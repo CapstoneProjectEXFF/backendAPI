@@ -7,6 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public interface UserServices {
     UserEntity login(String phoneNumber, String password);
-    UserEntity save(String phoneNumber, String password, String fullname, String status);
-    UserEntity save(String phoneNumber, String password, String fullname, String status, RoleEntity roleId);
+    UserEntity register(String phoneNumber, String password, String fullname, String status);
+    UserEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleId);
 }

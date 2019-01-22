@@ -30,15 +30,15 @@ public class UserServiceImpl implements UserServices{
     }
 
     @Override
-    public UserEntity save(String phoneNumber, String password, String fullname, String status) {
+    public UserEntity register(String phoneNumber, String password, String fullname, String status) {
         Optional<RoleEntity> role = roleEntities.stream()
                 .filter(roleEntity -> roleEntity.getName().equals("user"))
                 .findFirst();
-        return save(phoneNumber,password,fullname, status, role.get());
+        return register(phoneNumber,password,fullname, status, role.get());
     }
 
     @Override
-    public UserEntity save(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+    public UserEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
         userEntity.setPassword(password);

@@ -41,7 +41,7 @@ public class UserController {
         String status = body.get("status");
         UserEntity userEntity;
         try {
-            userEntity = userServices.save(phoneNumber, password, fullName, status);
+            userEntity = userServices.register(phoneNumber, password, fullName, status);
         } catch (Exception e) {
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }
