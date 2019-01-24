@@ -4,7 +4,10 @@ import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RoleRepository;
 import com.capstone.exff.repositories.UserRepository;
+import com.capstone.exff.utilities.ExffError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,36 +19,49 @@ public class UserServiceImpl implements UserServices{
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private List<RoleEntity> roleEntities;
+    private final RoleEntity userRole;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.roleEntities = roleRepository.findAll();
-    }
-
-    @Override
-    public UserEntity login(String phoneNumber, String password) {
-        return userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
-    }
-
-    @Override
-    public UserEntity register(String phoneNumber, String password, String fullname, String status) {
         Optional<RoleEntity> role = roleEntities.stream()
                 .filter(roleEntity -> roleEntity.getName().equals("user"))
                 .findFirst();
-        return register(phoneNumber,password,fullname, status, role.get());
+        userRole = role.orElse(null);
     }
 
     @Override
-    public UserEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+    public ResponseEntity login(String phoneNumber, String password) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
+
+        if (userEntity != null) {
+            return new ResponseEntity<>(userEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
+        return register(phoneNumber,password,fullname, status, this.userRole);
+    }
+
+    @Override
+    public ResponseEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
         userEntity.setPassword(password);
         userEntity.setFullName(fullname);
         userEntity.setStatus(status);
         userEntity.setRoleByRoleId(roleEntity);
-        return userRepository.save(userEntity);
+        try {
+            userEntity = userRepository.save(userEntity);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(userEntity, HttpStatus.OK);
     }
 
 
