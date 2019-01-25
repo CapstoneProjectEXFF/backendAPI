@@ -1,7 +1,6 @@
 package com.capstone.exff.controllers;
 
 import com.capstone.exff.entities.ItemEntity;
-import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.utilities.ExffError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,13 @@ public class ItemController {
     @PostMapping("create")
     public ResponseEntity createItem(@RequestBody Map<String, String> body){
         String name = body.get("name");
-        int user_id;
+        int userId;
         String description = body.get("description");
         ItemEntity itemEntity;
 
         try{
-            user_id = Integer.parseInt(body.get("user_id"));
-            itemEntity = itemServices.createItem(name, user_id, description);
+            userId = Integer.parseInt(body.get("userId"));
+            itemEntity = itemServices.createItem(name, userId, description);
         } catch (Exception e){
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }

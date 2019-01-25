@@ -7,8 +7,9 @@ import javax.persistence.*;
 public class ItemEntity {
     private int id;
     private String name;
-    private int user_id;
+    private int userId;
     private String description;
+    private boolean status; //status = false - disable, status = true - enable
 
     @Id
     @Column(name = "id")
@@ -32,12 +33,12 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "user_id")
-    public int getUser_id() {
-        return user_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Basic
@@ -48,5 +49,15 @@ public class ItemEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Basic
+    @Column(name = "status")
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

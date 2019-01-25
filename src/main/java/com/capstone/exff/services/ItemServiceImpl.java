@@ -18,11 +18,12 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ItemEntity createItem(String name, int user_id, String description) {
+    public ItemEntity createItem(String name, int userId, String description) {
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setName(name);
-        itemEntity.setUser_id(user_id);
+        itemEntity.setUserId(userId);
         itemEntity.setDescription(description);
+        itemEntity.setStatus(true);
         return itemRepository.save(itemEntity);
     }
 
@@ -47,15 +48,17 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public ResponseEntity removeItem(int id) {
         ItemEntity itemEntity = itemRepository.getOne(id);
+        ItemEntity removedItemEntity;
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
 
         try{
-            itemRepository.delete(itemEntity);
+            itemEntity.setStatus(false);
+            removedItemEntity = itemRepository.save(itemEntity);
         } catch (Exception e){
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return ResponseEntity.ok().build();
+        return new ResponseEntity(removedItemEntity, HttpStatus.OK);
     }
 }
