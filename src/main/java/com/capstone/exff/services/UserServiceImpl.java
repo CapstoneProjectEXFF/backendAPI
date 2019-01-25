@@ -16,10 +16,10 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserServices{
 
+    private final RoleEntity ROLE_USER;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private List<RoleEntity> roleEntities;
-    private final RoleEntity userRole;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserServices{
         Optional<RoleEntity> role = roleEntities.stream()
                 .filter(roleEntity -> roleEntity.getName().equals("user"))
                 .findFirst();
-        userRole = role.orElse(null);
+        ROLE_USER = role.orElse(null);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserServices{
 
     @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
-        return register(phoneNumber,password,fullname, status, this.userRole);
+        return register(phoneNumber,password,fullname, status, this.ROLE_USER);
     }
 
     @Override

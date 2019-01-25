@@ -21,7 +21,7 @@ public class UserController {
         this.userServices = userServices;
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody Map<String, String> body) {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
@@ -29,7 +29,7 @@ public class UserController {
 
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity register(@RequestBody Map<String, String> body) {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
