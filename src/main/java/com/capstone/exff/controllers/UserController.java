@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     private final UserServices userServices;
@@ -29,12 +28,17 @@ public class UserController {
 
     }
 
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     public ResponseEntity register(@RequestBody Map<String, String> body) {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
         String status = body.get("status");
         return userServices.register(phoneNumber, password, fullName, status);
+    }
+
+    @GetMapping()
+    public ResponseEntity getUsers(@RequestBody Map<String, String> body){
+        return new ResponseEntity(body.get("phoneNumber"), HttpStatus.OK);
     }
 }

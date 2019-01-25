@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,24 +27,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         super.configure(http);
         http.csrf()
                 .disable()
-                .authorizeRequests()
-                .antMatchers("/", "/user/login").permitAll()
+            .authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JWTLoginFilter("/user/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
+            .addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        auth.inMemoryAuthentication().withUser("admin").password(encoder.encode("secret")).roles("ADMIN");
+//        auth.inMemoryAuthentication().withUser("admin").password(encoder.encode("password")).roles("ADMIN");
 
-        auth.inMemoryAuthentication().withUser("admin").password("{noop}password").roles("USER");
+        auth.inMemoryAuthentication().withUser("admin").password("{noop}password").roles("ADMIN");
 //        auth.jdbcAuthentication().dataSource(dataSource)
 //                .usersByUsernameQuery("select phone_number as `username`,`password`,`status` from `user` where phone_number=?")
 //                .authoritiesByUsernameQuery("select phone_number as `username`, `role`.name from `user`,`role` where phone_number=? and `user`.role_id = `role`.id");

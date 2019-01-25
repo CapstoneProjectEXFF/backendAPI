@@ -25,6 +25,15 @@ public class TokenAuthenticationService {
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + JWT);
     }
 
+    public static String createToken(String username){
+        return Jwts.builder()
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
+    }
+
+
     public static Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
         if (token != null) {

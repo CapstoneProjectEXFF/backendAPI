@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,7 +39,10 @@ public class UserServiceImpl implements UserServices{
         UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
 
         if (userEntity != null) {
-            return new ResponseEntity<>(userEntity, HttpStatus.OK);
+            Map<String,String> token = new HashMap<>();
+            token.put("token",TokenAuthenticationService.createToken(userEntity.getPhoneNumber()));
+
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
         }
