@@ -3,10 +3,12 @@ package com.capstone.controller;
 import com.capstone.model.Item;
 import com.capstone.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class ItemController {
@@ -40,6 +42,20 @@ public class ItemController {
 
         itemRepository.delete(item);
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/item/{itemName}", method = RequestMethod.GET)
+    public ResponseEntity findItem(@PathVariable(value = "itemName") String itemName) {
+       try {
+          List<Item> results = itemRepository.findItemsByItemName(itemName);
+          if (results.isEmpty()) {
+              return new ResponseEntity("no item found", HttpStatus.OK);
+          } else {
+              return new ResponseEntity(results, HttpStatus.OK);
+          }
+       } catch (Exception e) {
+           return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+       }
     }
 
 }
