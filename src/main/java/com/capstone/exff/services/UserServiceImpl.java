@@ -81,5 +81,15 @@ public class UserServiceImpl implements UserServices {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @Override
+    public List<UserEntity> findUsersByName(String name) {
+        return userRepository.findUserEntitiesByFullName(name);
+    }
+
+    @Override
+    public UserEntity findUserByPhone(String phone) {
+        return userRepository.findUserEntitiesByPhoneNumber(phone);
+    }
+
 
 }
