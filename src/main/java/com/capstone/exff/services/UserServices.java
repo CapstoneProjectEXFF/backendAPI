@@ -1,6 +1,7 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.entities.RoleEntity;
+import com.capstone.exff.entities.UserEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
