@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserServices{
+public class UserServiceImpl implements UserServices {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserServices{
         UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
 
         if (userEntity != null) {
-            Map<String,String> token = new HashMap<>();
+            Map<String, String> token = new HashMap<>();
             token.put(
                     TokenAuthenticationService.HEADER_STRING,
                     TokenAuthenticationService.createToken(userEntity.getPhoneNumber()));
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserServices{
 
     @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
-        return register(phoneNumber,password,fullname, status, this.userRole);
+        return register(phoneNumber, password, fullname, status, this.userRole);
     }
 
     @Override
@@ -68,6 +68,17 @@ public class UserServiceImpl implements UserServices{
             return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(userEntity, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getAllUser() {
+        List users;
+        try {
+            users = userRepository.findAll();
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 
