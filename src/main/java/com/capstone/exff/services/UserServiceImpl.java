@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserServices {
             Map<String, String> token = new HashMap<>();
             token.put(
                     TokenAuthenticationService.HEADER_STRING,
-                    TokenAuthenticationService.createToken(userEntity.getPhoneNumber()));
+                    TokenAuthenticationService.createToken(userEntity));
             return new ResponseEntity<>(token, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
