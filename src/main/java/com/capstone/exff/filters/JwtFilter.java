@@ -1,5 +1,6 @@
 package com.capstone.exff.filters;
 
+import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.TokenAuthenticationService;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +28,8 @@ public class JwtFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String token = (String) request.getHeader("Authorization");
         if (token != null) {
-            String info = TokenAuthenticationService.getInfoFromToken(token);
-            request.setAttribute("info",info);
+            UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
+            request.setAttribute("USER_INFO", userEntity);
             filterChain.doFilter(request, response);
         } else {
             response.setStatus(HttpStatus.FORBIDDEN.value());
