@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserServices {
             Map<String, String> token = new HashMap<>();
             token.put(
                     TokenAuthenticationService.HEADER_STRING,
-                    TokenAuthenticationService.createToken(userEntity.getPhoneNumber()));
+                    TokenAuthenticationService.createToken(userEntity));
             return new ResponseEntity<>(token, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
@@ -79,6 +79,16 @@ public class UserServiceImpl implements UserServices {
             return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @Override
+    public List<UserEntity> findUsersByName(String name) {
+        return userRepository.findUserEntitiesByFullName(name);
+    }
+
+    @Override
+    public UserEntity findUserByPhone(String phone) {
+        return userRepository.findUserEntitiesByPhoneNumber(phone);
     }
 
 
