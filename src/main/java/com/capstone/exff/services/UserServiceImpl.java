@@ -39,11 +39,12 @@ public class UserServiceImpl implements UserServices {
         UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
 
         if (userEntity != null) {
-            Map<String, String> token = new HashMap<>();
-            token.put(
+            Map<String, Object> data = new HashMap<>();
+            data.put(
                     TokenAuthenticationService.HEADER_STRING,
                     TokenAuthenticationService.createToken(userEntity));
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            data.put("User", userEntity);
+            return new ResponseEntity<>(data, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
         }
