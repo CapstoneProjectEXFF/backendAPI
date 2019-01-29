@@ -54,15 +54,14 @@ public class ItemController {
         return itemServices.updateItem(id, name, description, userId);
     }
 
-    @DeleteMapping
-    public ResponseEntity removeItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
-        int id;
+    @DeleteMapping("/{id:[\\d]+}")
+    public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest){
         int userId = getLoginUserId(servletRequest);
-        try{
-            id = Integer.parseInt(body.get("id"));
-        }catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-        }
+//        try{
+//            id = Integer.parseInt(body.get("id"));
+//        }catch (Exception e){
+//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+//        }
         return itemServices.removeItem(id, userId);
     }
 
