@@ -1,7 +1,7 @@
-package com.capstone.controller;
+package com.capstone.exff.controller;
 
-import com.capstone.model.Item;
-import com.capstone.repository.ItemRepository;
+import com.capstone.exff.model.Item;
+import com.capstone.exff.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
