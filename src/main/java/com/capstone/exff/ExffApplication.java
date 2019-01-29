@@ -4,10 +4,7 @@ import com.capstone.exff.filters.JwtFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @SpringBootApplication
@@ -23,7 +20,7 @@ public class ExffApplication {
 
         registrationBean.setFilter(new JwtFilter());
         registrationBean.addUrlPatterns("/user/*");
-
+        registrationBean.addUrlPatterns("/item/*");
         return registrationBean;
     }
 }

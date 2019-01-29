@@ -5,6 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ItemServices {
     ItemEntity createItem(String name, int userId, String description);
-    ResponseEntity updateItem(int id, String name, String description);
-    ResponseEntity removeItem(int id);
+    ResponseEntity updateItem(int id, String name, String description, int userId);
+    ResponseEntity removeItem(int id, int userId);
 }

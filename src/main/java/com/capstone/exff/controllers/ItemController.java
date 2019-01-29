@@ -1,6 +1,7 @@
 package com.capstone.exff.controllers;
 
 import com.capstone.exff.entities.ItemEntity;
+import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.utilities.ExffError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -23,14 +26,13 @@ public class ItemController {
 
 
     @PostMapping("create")
-    public ResponseEntity createItem(@RequestBody Map<String, String> body){
+    public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         String name = body.get("name");
-        int userId;
+        int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         ItemEntity itemEntity;
 
         try{
-            userId = Integer.parseInt(body.get("userId"));
             itemEntity = itemServices.createItem(name, userId, description);
         } catch (Exception e){
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
@@ -39,8 +41,9 @@ public class ItemController {
     }
 
     @PutMapping("update")
-    public ResponseEntity updateItem(@RequestBody Map<String, String> body){
+    public ResponseEntity updateItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         int id;
+        int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
         String description = body.get("description");
 
@@ -49,18 +52,25 @@ public class ItemController {
         }catch (Exception e){
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return itemServices.updateItem(id, name, description);
+        return itemServices.updateItem(id, name, description, userId);
     }
 
     @DeleteMapping("remove")
-    public ResponseEntity removeItem(@RequestBody Map<String, String> body){
+    public ResponseEntity removeItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         int id;
-
+        int userId = getLoginUserId(servletRequest);
         try{
             id = Integer.parseInt(body.get("id"));
         }catch (Exception e){
             return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return itemServices.removeItem(id);
+        return itemServices.removeItem(id, userId);
+    }
+
+    private int getLoginUserId(ServletRequest servletRequest){
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        int userId = userEntity.getId();
+        return userId;
     }
 }

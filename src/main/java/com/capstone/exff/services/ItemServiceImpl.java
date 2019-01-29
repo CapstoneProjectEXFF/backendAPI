@@ -28,37 +28,43 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ResponseEntity updateItem(int id, String name, String description) {
+    public ResponseEntity updateItem(int id, String name, String description, int userId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-
-        itemEntity.setName(name);
-        itemEntity.setDescription(description);
-        try{
-            newItemEntity = itemRepository.save(itemEntity);
-        } catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+        if (itemEntity.getUserId() == userId && itemEntity.isStatus() == true) {
+            itemEntity.setName(name);
+            itemEntity.setDescription(description);
+            try {
+                newItemEntity = itemRepository.save(itemEntity);
+            } catch (Exception e) {
+                return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(newItemEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
         }
-        return new ResponseEntity(newItemEntity, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity removeItem(int id) {
+    public ResponseEntity removeItem(int id, int userId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity removedItemEntity;
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-
-        try{
-            itemEntity.setStatus(false);
-            removedItemEntity = itemRepository.save(itemEntity);
-        } catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+        if (itemEntity.getUserId() == userId && itemEntity.isStatus() == true) {
+            try {
+                itemEntity.setStatus(false);
+                removedItemEntity = itemRepository.save(itemEntity);
+            } catch (Exception e) {
+                return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(removedItemEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
         }
-        return new ResponseEntity(removedItemEntity, HttpStatus.OK);
     }
 }
