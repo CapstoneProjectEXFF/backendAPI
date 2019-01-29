@@ -78,12 +78,13 @@ public class TokenAuthenticationService {
         } catch (IOException e) {
             StringTokenizer stringTokenizer = new StringTokenizer(res, " ");
             userEntity = new UserEntity();
-            String id = stringTokenizer.nextToken();
             try {
+                String id = stringTokenizer.nextToken();
                 userEntity.setId(Integer.parseInt(id));
-            } catch (Exception ex){
+                userEntity.setPhoneNumber(stringTokenizer.nextToken());
+            } catch (Exception ex) {
+                userEntity = null;
             }
-            userEntity.setPhoneNumber(stringTokenizer.nextToken());
         }
         return userEntity;
     }

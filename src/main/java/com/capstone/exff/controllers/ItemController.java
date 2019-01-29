@@ -25,7 +25,7 @@ public class ItemController {
     }
 
 
-    @PostMapping("create")
+    @PostMapping
     public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
@@ -40,22 +40,21 @@ public class ItemController {
         return new ResponseEntity(itemEntity, HttpStatus.OK);
     }
 
-    @PutMapping("update")
-    public ResponseEntity updateItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
-        int id;
+    @PutMapping("/{id:[\\d]+}")
+    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest){
         int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
         String description = body.get("description");
 
-        try{
-            id = Integer.parseInt(body.get("id"));
-        }catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-        }
+//        try{
+//            id = Integer.parseInt(body.get("id"));
+//        }catch (Exception e){
+//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+//        }
         return itemServices.updateItem(id, name, description, userId);
     }
 
-    @DeleteMapping("remove")
+    @DeleteMapping
     public ResponseEntity removeItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         int id;
         int userId = getLoginUserId(servletRequest);

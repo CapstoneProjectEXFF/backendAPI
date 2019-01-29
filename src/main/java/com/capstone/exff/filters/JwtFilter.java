@@ -29,8 +29,13 @@ public class JwtFilter implements Filter {
         String token = (String) request.getHeader("Authorization");
         if (token != null) {
             UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
-            request.setAttribute("USER_INFO", userEntity);
-            filterChain.doFilter(request, response);
+            if (userEntity != null){
+                request.setAttribute("USER_INFO", userEntity);
+                filterChain.doFilter(request, response);
+            } else {
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.getWriter().write("{\"message\":\"Access denied\"}");
+            }
         } else {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.getWriter().write("{\"message\":\"Access denied\"}");
