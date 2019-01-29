@@ -1,6 +1,6 @@
 package com.capstone.exff.services;
 
-import com.capstone.exff.model.Item;
+import com.capstone.exff.entities.Item;
 
 import java.util.List;
 

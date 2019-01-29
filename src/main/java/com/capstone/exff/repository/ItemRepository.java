@@ -1,6 +1,6 @@
 package com.capstone.exff.repository;
 
-import com.capstone.exff.model.Item;
+import com.capstone.exff.entities.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

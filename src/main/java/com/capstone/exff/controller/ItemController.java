@@ -1,6 +1,6 @@
 package com.capstone.exff.controller;
 
-import com.capstone.exff.model.Item;
+import com.capstone.exff.entities.Item;
 import com.capstone.exff.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

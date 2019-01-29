@@ -1,4 +1,4 @@
-package com.capstone.exff.model;
+package com.capstone.exff.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
