@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/item")
 public class ItemController {
 
     private final ItemServices itemServices;
@@ -25,7 +25,7 @@ public class ItemController {
     }
 
 
-    @PostMapping
+    @PostMapping("/item")
     public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
@@ -40,7 +40,7 @@ public class ItemController {
         return new ResponseEntity(itemEntity, HttpStatus.OK);
     }
 
-    @PutMapping("/{id:[\\d]+}")
+    @PutMapping("/item/{id:[\\d]+}")
     public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest){
         int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
@@ -54,7 +54,7 @@ public class ItemController {
         return itemServices.updateItem(id, name, description, userId);
     }
 
-    @DeleteMapping("/{id:[\\d]+}")
+    @DeleteMapping("item/{id:[\\d]+}")
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest){
         int userId = getLoginUserId(servletRequest);
 //        try{
@@ -63,6 +63,19 @@ public class ItemController {
 //            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
 //        }
         return itemServices.removeItem(id, userId);
+    }
+    @GetMapping("/itemSearch")
+    public ResponseEntity findItem(@RequestParam(value = "name") String itemName) {
+        try {
+            List<ItemEntity> results = itemServices.findItemsByItemName(itemName);
+            if (results.isEmpty()) {
+                return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(results, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     private int getLoginUserId(ServletRequest servletRequest){

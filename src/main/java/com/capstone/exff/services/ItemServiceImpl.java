@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ItemServiceImpl implements ItemServices {
     private ItemRepository itemRepository;
@@ -67,4 +69,10 @@ public class ItemServiceImpl implements ItemServices {
             return new ResponseEntity("Cannot access this item", HttpStatus.OK);
         }
     }
+
+    @Override
+    public List<ItemEntity> findItemsByItemName(String itemName) {
+        return itemRepository.findItemsByItemName(itemName);
+    }
+
 }
