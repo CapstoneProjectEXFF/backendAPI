@@ -4,7 +4,7 @@ import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RoleRepository;
 import com.capstone.exff.repositories.UserRepository;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserServices {
             data.put("User", userEntity);
             return new ResponseEntity<>(data, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ExffMessage("Cannot login"), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserServices {
         try {
             userEntity = userRepository.save(userEntity);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(userEntity, HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserServices {
         try {
             users = userRepository.findAll();
         } catch (Exception e) {
-            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }

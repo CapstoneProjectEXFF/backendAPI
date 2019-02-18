@@ -19,7 +19,7 @@ public class ExffApplication {
                 = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(new JwtFilter());
-        registrationBean.addUrlPatterns("/user/*");
+        registrationBean.addUrlPatterns("/user/*", "/relationship");
         registrationBean.addUrlPatterns("/item/*");
 
         return registrationBean;

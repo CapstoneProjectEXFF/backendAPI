@@ -2,7 +2,7 @@ package com.capstone.exff.services;
 
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class ItemServiceImpl implements ItemServices {
             try {
                 newItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
-                return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+                return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
             }
             return new ResponseEntity(newItemEntity, HttpStatus.OK);
         } else {
@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemServices {
                 itemEntity.setStatus(false);
                 removedItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
-                return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+                return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
             }
             return new ResponseEntity(removedItemEntity, HttpStatus.OK);
         } else {
