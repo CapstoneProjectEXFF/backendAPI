@@ -3,7 +3,7 @@ package com.capstone.exff.controllers;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ItemServices;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class ItemController {
         try{
             itemEntity = itemServices.createItem(name, userId, description);
         } catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(itemEntity, HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class ItemController {
 //        try{
 //            id = Integer.parseInt(body.get("id"));
 //        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
 //        }
         return itemServices.updateItem(id, name, description, userId);
     }
@@ -60,7 +60,7 @@ public class ItemController {
 //        try{
 //            id = Integer.parseInt(body.get("id"));
 //        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
 //        }
         return itemServices.removeItem(id, userId);
     }
