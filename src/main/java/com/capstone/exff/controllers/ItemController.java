@@ -30,10 +30,13 @@ public class ItemController {
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
+        String image = body.get("image");
+        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
 
         try{
-            itemEntity = itemServices.createItem(name, userId, description);
+            itemEntity = itemServices.createItem(name, userId, description, image, privacy, categoryId);
         } catch (Exception e){
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
@@ -45,23 +48,17 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
         String description = body.get("description");
+        String image = body.get("image");
+        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        int categoryId = Integer.parseInt(body.get("category"));
 
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-//        }
-        return itemServices.updateItem(id, name, description, userId);
+        return itemServices.updateItem(id, name, description, userId, image, privacy, categoryId);
     }
 
     @DeleteMapping("item/{id:[\\d]+}")
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest){
         int userId = getLoginUserId(servletRequest);
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-//        }
+
         return itemServices.removeItem(id, userId);
     }
     @GetMapping("/itemSearch")
