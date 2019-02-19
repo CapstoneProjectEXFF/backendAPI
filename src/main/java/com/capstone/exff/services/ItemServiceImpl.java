@@ -75,4 +75,9 @@ public class ItemServiceImpl implements ItemServices {
         return itemRepository.findItemsByItemName(itemName);
     }
 
+    @Override
+    public List<ItemEntity> loadAllItems() {
+        return itemRepository.findAll();
+    }
+
 }
