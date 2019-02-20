@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +32,14 @@ public class ItemController {
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
-        String image = body.get("image");
+        String address = body.get("address");
         boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        Timestamp createTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
 
-
         try{
-            itemEntity = itemServices.createItem(name, userId, description, image, privacy, categoryId);
+            itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
         } catch (Exception e){
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
@@ -47,14 +48,15 @@ public class ItemController {
 
     @PutMapping("/item/{id:[\\d]+}")
     public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest) {
-        int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
+        int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
-        String image = body.get("image");
+        String address = body.get("address");
         boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 
-        return itemServices.updateItem(id, name, description, userId, image, privacy, categoryId);
+        return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }
 
     @DeleteMapping("item/{id:[\\d]+}")

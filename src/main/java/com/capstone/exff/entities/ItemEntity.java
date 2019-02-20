@@ -1,6 +1,7 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -10,11 +11,12 @@ public class ItemEntity {
     private String name;
     private int userId;
     private String description;
-    private int status; //status = 0 enable, 1 disable, 2 trade complete
-    private String image;
-    private boolean privacy; //privary = false: public, true: friends
+    private String address;
+    private char status;
+    private char privacy;
+    private Timestamp createTime;
+    private Timestamp modifyTime;
     private int categoryId;
-
 
     @Id
     @Column(name = "id")
@@ -57,33 +59,53 @@ public class ItemEntity {
     }
 
     @Basic
+    @Column(name = "address")
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Basic
     @Column(name = "status")
-    public int getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
     @Basic
-    @Column(name = "image")
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    @Basic
     @Column(name = "privacy")
-    public boolean isPrivacy() {
+    public char getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(boolean privacy) {
+    public void setPrivacy(char privacy) {
         this.privacy = privacy;
+    }
+
+    @Basic
+    @Column(name = "create_time")
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    @Basic
+    @Column(name = "modify_time")
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
     @Basic
@@ -102,13 +124,19 @@ public class ItemEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ItemEntity that = (ItemEntity) o;
         return id == that.id &&
-                status == that.status &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+                userId == that.userId &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(privacy, that.privacy) &&
+                Objects.equals(createTime, that.createTime) &&
+                Objects.equals(modifyTime, that.modifyTime) &&
+                categoryId == that.categoryId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status);
+        return Objects.hash(id, name, userId, description, address, status, privacy, createTime, modifyTime, categoryId);
     }
 }
