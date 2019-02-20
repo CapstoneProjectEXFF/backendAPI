@@ -95,7 +95,7 @@ public class ItemController {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
 }

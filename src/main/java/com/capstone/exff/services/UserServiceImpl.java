@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffRole;
 import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RoleRepository;
@@ -31,10 +32,11 @@ public class UserServiceImpl implements UserServices {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleEntities = roleRepository.findAll();
-        Optional<RoleEntity> role = roleEntities.stream()
-                .filter(roleEntity -> roleEntity.getName().equals("user"))
-                .findFirst();
-        userRole = role.orElse(null);
+//        Optional<RoleEntity> role = roleEntities.stream()
+//                .filter(roleEntity -> roleEntity.getName().equals(ExffRole.ROLE_USER))
+//                .findFirst();
+//        this.userRole = role.orElse(null);
+        this.userRole = roleRepository.findTop1ByName(ExffRole.ROLE_USER);
     }
 
     @Override
