@@ -3,6 +3,7 @@ package com.capstone.exff.controllers;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ItemServices;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class ItemController {
 
 
     @PostMapping("/item")
-    public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
+    public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
@@ -34,6 +35,7 @@ public class ItemController {
         boolean privacy = Boolean.parseBoolean(body.get("privacy"));
         int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
+
 
         try{
             itemEntity = itemServices.createItem(name, userId, description, image, privacy, categoryId);
@@ -44,7 +46,7 @@ public class ItemController {
     }
 
     @PutMapping("/item/{id:[\\d]+}")
-    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest){
+    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
         String description = body.get("description");
@@ -56,11 +58,12 @@ public class ItemController {
     }
 
     @DeleteMapping("item/{id:[\\d]+}")
-    public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest){
+    public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
 
         return itemServices.removeItem(id, userId);
     }
+
     @GetMapping("/itemSearch")
     public ResponseEntity findItem(@RequestParam(value = "name") String itemName) {
         try {
@@ -75,10 +78,24 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest){
+    private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    @GetMapping("/item")
+    public ResponseEntity loadItems() {
+        try {
+            List<ItemEntity> result = itemServices.loadAllItems();
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+        }
     }
 }
