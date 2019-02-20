@@ -10,4 +10,6 @@ public interface RoleRepository extends CrudRepository<RoleEntity, Integer> {
     List<RoleEntity> findAll();
 
     RoleEntity findFirstById(int id);
+
+    RoleEntity findTop1ByName(String name);
 }
