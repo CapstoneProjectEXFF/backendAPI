@@ -3,8 +3,8 @@ package com.capstone.exff.controllers;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ItemServices;
-import com.capstone.exff.utilities.ExffError;
 import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +31,16 @@ public class ItemController {
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
+        String image = body.get("image");
+        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
 
-        try {
-            itemEntity = itemServices.createItem(name, userId, description);
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+
+        try{
+            itemEntity = itemServices.createItem(name, userId, description, image, privacy, categoryId);
+        } catch (Exception e){
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(itemEntity, HttpStatus.OK);
     }
@@ -46,23 +50,17 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String name = body.get("name");
         String description = body.get("description");
+        String image = body.get("image");
+        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        int categoryId = Integer.parseInt(body.get("category"));
 
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-//        }
-        return itemServices.updateItem(id, name, description, userId);
+        return itemServices.updateItem(id, name, description, userId, image, privacy, categoryId);
     }
 
     @DeleteMapping("item/{id:[\\d]+}")
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-//        }
+
         return itemServices.removeItem(id, userId);
     }
 

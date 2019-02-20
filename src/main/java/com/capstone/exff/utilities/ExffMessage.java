@@ -1,9 +1,9 @@
 package com.capstone.exff.utilities;
 
-public class ExffError {
+public class ExffMessage {
     private String message;
 
-    public ExffError(String message) {
+    public ExffMessage(String message) {
         this.message = message;
     }
 
