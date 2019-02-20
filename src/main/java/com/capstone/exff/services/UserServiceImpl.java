@@ -8,6 +8,7 @@ import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -36,9 +37,9 @@ public class UserServiceImpl implements UserServices {
 
     @Override
     public ResponseEntity login(String phoneNumber, String password) {
-        UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
-
-        if (userEntity != null) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
             Map<String, Object> data = new HashMap<>();
             data.put(
                     TokenAuthenticationService.HEADER_STRING,
@@ -57,9 +58,10 @@ public class UserServiceImpl implements UserServices {
 
     @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setPassword(password);
+        userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setFullName(fullname);
         userEntity.setStatus(status);
         userEntity.setRoleByRoleId(roleEntity);
