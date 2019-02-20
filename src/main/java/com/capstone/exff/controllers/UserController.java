@@ -35,7 +35,7 @@ public class UserController {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
-        String status = body.get("status");
+        char status = body.get("status").charAt(0);
         return userServices.register(phoneNumber, password, fullName, status);
     }
 

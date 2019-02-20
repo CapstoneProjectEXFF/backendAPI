@@ -51,12 +51,12 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
+    public ResponseEntity register(String phoneNumber, String password, String fullname, char status) {
         return register(phoneNumber, password, fullname, status, this.userRole);
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+    public ResponseEntity register(String phoneNumber, String password, String fullname, char status, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
         userEntity.setPassword(password);

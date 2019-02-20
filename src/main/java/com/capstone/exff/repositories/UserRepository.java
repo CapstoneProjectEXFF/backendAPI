@@ -15,6 +15,8 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     @Query("select u from UserEntity u where u.phoneNumber = :phone")
     UserEntity findUserEntitiesByPhoneNumber(String phone);
 
+    UserEntity findTop1ByPhoneNumber(String phoneNumber);
+
     @Override
     <S extends UserEntity> S save(S s);
 

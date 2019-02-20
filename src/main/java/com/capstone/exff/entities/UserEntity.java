@@ -12,7 +12,7 @@ public class UserEntity {
     private String phoneNumber;
     private String password;
     private String fullName;
-    private String status;
+    private char status;
     private RoleEntity roleByRoleId;
 
     @Id
@@ -58,11 +58,11 @@ public class UserEntity {
 
     @Basic
     @Column(name = "status")
-    public String getStatus() {
+    public char getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(char status) {
         this.status = status;
     }
 
