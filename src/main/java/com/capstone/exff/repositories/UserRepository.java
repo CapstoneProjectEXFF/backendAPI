@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface UserRepository extends CrudRepository<UserEntity, Integer> {
-    UserEntity findFirstByPhoneNumberAndPassword(String phoneNumber, String password);
+    UserEntity findFirstByPhoneNumber(String phoneNumber);
 
     @Query("select u from UserEntity u where u.fullName like concat('%', :name, '%')")
     List<UserEntity> findUserEntitiesByFullName(String name);

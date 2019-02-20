@@ -8,6 +8,7 @@ import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,13 +21,15 @@ public class UserServiceImpl implements UserServices {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private List<RoleEntity> roleEntities;
     private final RoleEntity userRole;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
         this.roleEntities = roleRepository.findAll();
         Optional<RoleEntity> role = roleEntities.stream()
                 .filter(roleEntity -> roleEntity.getName().equals("user"))
@@ -36,9 +39,8 @@ public class UserServiceImpl implements UserServices {
 
     @Override
     public ResponseEntity login(String phoneNumber, String password) {
-        UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
-
-        if (userEntity != null) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+        if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
             Map<String, Object> data = new HashMap<>();
             data.put(
                     TokenAuthenticationService.HEADER_STRING,
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserServices {
     public ResponseEntity register(String phoneNumber, String password, String fullname, char status, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setPassword(password);
+        userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setFullName(fullname);
         userEntity.setStatus(status);
         userEntity.setRoleByRoleId(roleEntity);
