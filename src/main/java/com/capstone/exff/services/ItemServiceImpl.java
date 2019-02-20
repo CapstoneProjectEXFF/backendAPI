@@ -20,25 +20,31 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ItemEntity createItem(String name, int userId, String description) {
+    public ItemEntity createItem(String name, int userId, String description, String image, boolean privacy, int categoryId) {
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setName(name);
         itemEntity.setUserId(userId);
         itemEntity.setDescription(description);
-        itemEntity.setStatus(true);
+        itemEntity.setStatus(0);
+        itemEntity.setImage(image);
+        itemEntity.setPrivacy(privacy);
+        itemEntity.setCategoryId(categoryId);
         return itemRepository.save(itemEntity);
     }
 
     @Override
-    public ResponseEntity updateItem(int id, String name, String description, int userId) {
+    public ResponseEntity updateItem(int id, String name, String description, int userId, String image, boolean privacy, int categoryId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.isStatus() == true) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == 0) {
             itemEntity.setName(name);
             itemEntity.setDescription(description);
+            itemEntity.setImage(image);
+            itemEntity.setPrivacy(privacy);
+            itemEntity.setCategoryId(categoryId);
             try {
                 newItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
@@ -57,9 +63,9 @@ public class ItemServiceImpl implements ItemServices {
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.isStatus() == true) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == 0) {
             try {
-                itemEntity.setStatus(false);
+                itemEntity.setStatus(1);
                 removedItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
                 return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);

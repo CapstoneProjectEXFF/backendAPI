@@ -10,7 +10,10 @@ public class ItemEntity {
     private String name;
     private int userId;
     private String description;
-    private boolean status; //status = false - disable, status = true - enable
+    private int status; //status = 0 enable, 1 disable, 2 trade complete
+    private String image;
+    private boolean privacy; //privary = false: public, true: friends
+    private int categoryId;
 
 
     @Id
@@ -55,12 +58,42 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "status")
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    @Basic
+    @Column(name = "image")
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Basic
+    @Column(name = "privacy")
+    public boolean isPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(boolean privacy) {
+        this.privacy = privacy;
+    }
+
+    @Basic
+    @Column(name = "category_id")
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Override
