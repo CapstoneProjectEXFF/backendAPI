@@ -54,4 +54,5 @@ public class CategoryEntity {
     public int hashCode() {
         return Objects.hash(id, name, suppercategoryId);
     }
+
 }

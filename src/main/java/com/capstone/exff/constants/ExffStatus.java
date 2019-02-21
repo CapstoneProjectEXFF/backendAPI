@@ -13,4 +13,6 @@ public class ExffStatus {
     public static final String TRANSACTION_DONE = "2";
     public static final String RELATIONSHIP_SEND = "1";
     public static final String RELATIONSHIP_ACCEPTED = "2";
+    public static final String ITEM_PRIVACY_PUBLIC = '0';
+    public static final String ITEM_PRIVACY_FRIENDS = '1';
 }
