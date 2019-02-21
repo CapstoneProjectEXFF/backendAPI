@@ -1,6 +1,7 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -8,13 +9,14 @@ import java.util.Objects;
 public class ItemEntity {
     private int id;
     private String name;
-    private int userId;
+    private Integer userId;
     private String description;
-    private int status; //status = 0 enable, 1 disable, 2 trade complete
-    private String image;
-    private boolean privacy; //privary = false: public, true: friends
-    private int categoryId;
-
+    private String address;
+    private String status;
+    private String privacy;
+    private Timestamp createTime;
+    private Timestamp modifyTime;
+    private Integer categoryId;
 
     @Id
     @Column(name = "id")
@@ -38,11 +40,11 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "user_id")
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -57,42 +59,62 @@ public class ItemEntity {
     }
 
     @Basic
+    @Column(name = "address")
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Basic
     @Column(name = "status")
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
     @Basic
-    @Column(name = "image")
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    @Basic
     @Column(name = "privacy")
-    public boolean isPrivacy() {
+    public String getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(boolean privacy) {
+    public void setPrivacy(String privacy) {
         this.privacy = privacy;
     }
 
     @Basic
+    @Column(name = "create_time")
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    @Basic
+    @Column(name = "modify_time")
+    public Timestamp getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Timestamp modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    @Basic
     @Column(name = "category_id")
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -102,13 +124,19 @@ public class ItemEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ItemEntity that = (ItemEntity) o;
         return id == that.id &&
-                status == that.status &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description);
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(status, that.status) &&
+                Objects.equals(privacy, that.privacy) &&
+                Objects.equals(createTime, that.createTime) &&
+                Objects.equals(modifyTime, that.modifyTime) &&
+                Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status);
+        return Objects.hash(id, name, userId, description, address, status, privacy, createTime, modifyTime, categoryId);
     }
 }

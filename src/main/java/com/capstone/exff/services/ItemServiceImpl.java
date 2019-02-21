@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -20,29 +21,29 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ItemEntity createItem(String name, int userId, String description, String image, boolean privacy, int categoryId) {
+    public ItemEntity createItem(String name, int userId, String description, String image, String privacy, int categoryId) {
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setName(name);
         itemEntity.setUserId(userId);
         itemEntity.setDescription(description);
-        itemEntity.setStatus(0);
-        itemEntity.setImage(image);
+        itemEntity.setStatus(ExffStatus.ITEM_ENABLE);
+//        itemEntity.setImage(image);
         itemEntity.setPrivacy(privacy);
         itemEntity.setCategoryId(categoryId);
         return itemRepository.save(itemEntity);
     }
 
     @Override
-    public ResponseEntity updateItem(int id, String name, String description, int userId, String image, boolean privacy, int categoryId) {
+    public ResponseEntity updateItem(int id, String name, String description, int userId, String image, String privacy, int categoryId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == 0) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ExffStatus.ITEM_ENABLE)) {
             itemEntity.setName(name);
             itemEntity.setDescription(description);
-            itemEntity.setImage(image);
+//            itemEntity.setImage(image);
             itemEntity.setPrivacy(privacy);
             itemEntity.setCategoryId(categoryId);
             try {
@@ -63,9 +64,9 @@ public class ItemServiceImpl implements ItemServices {
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == 0) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ExffStatus.ITEM_ENABLE)) {
             try {
-                itemEntity.setStatus(1);
+                itemEntity.setStatus(ExffStatus.ITEM_DISABLE);
                 removedItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
                 return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
