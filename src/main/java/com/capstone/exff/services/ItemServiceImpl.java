@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -49,7 +50,7 @@ public class ItemServiceImpl implements ItemServices {
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == ITEM_ENABLE) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
             itemEntity.setName(name);
             itemEntity.setDescription(description);
             itemEntity.setAddress(address);
@@ -80,7 +81,7 @@ public class ItemServiceImpl implements ItemServices {
         if (itemEntity == null){
             return ResponseEntity.notFound().build();
         }
-        if (itemEntity.getUserId() == userId && itemEntity.getStatus() == ITEM_ENABLE) {
+        if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
             try {
                 itemEntity.setStatus(ITEM_DISABLE);
                 removedItemEntity = itemRepository.save(itemEntity);

@@ -1,13 +1,14 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "category", schema = "exff")
 public class CategoryEntity {
     private int id;
     private String name;
-    private int suppercategoryId;
+    private Integer suppercategoryId;
 
     @Id
     @Column(name = "id")
@@ -31,13 +32,27 @@ public class CategoryEntity {
 
     @Basic
     @Column(name = "suppercategory_id")
-    public int getSuppercategoryId() {
+    public Integer getSuppercategoryId() {
         return suppercategoryId;
     }
 
-    public void setSuppercategoryId(int suppercategoryId) {
+    public void setSuppercategoryId(Integer suppercategoryId) {
         this.suppercategoryId = suppercategoryId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryEntity that = (CategoryEntity) o;
+        return id == that.id &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(suppercategoryId, that.suppercategoryId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, suppercategoryId);
+    }
 
 }

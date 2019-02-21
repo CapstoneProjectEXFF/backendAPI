@@ -32,8 +32,8 @@ public class ItemController {
         String name = body.get("name");
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
-        String address = body.get("address");
-        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        String image = body.get("image");
+        String privacy = body.get("privacy");
         Timestamp createTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
@@ -52,7 +52,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String address = body.get("address");
-        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        String privacy = body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 

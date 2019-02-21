@@ -9,14 +9,14 @@ import java.util.Objects;
 public class ItemEntity {
     private int id;
     private String name;
-    private int userId;
+    private Integer userId;
     private String description;
     private String address;
-    private char status;
-    private char privacy;
+    private String status;
+    private String privacy;
     private Timestamp createTime;
     private Timestamp modifyTime;
-    private int categoryId;
+    private Integer categoryId;
 
     @Id
     @Column(name = "id")
@@ -40,11 +40,11 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "user_id")
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -70,21 +70,21 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "status")
-    public char getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
     @Basic
     @Column(name = "privacy")
-    public char getPrivacy() {
+    public String getPrivacy() {
         return privacy;
     }
 
-    public void setPrivacy(char privacy) {
+    public void setPrivacy(String privacy) {
         this.privacy = privacy;
     }
 
@@ -110,11 +110,11 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "category_id")
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -125,14 +125,14 @@ public class ItemEntity {
         ItemEntity that = (ItemEntity) o;
         return id == that.id &&
                 Objects.equals(name, that.name) &&
-                userId == that.userId &&
+                Objects.equals(userId, that.userId) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(privacy, that.privacy) &&
                 Objects.equals(createTime, that.createTime) &&
                 Objects.equals(modifyTime, that.modifyTime) &&
-                categoryId == that.categoryId;
+                Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
