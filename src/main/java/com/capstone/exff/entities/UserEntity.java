@@ -1,7 +1,5 @@
 package com.capstone.exff.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,7 +10,8 @@ public class UserEntity {
     private String phoneNumber;
     private String password;
     private String fullName;
-    private char status;
+    private String avatar;
+    private String status;
     private RoleEntity roleByRoleId;
 
     @Id
@@ -37,7 +36,6 @@ public class UserEntity {
 
     @Basic
     @Column(name = "password")
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -57,12 +55,22 @@ public class UserEntity {
     }
 
     @Basic
+    @Column(name = "avatar")
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    @Basic
     @Column(name = "status")
-    public char getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(char status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -75,12 +83,13 @@ public class UserEntity {
                 Objects.equals(phoneNumber, that.phoneNumber) &&
                 Objects.equals(password, that.password) &&
                 Objects.equals(fullName, that.fullName) &&
+                Objects.equals(avatar, that.avatar) &&
                 Objects.equals(status, that.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, phoneNumber, password, fullName, status);
+        return Objects.hash(id, phoneNumber, password, fullName, avatar, status);
     }
 
     @ManyToOne

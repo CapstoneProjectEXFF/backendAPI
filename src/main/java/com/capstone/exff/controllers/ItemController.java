@@ -32,7 +32,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String image = body.get("image");
-        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        String privacy = body.get("privacy");
         int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
 
@@ -51,7 +51,7 @@ public class ItemController {
         String name = body.get("name");
         String description = body.get("description");
         String image = body.get("image");
-        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        String privacy = body.get("privacy");
         int categoryId = Integer.parseInt(body.get("category"));
 
         return itemServices.updateItem(id, name, description, userId, image, privacy, categoryId);
