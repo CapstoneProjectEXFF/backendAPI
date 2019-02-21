@@ -29,18 +29,18 @@ public class ItemController {
 
     @PostMapping("/item")
     public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
-        String name = body.get("name");
-        int userId = getLoginUserId(servletRequest);
-        String description = body.get("description");
-        String image = body.get("image");
-        String privacy = body.get("privacy");
-        Timestamp createTime = new Timestamp(System.currentTimeMillis());
-        int categoryId = Integer.parseInt(body.get("category"));
         ItemEntity itemEntity;
-
-        try{
+        try {
+            String name = body.get("name");
+            int userId = getLoginUserId(servletRequest);
+            String description = body.get("description");
+            String image = body.get("image");
+            String address = body.get("address");
+            boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+            Timestamp createTime = new Timestamp(System.currentTimeMillis());
+            int categoryId = Integer.parseInt(body.get("category"));
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(itemEntity, HttpStatus.OK);
@@ -52,7 +52,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String address = body.get("address");
-        String privacy = body.get("privacy");
+        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 
