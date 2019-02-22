@@ -13,4 +13,6 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
 
     @Query("select i from ItemEntity i where i.name like concat('%', :itemName, '%')")
     List<ItemEntity> findItemsByItemName(String itemName);
+
+
 }

@@ -40,7 +40,9 @@ public class ItemServiceImpl implements ItemServices {
             itemEntity.setPrivacy(ITEM_PRIVACY_FRIENDS);
         }
 
-        return itemRepository.save(itemEntity);
+        itemEntity = itemRepository.save(itemEntity);
+        itemRepository.flush();
+        return itemEntity;
     }
 
     @Override
