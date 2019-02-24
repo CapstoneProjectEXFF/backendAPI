@@ -9,4 +9,9 @@ public interface CategoryRepository extends CrudRepository<CategoryEntity, Integ
     @Override
     List<CategoryEntity> findAll();
 
+    @Override
+    <S extends CategoryEntity> S save(S s);
+
+    @Override
+    <S extends CategoryEntity> Iterable<S> saveAll(Iterable<S> iterable);
 }

@@ -4,9 +4,12 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "relationship", schema = "exff", uniqueConstraints={
-@UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
-})
+@Table(name = "relationship",
+        schema = "exff",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
+        }
+)
 public class RelationshipEntity {
     private int id;
     private Integer senderId;
@@ -15,6 +18,7 @@ public class RelationshipEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
         return id;
     }
