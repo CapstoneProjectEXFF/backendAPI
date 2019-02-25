@@ -19,6 +19,7 @@ public class ItemEntity {
     private Integer categoryId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
