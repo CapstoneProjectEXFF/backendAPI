@@ -12,7 +12,6 @@ public class ImageEntity {
     private Integer donationPostId;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
