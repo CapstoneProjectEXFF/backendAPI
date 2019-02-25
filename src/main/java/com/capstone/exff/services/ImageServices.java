@@ -7,4 +7,5 @@ import java.util.List;
 public interface ImageServices  {
 //    List<ImageEntity> saveImages(String[] url, int itemId);
     ImageEntity saveImages(String url, int itemId);
+    List<ImageEntity> getImagesByItemId(int itemId);
 }

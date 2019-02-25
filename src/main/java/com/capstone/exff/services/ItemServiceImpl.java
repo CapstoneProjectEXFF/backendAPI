@@ -106,4 +106,8 @@ public class ItemServiceImpl implements ItemServices {
         return itemRepository.findAll();
     }
 
+    @Override
+    public ItemEntity getItemById(int itemId) {
+        return itemRepository.getItemById(itemId);
+    }
 }

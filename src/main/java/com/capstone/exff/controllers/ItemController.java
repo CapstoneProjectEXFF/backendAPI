@@ -110,4 +110,18 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+    @GetMapping("/item/{id:[\\d]+}")
+    public ResponseEntity getItemById(@PathVariable("id") int id) {
+        try {
+            ItemEntity result = itemServices.getItemById(id);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
 }
