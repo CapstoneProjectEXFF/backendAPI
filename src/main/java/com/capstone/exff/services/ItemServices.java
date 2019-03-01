@@ -14,5 +14,6 @@ public interface ItemServices {
 
     List<ItemEntity> findItemsByItemName(String itemName);
     List<ItemEntity> loadAllItems();
+    List<ItemEntity> getItemsByUserId(int userId);
     ItemEntity getItemById(int itemId);
 }

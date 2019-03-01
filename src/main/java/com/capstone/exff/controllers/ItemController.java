@@ -102,7 +102,7 @@ public class ItemController {
         try {
             List<ItemEntity> result = itemServices.loadAllItems();
             if (result == null) {
-                return new ResponseEntity("no item found", HttpStatus.OK);
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
@@ -117,6 +117,20 @@ public class ItemController {
             ItemEntity result = itemServices.getItemById(id);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("user/{userId:[\\d]+}/item")
+    public ResponseEntity getItemsByUserId(@PathVariable("userId") int userId) {
+        try {
+            List<ItemEntity> result = itemServices.getItemsByUserId(userId);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }

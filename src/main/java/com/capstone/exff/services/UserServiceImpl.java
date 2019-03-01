@@ -1,6 +1,7 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.constants.ExffRole;
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RoleRepository;
@@ -55,17 +56,17 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
-        return register(phoneNumber, password, fullname, status, this.userRole);
+    public ResponseEntity register(String phoneNumber, String password, String fullname) {
+        return register(phoneNumber, password, fullname, this.userRole);
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+    public ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
         userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setFullName(fullname);
-        userEntity.setStatus(status);
+        userEntity.setStatus(ExffStatus.USER_ENABLE);
         userEntity.setRoleByRoleId(roleEntity);
         try {
             userEntity = userRepository.save(userEntity);

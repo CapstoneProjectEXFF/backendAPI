@@ -1,5 +1,9 @@
 package com.capstone.exff.entities;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -17,6 +21,8 @@ public class ItemEntity {
     private Timestamp createTime;
     private Timestamp modifyTime;
     private Integer categoryId;
+    private CategoryEntity categoryEntity;
+    private UserEntity userEntity;
 
     @Id
     @Column(name = "id")
@@ -41,12 +47,24 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "user_id")
+    @JsonIgnore
     public Integer getUserId() {
         return userId;
     }
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonProperty("user")
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 
     @Basic
@@ -111,12 +129,24 @@ public class ItemEntity {
 
     @Basic
     @Column(name = "category_id")
+    @JsonIgnore
     public Integer getCategoryId() {
         return categoryId;
     }
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name="category_id", insertable = false, updatable = false)
+    @JsonProperty("category")
+    public CategoryEntity getCategoryEntity() {
+        return categoryEntity;
+    }
+
+    public void setCategoryEntity(CategoryEntity categoryEntity) {
+        this.categoryEntity = categoryEntity;
     }
 
     @Override
