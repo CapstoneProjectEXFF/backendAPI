@@ -137,7 +137,7 @@ public class DatabaseSeeder {
         if (userEntity == null) {
             RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_ADMIN);
             String adminPassword = "password00100";
-            userServices.register(adminAccount,adminPassword,"admin", ExffStatus.USER_ENABLE, roleEntity);
+            userServices.register(adminAccount,adminPassword,"admin", roleEntity);
         }
     }
 }

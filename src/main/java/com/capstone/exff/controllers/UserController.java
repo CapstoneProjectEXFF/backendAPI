@@ -35,8 +35,7 @@ public class UserController {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
-        String status = body.get("status");
-        return userServices.register(phoneNumber, password, fullName, status);
+        return userServices.register(phoneNumber, password, fullName);
     }
 
     @GetMapping("/user")
