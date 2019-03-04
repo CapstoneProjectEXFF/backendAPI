@@ -20,7 +20,7 @@ public class ImageServiceImpl implements ImageServices {
     }
 
     //    @Override
-//    public List<ImageEntity> saveImages(String[] url, int itemId) {
+//    public List<ImageEntity> saveImage(String[] url, int itemId) {
 //        List<ImageEntity> listImage = new ArrayList<>();
 //
 //        for (int i = 0; i < url.length; i++) {
@@ -33,12 +33,25 @@ public class ImageServiceImpl implements ImageServices {
 //        return (List<ImageEntity>) imageRepository.saveAll(listImage);
 //    }
     @Override
-    public ImageEntity saveImages(String url, int itemId) {
+    public ImageEntity saveImage(String url, int itemId) {
         ImageEntity imageEntity = new ImageEntity();
         imageEntity.setItemId(itemId);
         imageEntity.setUrl(url);
 
         return imageRepository.save(imageEntity);
+    }
+
+    @Override
+    public Iterable<ImageEntity> saveImages(List<String> urls, int itemId) {
+        List<ImageEntity> imageEntities = new ArrayList<>();
+        for (String url :
+                urls) {
+            ImageEntity tmpImage = new ImageEntity();
+            tmpImage.setItemId(itemId);
+            tmpImage.setUrl(url);
+            imageEntities.add(tmpImage);
+        }
+        return imageRepository.saveAll(imageEntities);
     }
 
     @Override
