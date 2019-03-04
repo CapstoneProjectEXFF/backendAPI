@@ -41,12 +41,10 @@ public class ItemController {
             String description = (String) body.get("description");
 
             String address = (String) body.get("address");
-            boolean privacy = Boolean.parseBoolean((String) body.get("privacy"));
+            String privacy = (String) body.get("privacy");
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
             int categoryId = Integer.parseInt((String) body.get("category"));
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
-
-            //String[] url = {"pic1", "pic2"};
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
             imageServices.saveImages(url, itemEntity.getId());
@@ -63,7 +61,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String address = body.get("address");
-        boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+        String privacy = (String)body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 
