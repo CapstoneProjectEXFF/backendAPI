@@ -6,7 +6,6 @@ import com.capstone.exff.services.ImageServices;
 import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,21 +33,22 @@ public class ItemController {
 
     @PostMapping("/item")
     @Transactional
-    public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest/*, @RequestBody Map<String, String[]> urlArray*/) {
+    public ResponseEntity createItem(@RequestBody Map<String, Object> body, ServletRequest servletRequest/*, @RequestBody Map<String, String[]> urlArray*/) {
         ItemEntity itemEntity;
         try {
-            String name = body.get("name");
+            String name = (String) body.get("name");
             int userId = getLoginUserId(servletRequest);
-            String description = body.get("description");
+            String description = (String) body.get("description");
 
-            String address = body.get("address");
-            boolean privacy = Boolean.parseBoolean(body.get("privacy"));
+            String address = (String) body.get("address");
+            boolean privacy = Boolean.parseBoolean((String) body.get("privacy"));
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            int categoryId = Integer.parseInt(body.get("category"));
+            int categoryId = Integer.parseInt((String) body.get("category"));
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
 
             //String[] url = {"pic1", "pic2"};
-            String url = body.get("url");
+
+            ArrayList<String> url = (ArrayList<String>) body.get("urls");
             imageServices.saveImages(url, itemEntity.getId());
 
         } catch (Exception e) {

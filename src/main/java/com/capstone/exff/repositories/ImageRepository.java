@@ -11,4 +11,6 @@ public interface ImageRepository extends CrudRepository<ImageEntity, Integer>{
     @Query("select i from ImageEntity i where i.itemId = :itemId")
     List<ImageEntity> getImagesByIdItem(int itemId);
 
+    @Override
+    <S extends ImageEntity> Iterable<S> saveAll(Iterable<S> iterable);
 }

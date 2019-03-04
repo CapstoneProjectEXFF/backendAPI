@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +25,7 @@ public class ItemEntity {
     private Integer categoryId;
     private CategoryEntity categoryEntity;
     private UserEntity userEntity;
+    private List<ImageEntity> imageEntities;
 
     @Id
     @Column(name = "id")
@@ -147,6 +150,17 @@ public class ItemEntity {
 
     public void setCategoryEntity(CategoryEntity categoryEntity) {
         this.categoryEntity = categoryEntity;
+    }
+
+    @OneToMany
+    @JoinColumn(name="item_id", insertable = false, updatable = false)
+    @JsonProperty("images")
+    public List<ImageEntity> getImageEntities() {
+        return imageEntities;
+    }
+
+    public void setImageEntities(List<ImageEntity> imageEntities) {
+        this.imageEntities = imageEntities;
     }
 
     @Override
