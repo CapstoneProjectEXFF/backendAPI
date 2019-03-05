@@ -23,7 +23,8 @@ public class TransactionServicesImpl implements TransactionServices {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setSenderId(senderId);
         transaction.setReceiverId(receiverId);
-        transaction.setDonationPostId(donationId);
+        if (donationId > 0)
+            transaction.setDonationPostId(donationId);
         transaction.setStatus(status);
         transaction.setCreateTime(createTime);
         transaction.setModifyTime(modifiedTime);

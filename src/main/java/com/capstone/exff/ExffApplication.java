@@ -29,6 +29,7 @@ public class ExffApplication {
         registrationBean.addUrlPatterns("/user/*", "/relationship");
         registrationBean.addUrlPatterns("/item/*");
         registrationBean.addUrlPatterns("/image/*");
+        registrationBean.addUrlPatterns("/transaction/*");
 
         return registrationBean;
     }

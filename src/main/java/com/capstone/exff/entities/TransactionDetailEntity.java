@@ -8,7 +8,7 @@ import java.util.Objects;
 @Table(name = "transaction_detail", schema = "exff")
 public class TransactionDetailEntity implements Serializable {
     private int id;
-//    private Integer transactionId;
+    private Integer transactionId;
     private Integer itemId;
 
     @Id
@@ -22,15 +22,15 @@ public class TransactionDetailEntity implements Serializable {
         this.id = id;
     }
 
-//    @Basic
-//    @Column(name = "transaction_id")
-//    public Integer getTransactionId() {
-//        return transactionId;
-//    }
+    @Basic
+    @Column(name = "transaction_id")
+    public Integer getTransactionId() {
+        return transactionId;
+    }
 
-//    public void setTransactionId(Integer transactionId) {
-//        this.transactionId = transactionId;
-//    }
+    public void setTransactionId(Integer transactionId) {
+        this.transactionId = transactionId;
+    }
 
     @Basic
     @Column(name = "item_id")

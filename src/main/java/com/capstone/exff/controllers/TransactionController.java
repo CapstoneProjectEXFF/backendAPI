@@ -53,7 +53,7 @@ public class TransactionController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity( HttpStatus.OK);
+        return new ResponseEntity(new ExffMessage("Sended"), HttpStatus.OK);
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {

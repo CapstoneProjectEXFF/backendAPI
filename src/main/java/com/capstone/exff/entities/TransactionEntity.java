@@ -16,7 +16,6 @@ public class TransactionEntity implements Serializable {
     private Timestamp createTime;
     private Timestamp modifyTime;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
