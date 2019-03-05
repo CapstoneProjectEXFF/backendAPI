@@ -26,19 +26,23 @@ public class JwtFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        String token = (String) request.getHeader("Authorization");
-        if (token != null) {
-            UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
-            if (userEntity != null){
-                request.setAttribute("USER_INFO", userEntity);
-                filterChain.doFilter(request, response);
+        if ("GET".equals(request.getMethod())) {
+            filterChain.doFilter(request, response);
+        } else {
+            String token = (String) request.getHeader("Authorization");
+            if (token != null) {
+                UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
+                if (userEntity != null) {
+                    request.setAttribute("USER_INFO", userEntity);
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.getWriter().write("{\"message\":\"Access denied\"}");
+                }
             } else {
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 response.getWriter().write("{\"message\":\"Access denied\"}");
             }
-        } else {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.getWriter().write("{\"message\":\"Access denied\"}");
         }
     }
 

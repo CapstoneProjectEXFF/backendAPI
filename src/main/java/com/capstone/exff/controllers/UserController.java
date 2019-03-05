@@ -1,15 +1,13 @@
 package com.capstone.exff.controllers;
 
 import com.capstone.exff.entities.UserEntity;
-import com.capstone.exff.services.TokenAuthenticationService;
 import com.capstone.exff.services.UserServices;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.List;
 import java.util.Map;
@@ -37,8 +35,7 @@ public class UserController {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
-        String status = body.get("status");
-        return userServices.register(phoneNumber, password, fullName, status);
+        return userServices.register(phoneNumber, password, fullName);
     }
 
     @GetMapping("/user")
@@ -56,7 +53,7 @@ public class UserController {
                 return new ResponseEntity(results, HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
 
@@ -70,7 +67,7 @@ public class UserController {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
 }

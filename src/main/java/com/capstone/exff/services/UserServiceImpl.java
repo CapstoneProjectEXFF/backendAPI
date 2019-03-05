@@ -1,13 +1,16 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffRole;
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RoleRepository;
 import com.capstone.exff.repositories.UserRepository;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,25 +23,27 @@ public class UserServiceImpl implements UserServices {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private List<RoleEntity> roleEntities;
     private final RoleEntity userRole;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
         this.roleEntities = roleRepository.findAll();
-        Optional<RoleEntity> role = roleEntities.stream()
-                .filter(roleEntity -> roleEntity.getName().equals("user"))
-                .findFirst();
-        userRole = role.orElse(null);
+//        Optional<RoleEntity> role = roleEntities.stream()
+//                .filter(roleEntity -> roleEntity.getName().equals(ExffRole.ROLE_USER))
+//                .findFirst();
+//        this.userRole = role.orElse(null);
+        this.userRole = roleRepository.findTop1ByName(ExffRole.ROLE_USER);
     }
 
     @Override
     public ResponseEntity login(String phoneNumber, String password) {
-        UserEntity userEntity = userRepository.findFirstByPhoneNumberAndPassword(phoneNumber, password);
-
-        if (userEntity != null) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+        if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
             Map<String, Object> data = new HashMap<>();
             data.put(
                     TokenAuthenticationService.HEADER_STRING,
@@ -46,27 +51,27 @@ public class UserServiceImpl implements UserServices {
             data.put("User", userEntity);
             return new ResponseEntity<>(data, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new ExffError("Cannot login"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ExffMessage("Cannot login"), HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status) {
-        return register(phoneNumber, password, fullname, status, this.userRole);
+    public ResponseEntity register(String phoneNumber, String password, String fullname) {
+        return register(phoneNumber, password, fullname, this.userRole);
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, String status, RoleEntity roleEntity) {
+    public ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setPassword(password);
+        userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setFullName(fullname);
-        userEntity.setStatus(status);
+        userEntity.setStatus(ExffStatus.USER_ENABLE);
         userEntity.setRoleByRoleId(roleEntity);
         try {
             userEntity = userRepository.save(userEntity);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(userEntity, HttpStatus.OK);
     }
@@ -77,7 +82,7 @@ public class UserServiceImpl implements UserServices {
         try {
             users = userRepository.findAll();
         } catch (Exception e) {
-            return new ResponseEntity<>(new ExffError(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }

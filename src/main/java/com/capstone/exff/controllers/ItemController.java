@@ -2,15 +2,19 @@ package com.capstone.exff.controllers;
 
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
+import com.capstone.exff.services.ImageServices;
 import com.capstone.exff.services.ItemServices;
-import com.capstone.exff.utilities.ExffError;
+import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,52 +22,59 @@ import java.util.Map;
 public class ItemController {
 
     private final ItemServices itemServices;
+    private final ImageServices imageServices;
 
     @Autowired
-    public ItemController(ItemServices itemServices) {
+    public ItemController(ItemServices itemServices, ImageServices imageServices) {
         this.itemServices = itemServices;
+        this.imageServices = imageServices;
     }
 
 
     @PostMapping("/item")
-    public ResponseEntity createItem(@RequestBody Map<String, String> body, ServletRequest servletRequest){
-        String name = body.get("name");
-        int userId = getLoginUserId(servletRequest);
-        String description = body.get("description");
+    @Transactional
+    public ResponseEntity createItem(@RequestBody Map<String, Object> body, ServletRequest servletRequest/*, @RequestBody Map<String, String[]> urlArray*/) {
         ItemEntity itemEntity;
+        try {
+            String name = (String) body.get("name");
+            int userId = getLoginUserId(servletRequest);
+            String description = (String) body.get("description");
 
-        try{
-            itemEntity = itemServices.createItem(name, userId, description);
-        } catch (Exception e){
-            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
+            String address = (String) body.get("address");
+            String privacy = (String) body.get("privacy");
+            Timestamp createTime = new Timestamp(System.currentTimeMillis());
+            int categoryId = Integer.parseInt((String) body.get("category"));
+            itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
+
+            ArrayList<String> url = (ArrayList<String>) body.get("urls");
+            imageServices.saveImages(url, itemEntity.getId());
+
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(itemEntity, HttpStatus.OK);
     }
 
     @PutMapping("/item/{id:[\\d]+}")
-    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest){
-        int userId = getLoginUserId(servletRequest);
+    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         String name = body.get("name");
+        int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
+        String address = body.get("address");
+        String privacy = (String)body.get("privacy");
+        Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
+        int categoryId = Integer.parseInt(body.get("category"));
 
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-//        }
-        return itemServices.updateItem(id, name, description, userId);
+        return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }
 
     @DeleteMapping("item/{id:[\\d]+}")
-    public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest){
+    public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
-//        try{
-//            id = Integer.parseInt(body.get("id"));
-//        }catch (Exception e){
-//            return new ResponseEntity(new ExffError(e.getMessage()), HttpStatus.CONFLICT);
-//        }
+
         return itemServices.removeItem(id, userId);
     }
+
     @GetMapping("/itemSearch")
     public ResponseEntity findItem(@RequestParam(value = "name") String itemName) {
         try {
@@ -78,10 +89,52 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest){
+    private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    @GetMapping("/item")
+    public ResponseEntity loadItems() {
+        try {
+            List<ItemEntity> result = itemServices.loadAllItems();
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/item/{id:[\\d]+}")
+    public ResponseEntity getItemById(@PathVariable("id") int id) {
+        try {
+            ItemEntity result = itemServices.getItemById(id);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("user/{userId:[\\d]+}/item")
+    public ResponseEntity getItemsByUserId(@PathVariable("userId") int userId) {
+        try {
+            List<ItemEntity> result = itemServices.getItemsByUserId(userId);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
     }
 }
