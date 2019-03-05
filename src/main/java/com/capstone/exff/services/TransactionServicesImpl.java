@@ -18,7 +18,7 @@ public class TransactionServicesImpl implements TransactionServices {
     }
 
     @Override
-    public TransactionEntity createTransaction(int senderId, int receiverId, int donationId,
+    public int createTransaction(int senderId, int receiverId, int donationId,
                                                String status, Timestamp createTime, Timestamp modifiedTime) {
         TransactionEntity transaction = new TransactionEntity();
         transaction.setSenderId(senderId);
@@ -27,6 +27,8 @@ public class TransactionServicesImpl implements TransactionServices {
         transaction.setStatus(status);
         transaction.setCreateTime(createTime);
         transaction.setModifyTime(modifiedTime);
-        return transactionRepository.save(transaction);
+        TransactionEntity trans = transactionRepository.save(transaction);
+        return trans.getId();
     }
+
 }

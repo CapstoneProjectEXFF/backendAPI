@@ -1,50 +1,59 @@
 package com.capstone.exff.controllers;
 
+import com.capstone.exff.entities.TransactionDetailEntity;
+import com.capstone.exff.entities.TransactionDetails;
 import com.capstone.exff.entities.TransactionEntity;
 import com.capstone.exff.entities.UserEntity;
+import com.capstone.exff.services.TransactionDetailServices;
 import com.capstone.exff.services.TransactionServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class TransactionController {
 
     private final TransactionServices transactionService;
+    private final TransactionDetailServices transactionDetailServices;
 
     @Autowired
-    public TransactionController(TransactionServices transactionService) {
+    public TransactionController(TransactionServices transactionService,
+                TransactionDetailServices transactionDetailServices) {
         this.transactionService = transactionService;
+        this.transactionDetailServices = transactionDetailServices;
     }
 
     @PostMapping("/transaction")
-    public ResponseEntity createTransaction(@RequestBody Map<String, String> body,
+    public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
         TransactionEntity transaction;
+        Timestamp createTime = new Timestamp(System.currentTimeMillis());
+        Timestamp modifiedTime = createTime;
+        TransactionDetails transactionDetails = new TransactionDetails();
         try {
             int senderId = getLoginUserId(servletRequest);
-            int receiverId = Integer.parseInt(body.get("receiverId"));
-            int donationId = Integer.parseInt(body.get("donationId"));
-            String status = body.get("status");
-            Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            Timestamp modifiedTime = createTime;
-            transaction = transactionService.createTransaction(
-                    senderId, receiverId, donationId,
-                    status, createTime, modifiedTime);
+            transaction = requestWrapper.getTransaction();
+            transaction.setSenderId(senderId);
+            int transactionId =
+                    transactionService.createTransaction(senderId, transaction.getReceiverId(),
+                            transaction.getDonationPostId(), transaction.getStatus(),
+                            createTime, modifiedTime);
+            transactionDetails.setTransactionId(transactionId);
+            transactionDetails.setTransactionDetails(requestWrapper.getDetails());
+            transactionDetails.getTransactionDetails().stream()
+                    .forEach(t -> transactionDetailServices.createDetailTrans(transactionId, t.getItemId()));
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity(transaction, HttpStatus.OK);
+        return new ResponseEntity( HttpStatus.OK);
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {
