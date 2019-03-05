@@ -45,7 +45,7 @@ public class TransactionController {
     }
 
 
-    @PutMapping("/item/{id:[\\d]+}")
+    @PutMapping("/transaction/{id:[\\d]+}")
     public ResponseEntity updateItem(@PathVariable("id") int id) {
         return transactionService.confirmTransaction(id);
     }
