@@ -15,6 +15,8 @@ public class TransactionEntity implements Serializable {
     private String status;
     private Timestamp createTime;
     private Timestamp modifyTime;
+    private UserEntity sender;
+    private UserEntity receiver;
 
     @Id
     @Column(name = "id")
@@ -85,6 +87,26 @@ public class TransactionEntity implements Serializable {
 
     public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntity sender) {
+        this.sender = sender;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver;
     }
 
     @Override

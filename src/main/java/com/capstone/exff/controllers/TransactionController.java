@@ -26,9 +26,21 @@ public class TransactionController {
 
     @Autowired
     public TransactionController(TransactionServices transactionService,
-                TransactionDetailServices transactionDetailServices) {
+                                 TransactionDetailServices transactionDetailServices) {
         this.transactionService = transactionService;
         this.transactionDetailServices = transactionDetailServices;
+    }
+
+    @GetMapping("/transaction")
+    public ResponseEntity getTransactionByUserId(ServletRequest servletRequest) {
+        List<TransactionEntity> transactionEntities;
+        try {
+            int receiverId = getLoginUserId(servletRequest);
+            transactionEntities = transactionService.getTopTransactionByReceiverId(receiverId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionEntities, HttpStatus.OK);
     }
 
     @PostMapping("/transaction")
@@ -54,6 +66,40 @@ public class TransactionController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(new ExffMessage("Sended"), HttpStatus.OK);
+    }
+
+    @PutMapping("/transaction")
+    public ResponseEntity updateTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            TransactionEntity transaction = requestWrapper.getTransaction();
+            if (loginUserId == transaction.getReceiverId()) {
+                swapUserId(transaction);
+            }
+            transaction.setModifyTime(new Timestamp(System.currentTimeMillis()));
+            transactionService.updateTransaction(transaction);
+
+            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
+            transactionDetails.stream()
+                    .forEach((transactionDetail) -> {
+                        if (transactionDetail.getTransactionId() == null)
+                            transactionDetailServices.deleteTransactionDetail(transactionDetail);
+                        else {
+                            transactionDetail.setTransactionId(transaction.getId());
+                            transactionDetailServices.updateTransactionDetail(transactionDetail);
+                        }
+                    });
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Updated and resend"), HttpStatus.OK);
+    }
+
+    private void swapUserId(TransactionEntity transaction) {
+        Integer tmpSenderId = transaction.getSenderId();
+        transaction.setSenderId(transaction.getReceiverId());
+        transaction.setReceiverId(tmpSenderId);
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {

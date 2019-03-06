@@ -22,4 +22,16 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
         detailEntity.setTransactionId(transactionId);
         return transactionDetailRepository.save(detailEntity);
     }
+
+    @Override
+    public TransactionDetailEntity updateTransactionDetail(TransactionDetailEntity transactionDetailEntity) {
+        return transactionDetailRepository.save(transactionDetailEntity);
+    }
+
+    @Override
+    public void deleteTransactionDetail(TransactionDetailEntity transactionDetailEntity) {
+        transactionDetailRepository.delete(transactionDetailEntity);
+    }
+
+
 }

@@ -7,4 +7,7 @@ public interface TransactionDetailRepository extends JpaRepository<TransactionDe
 
     @Override
     <S extends TransactionDetailEntity> S save(S s);
+
+    @Override
+    void delete(TransactionDetailEntity transactionDetailEntity);
 }
