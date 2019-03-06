@@ -10,6 +10,7 @@ public interface UserServices {
     ResponseEntity login(String phoneNumber, String password);
     ResponseEntity register(String phoneNumber, String password, String fullname);
     ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleId);
+    ResponseEntity updateUserInfo(int id, String phoneNumber, String fullName,String avatar,String status);
     ResponseEntity getAllUser();
 
     List<UserEntity> findUsersByName(String name);

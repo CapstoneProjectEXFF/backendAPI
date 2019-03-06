@@ -77,6 +77,26 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
+    public ResponseEntity updateUserInfo(int id, String phoneNumber, String fullName, String avatar, String status) {
+        UserEntity userEntity = new UserEntity();
+        userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+
+        if (userEntity != null) {
+            userEntity.setAvatar(avatar);
+            userEntity.setFullName(fullName);
+            userEntity.setStatus(status);
+            userRepository.save(userEntity);
+            Map<String, Object> data = new HashMap<>();
+            data.put("User", userEntity);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ExffMessage("Cannot Update"), HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+    @Override
     public ResponseEntity getAllUser() {
         List users;
         try {
