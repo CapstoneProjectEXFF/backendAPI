@@ -49,6 +49,15 @@ public class UserController {
 
     }
 
+    @PostMapping("/user/changePassword")
+    public ResponseEntity changePassword(@RequestBody Map<String, String> body) {
+        String phoneNumber = body.get("phoneNumber");
+        String oldPassword = (String) body.get("oldPassword");
+        String newPassword = (String) body.get("newPassword");
+        return userServices.changePassword(phoneNumber, oldPassword, newPassword);
+
+    }
+
     @GetMapping("/user")
     public ResponseEntity getAllUser() {
         return userServices.getAllUser();

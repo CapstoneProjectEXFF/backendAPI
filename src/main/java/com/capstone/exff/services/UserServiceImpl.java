@@ -56,6 +56,29 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
+    public ResponseEntity changePassword(String phoneNumber, String oldPassword, String newPassword) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+        if (userEntity != null && passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            try {
+                userEntity.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(userEntity);
+            } catch (Exception e) {
+                return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put(
+                    TokenAuthenticationService.HEADER_STRING,
+                    TokenAuthenticationService.createToken(userEntity));
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } else if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            return new ResponseEntity<>(new ExffMessage("Wrong Password"), HttpStatus.BAD_REQUEST);
+        }
+
+        return null;
+    }
+
+
+    @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname) {
         return register(phoneNumber, password, fullname, this.userRole);
     }
@@ -95,6 +118,7 @@ public class UserServiceImpl implements UserServices {
         }
 
     }
+
 
     @Override
     public ResponseEntity getAllUser() {
