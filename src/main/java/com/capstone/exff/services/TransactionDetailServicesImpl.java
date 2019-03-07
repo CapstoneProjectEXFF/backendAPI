@@ -33,5 +33,10 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
         transactionDetailRepository.delete(transactionDetailEntity);
     }
 
+    @Override
+    public void deleteTransactionDetailByTransactionId(int transactionId) {
+        transactionDetailRepository.deleteByTransactionId(transactionId);
+    }
+
 
 }

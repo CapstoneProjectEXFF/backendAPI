@@ -6,4 +6,5 @@ public interface TransactionDetailServices {
     TransactionDetailEntity createDetailTrans(int transactionId, int itemId);
     TransactionDetailEntity updateTransactionDetail(TransactionDetailEntity transactionDetailEntity);
     void deleteTransactionDetail(TransactionDetailEntity transactionDetailEntity);
+    void deleteTransactionDetailByTransactionId(int transactionId);
 }

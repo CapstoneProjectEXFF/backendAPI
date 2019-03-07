@@ -11,4 +11,5 @@ public interface TransactionServices {
                                  String status, Timestamp createTime,
                                  Timestamp modifiedTime);
     TransactionEntity updateTransaction(TransactionEntity transactionEntity);
+    void deleteTransaction(TransactionEntity transactionEntity);
 }

@@ -43,4 +43,9 @@ public class TransactionServicesImpl implements TransactionServices {
         return transactionRepository.save(transactionEntity);
     }
 
+    @Override
+    public void deleteTransaction(TransactionEntity transactionEntity) {
+        transactionRepository.delete(transactionEntity);
+    }
+
 }

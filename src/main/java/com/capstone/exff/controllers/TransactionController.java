@@ -96,6 +96,24 @@ public class TransactionController {
         return new ResponseEntity(new ExffMessage("Updated and resend"), HttpStatus.OK);
     }
 
+    @DeleteMapping("/transaction")
+    public ResponseEntity cancelTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            TransactionEntity transaction = requestWrapper.getTransaction();
+            if (loginUserId == transaction.getReceiverId()) {
+                transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
+                transactionService.deleteTransaction(transaction);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
+    }
+
     private void swapUserId(TransactionEntity transaction) {
         Integer tmpSenderId = transaction.getSenderId();
         transaction.setSenderId(transaction.getReceiverId());
