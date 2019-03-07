@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +46,21 @@ public class DonationPostController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(donationPostEntity, HttpStatus.OK);
+    }
+
+    @PutMapping("/donationPost/{id:[\\d]+}")
+    public ResponseEntity updateDonationPost(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
+        int userId = getLoginUserId(servletRequest);
+        String content = (String) body.get("content");
+        Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
+
+        return donationPostServices.updateDonationPost(id, content, modifyTime, userId);
+    }
+
+    @DeleteMapping("/donationPost/{id:[\\d]+}")
+    public ResponseEntity removeDonationPost(@PathVariable("id") int id, ServletRequest servletRequest) {
+        int userId = getLoginUserId(servletRequest);
+        return donationPostServices.removeDonationPost(id, userId);
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {
