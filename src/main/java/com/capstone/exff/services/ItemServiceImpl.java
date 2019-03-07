@@ -97,6 +97,11 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public List<ItemEntity> verifyItems(List<Integer> ids) {
+        return itemRepository.verifyItems(ids);
+    }
+
+    @Override
     public List<ItemEntity> getItemsByUserId(int userId) {
         return itemRepository.findItemEntitiesByUserId(userId);
     }

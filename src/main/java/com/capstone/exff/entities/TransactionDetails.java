@@ -20,6 +20,13 @@ public class TransactionDetails implements Serializable {
         return transactionDetails;
     }
 
+    public List<Integer> getItemIds() {
+        List<Integer> result = null;
+        if (transactionDetails == null) return null;
+        transactionDetails.stream().forEach(t -> result.add(t.getItemId()));
+        return result;
+    }
+
     public void setTransactionDetails(List<TransactionDetailEntity> transactionDetails) {
         this.transactionDetails = transactionDetails;
     }
