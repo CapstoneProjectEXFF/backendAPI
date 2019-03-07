@@ -37,10 +37,10 @@ public class TransactionController {
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper) {
         TransactionDetails transactionDetails = new TransactionDetails();
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
-//        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
-//        if (!unavailableItems.isEmpty()) {
-//            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
-//        }
+        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+        if (!unavailableItems.isEmpty()) {
+            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
+        }
 
         TransactionEntity transaction;
         transaction = requestWrapper.getTransaction();
