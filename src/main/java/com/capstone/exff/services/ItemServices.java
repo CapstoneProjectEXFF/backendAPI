@@ -1,6 +1,8 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.entities.ItemEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Timestamp;
@@ -13,7 +15,7 @@ public interface ItemServices {
 
 
     List<ItemEntity> findItemsByItemName(String itemName);
-    List<ItemEntity> loadAllItems();
+    Page<ItemEntity> loadAllItems(Pageable pageable);
     List<ItemEntity> getItemsByUserId(int userId);
     ItemEntity getItemById(int itemId);
 }

@@ -6,6 +6,9 @@ import com.capstone.exff.services.ImageServices;
 import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +64,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String address = body.get("address");
-        String privacy = (String)body.get("privacy");
+        String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 
@@ -97,13 +100,14 @@ public class ItemController {
     }
 
     @GetMapping("/item")
-    public ResponseEntity loadItems() {
+    public ResponseEntity loadItems(@RequestParam(value = "page") int requestPage,
+                                    @RequestParam(value = "size") int pageSize) {
         try {
-            List<ItemEntity> result = itemServices.loadAllItems();
+            Page<ItemEntity> result = itemServices.loadAllItems(PageRequest.of(requestPage, pageSize));
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
-                return new ResponseEntity(result, HttpStatus.OK);
+                return new ResponseEntity(result.getContent(), HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
