@@ -104,7 +104,7 @@ public class ItemController {
                                     @RequestParam(value = "size") int pageSize) {
         try {
             Page<ItemEntity> result = itemServices.loadAllItems(PageRequest.of(requestPage, pageSize));
-            if (result == null) {
+            if (result.getContent().isEmpty()) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result.getContent(), HttpStatus.OK);
