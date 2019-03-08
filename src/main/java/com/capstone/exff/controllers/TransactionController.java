@@ -1,5 +1,6 @@
 package com.capstone.exff.controllers;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.*;
 import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.services.TransactionDetailServices;
@@ -53,7 +54,10 @@ public class TransactionController {
                             createTime, modifiedTime);
             transactionDetails.setTransactionId(transactionId);
             transactionDetails.getTransactionDetails().stream()
-                    .forEach(t -> transactionDetailServices.createDetailTrans(transactionId, t.getItemId()));
+                    .forEach(t -> {
+                        transactionDetailServices.createDetailTrans(transactionId, t.getItemId());
+                        itemServices.setItemUnavailable(t.getItemId());
+                    });
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
@@ -61,7 +65,7 @@ public class TransactionController {
     }
 
     private List<ItemEntity> verifyItemsAvailabity(List<Integer> itemIds) {
-        List<ItemEntity> result = itemServices.verifyItems(itemIds);
+        List<ItemEntity> result = itemServices.verifyItems(ExffStatus.ITEM_DISABLE, itemIds);
         return result;
     }
 

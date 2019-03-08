@@ -1,6 +1,7 @@
 package com.capstone.exff.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionDetails implements Serializable {
@@ -21,7 +22,7 @@ public class TransactionDetails implements Serializable {
     }
 
     public List<Integer> getItemIds() {
-        List<Integer> result = null;
+        List<Integer> result = new ArrayList<>();
         if (transactionDetails == null) return null;
         transactionDetails.stream().forEach(t -> result.add(t.getItemId()));
         return result;
