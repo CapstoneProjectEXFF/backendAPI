@@ -47,7 +47,7 @@ public class ItemController {
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
-            imageServices.saveImages(url, itemEntity.getId());
+            imageServices.saveImages(url, itemEntity.getId(), true);
 
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
