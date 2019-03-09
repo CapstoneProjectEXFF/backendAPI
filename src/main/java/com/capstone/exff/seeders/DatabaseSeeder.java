@@ -56,6 +56,7 @@ public class DatabaseSeeder {
             RoleEntity role = new RoleEntity();
             role.setName(ExffRole.ROLE_USER);
             roleRepository.save(role);
+            role = new RoleEntity();
             role.setName(ExffRole.ROLE_ADMIN);
             roleRepository.save(role);
         }

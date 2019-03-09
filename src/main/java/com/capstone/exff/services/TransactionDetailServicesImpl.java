@@ -5,6 +5,8 @@ import com.capstone.exff.repositories.TransactionDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransactionDetailServicesImpl implements TransactionDetailServices {
 
@@ -16,9 +18,10 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
     }
 
     @Override
-    public TransactionDetailEntity createDetailTrans(int transactionId, int itemId) {
+    public TransactionDetailEntity createDetailTrans(int transactionId, int itemId, int userId) {
         TransactionDetailEntity detailEntity = new TransactionDetailEntity();
         detailEntity.setItemId(itemId);
+        detailEntity.setUserId(userId);
         detailEntity.setTransactionId(transactionId);
         return transactionDetailRepository.save(detailEntity);
     }
@@ -36,6 +39,11 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
     @Override
     public void deleteTransactionDetailByTransactionId(int transactionId) {
         transactionDetailRepository.deleteByTransactionId(transactionId);
+    }
+
+    @Override
+    public List<TransactionDetailEntity> getTransactionDetailsByTransactionId(int transactionId) {
+        return transactionDetailRepository.findAllByTransactionId(transactionId);
     }
 
 

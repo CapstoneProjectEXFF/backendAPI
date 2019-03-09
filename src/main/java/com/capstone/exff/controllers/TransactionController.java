@@ -43,6 +43,24 @@ public class TransactionController {
         return new ResponseEntity(transactionEntities, HttpStatus.OK);
     }
 
+    @GetMapping("/transaction/{id:[\\d]+}")
+    public ResponseEntity getTransactionById(@PathVariable("id") int id, ServletRequest servletRequest) {
+        TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
+        try {
+            int receiverId = getLoginUserId(servletRequest);
+            TransactionEntity transactionEntity = transactionService.getTransactionByTransactionId(id);
+            if (receiverId != transactionEntity.getReceiverId() && receiverId != transactionEntity.getSenderId()) {
+                return new ResponseEntity(new ExffMessage("You are not owner of this transaction"), HttpStatus.FORBIDDEN);
+            }
+            List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(id);
+            transactionRequestWrapper.setTransaction(transactionEntity);
+            transactionRequestWrapper.setDetails(details);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionRequestWrapper, HttpStatus.OK);
+    }
+
     @PostMapping("/transaction")
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
@@ -61,7 +79,7 @@ public class TransactionController {
             transactionDetails.setTransactionId(transactionId);
             transactionDetails.setTransactionDetails(requestWrapper.getDetails());
             transactionDetails.getTransactionDetails().stream()
-                    .forEach(t -> transactionDetailServices.createDetailTrans(transactionId, t.getItemId()));
+                    .forEach(t -> transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId()));
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }

@@ -12,4 +12,5 @@ public interface TransactionServices {
                                  Timestamp modifiedTime);
     TransactionEntity updateTransaction(TransactionEntity transactionEntity);
     void deleteTransaction(TransactionEntity transactionEntity);
+    TransactionEntity getTransactionByTransactionId(int transactionId);
 }

@@ -30,7 +30,7 @@ public class TransactionEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "sender_id")
+    @Column(name = "sender_id", updatable = false)
     public Integer getSenderId() {
         return senderId;
     }
@@ -40,7 +40,7 @@ public class TransactionEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "receiver_id")
+    @Column(name = "receiver_id", updatable = false)
     public Integer getReceiverId() {
         return receiverId;
     }
@@ -70,7 +70,7 @@ public class TransactionEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", updatable = false)
     public Timestamp getCreateTime() {
         return createTime;
     }

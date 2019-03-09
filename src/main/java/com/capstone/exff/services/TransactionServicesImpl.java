@@ -48,4 +48,9 @@ public class TransactionServicesImpl implements TransactionServices {
         transactionRepository.delete(transactionEntity);
     }
 
+    @Override
+    public TransactionEntity getTransactionByTransactionId(int transactionId) {
+        return transactionRepository.findById(transactionId).get();
+    }
+
 }
