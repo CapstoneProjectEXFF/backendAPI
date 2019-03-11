@@ -30,6 +30,7 @@ public class ExffApplication {
         registrationBean.addUrlPatterns("/item/*");
         registrationBean.addUrlPatterns("/image/*");
         registrationBean.addUrlPatterns("/transaction/*");
+        registrationBean.addUrlPatterns("/donationPost/*");
 
         return registrationBean;
     }
