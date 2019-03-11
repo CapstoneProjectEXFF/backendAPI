@@ -19,7 +19,7 @@ public class ItemServiceImpl implements ItemServices {
     private ItemRepository itemRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository){
+    public ItemServiceImpl(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
     }
 
@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemServices {
     public ResponseEntity updateItem(int id, String name, int userId, String description, String address, String privacy, Timestamp modifyTime, int categoryId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
-        if (itemEntity == null){
+        if (itemEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemServices {
     public ResponseEntity removeItem(int id, int userId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity removedItemEntity;
-        if (itemEntity == null){
+        if (itemEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
@@ -87,6 +87,26 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public ResponseEntity setItemUnavailable(int id) {
+        ItemEntity itemEntity = itemRepository.getOne(id);
+        ItemEntity newItemEntity;
+        if (itemEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (itemEntity.getStatus().equals(ITEM_ENABLE)) {
+            itemEntity.setStatus(ITEM_DISABLE);
+            try {
+                newItemEntity = itemRepository.save(itemEntity);
+            } catch (Exception e) {
+                return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(newItemEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
+        }
+    }
+
+    @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
         return itemRepository.findItemsByItemName(itemName);
     }
@@ -94,6 +114,11 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
+    }
+
+    @Override
+    public List<ItemEntity> verifyItems(String status, List<Integer> ids) {
+        return itemRepository.verifyItems(status, ids);
     }
 
     @Override
