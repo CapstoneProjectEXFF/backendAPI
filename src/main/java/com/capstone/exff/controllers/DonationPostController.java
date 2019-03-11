@@ -35,9 +35,10 @@ public class DonationPostController {
         DonationPostEntity donationPostEntity;
         try {
             String content = (String) body.get("content");
+            String address = (String) body.get("address");
             int userId = getLoginUserId(servletRequest);
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            donationPostEntity = donationPostServices.createDonationPost(content, createTime, userId);
+            donationPostEntity = donationPostServices.createDonationPost(content, address, createTime, userId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
             imageServices.saveImages(url, donationPostEntity.getId(), false);
@@ -52,9 +53,10 @@ public class DonationPostController {
     public ResponseEntity updateDonationPost(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
         String content = (String) body.get("content");
+        String address = (String) body.get("address");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
 
-        return donationPostServices.updateDonationPost(id, content, modifyTime, userId);
+        return donationPostServices.updateDonationPost(id, content, address, modifyTime, userId);
     }
 
     @DeleteMapping("/donationPost/{id:[\\d]+}")

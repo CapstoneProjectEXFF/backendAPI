@@ -23,9 +23,15 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public DonationPostEntity createDonationPost(String content, Timestamp createTime, int userId) {
+    public DonationPostEntity getDonationPostById(int id) {
+        return donationPostRepository.findById(id).get();
+    }
+
+    @Override
+    public DonationPostEntity createDonationPost(String content, String address, Timestamp createTime, int userId) {
         DonationPostEntity donationPostEntity = new DonationPostEntity();
         donationPostEntity.setContent(content);
+        donationPostEntity.setAddress(address);
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
         donationPostEntity.setCreateTime(createTime);
         donationPostEntity.setUserId(userId);
@@ -36,7 +42,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public ResponseEntity updateDonationPost(int id, String content, Timestamp modifyTime, int userId) {
+    public ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId) {
         DonationPostEntity donationPostEntity = donationPostRepository.getOne(id);
         DonationPostEntity newDonationPostEntity;
         if (donationPostEntity == null) {
@@ -44,6 +50,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
         }
         if (donationPostEntity.getUserId() == userId && donationPostEntity.getStatus().equals(DONATION_POST_ENABLE)) {
             donationPostEntity.setContent(content);
+            donationPostEntity.setAddress(address);
             donationPostEntity.setModifyTime(modifyTime);
             try {
                 newDonationPostEntity = donationPostRepository.save(donationPostEntity);
@@ -74,10 +81,5 @@ public class DonationPostServiceImpl implements DonationPostServices {
         } else {
             return new ResponseEntity("Cannot access this donation post", HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @Override
-    public DonationPostEntity getDonationPostById(int donationPostId) {
-        return donationPostRepository.getDonationPostById(donationPostId);
     }
 }
