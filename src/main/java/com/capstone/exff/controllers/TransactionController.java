@@ -87,7 +87,7 @@ public class TransactionController {
             transactionDetails.setTransactionId(transactionId);
             transactionDetails.getTransactionDetails().stream()
                     .forEach(t -> {
-                        transactionDetailServices.createDetailTrans(transactionId, t.getItemId());
+                        transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId());
                         itemServices.setItemUnavailable(t.getItemId());
                     });
         } catch (Exception e) {
