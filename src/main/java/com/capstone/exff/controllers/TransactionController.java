@@ -35,8 +35,10 @@ public class TransactionController {
     }
 
     @PostMapping("/transaction")
-    public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper) {
+    public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
+                                            ServletRequest servletRequest) {
         TransactionDetails transactionDetails = new TransactionDetails();
+        int senderId = getLoginUserId(servletRequest);
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
         List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
         if (!unavailableItems.isEmpty()) {
@@ -49,7 +51,7 @@ public class TransactionController {
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
             Timestamp modifiedTime = createTime;
             int transactionId =
-                    transactionService.createTransaction(transaction.getSenderId(), transaction.getReceiverId(),
+                    transactionService.createTransaction(senderId, transaction.getReceiverId(),
                             transaction.getDonationPostId(), transaction.getStatus(),
                             createTime, modifiedTime);
             transactionDetails.setTransactionId(transactionId);
