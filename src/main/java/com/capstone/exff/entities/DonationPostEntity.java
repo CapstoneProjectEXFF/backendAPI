@@ -52,7 +52,7 @@ public class DonationPostEntity {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", updatable = false)
     public Timestamp getCreateTime() {
         return createTime;
     }
@@ -72,7 +72,7 @@ public class DonationPostEntity {
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false)
     @JsonIgnore
     public Integer getUserId() {
         return userId;

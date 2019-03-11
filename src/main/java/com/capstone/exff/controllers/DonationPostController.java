@@ -29,6 +29,17 @@ public class DonationPostController {
         this.imageServices = imageServices;
     }
 
+    @GetMapping("/donationPost/{id:[\\d]+}")
+    public ResponseEntity getDonationPostById(@PathVariable("id") int id) {
+        DonationPostEntity donationPostEntity;
+        try {
+            donationPostEntity = donationPostServices.getDonationPostById(id);
+        } catch (Exception e){
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(donationPostEntity, HttpStatus.OK);
+    }
+
     @PostMapping("/donationPost")
     @Transactional
     public ResponseEntity createItem(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {

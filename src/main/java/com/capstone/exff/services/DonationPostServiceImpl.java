@@ -23,6 +23,11 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
+    public DonationPostEntity getDonationPostById(int id) {
+        return donationPostRepository.findById(id).get();
+    }
+
+    @Override
     public DonationPostEntity createDonationPost(String content, Timestamp createTime, int userId) {
         DonationPostEntity donationPostEntity = new DonationPostEntity();
         donationPostEntity.setContent(content);
