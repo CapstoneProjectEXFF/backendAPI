@@ -75,4 +75,9 @@ public class DonationPostServiceImpl implements DonationPostServices {
             return new ResponseEntity("Cannot access this donation post", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Override
+    public DonationPostEntity getDonationPostById(int donationPostId) {
+        return donationPostRepository.getDonationPostById(donationPostId);
+    }
 }

@@ -31,7 +31,7 @@ public class DonationPostController {
 
     @PostMapping("/donationPost")
     @Transactional
-    public ResponseEntity createItem(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {
+    public ResponseEntity createDonationPost(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {
         DonationPostEntity donationPostEntity;
         try {
             String content = (String) body.get("content");
@@ -68,5 +68,19 @@ public class DonationPostController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    @GetMapping("/donationPost/{id:[\\d]+}")
+    public ResponseEntity getDonationPostById(@PathVariable("id") int id) {
+        try {
+            DonationPostEntity result = donationPostServices.getDonationPostById(id);
+            if (result == null) {
+                return new ResponseEntity("no donation post found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
     }
 }
