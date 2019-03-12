@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class TransactionServicesImpl implements TransactionServices {
@@ -15,6 +16,11 @@ public class TransactionServicesImpl implements TransactionServices {
     @Autowired
     public TransactionServicesImpl(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
+    }
+
+    @Override
+    public List<TransactionEntity> getTopTransactionByReceiverId(int receiverId) {
+        return transactionRepository.findTop10ByReceiverIdOrderByCreateTime(receiverId);
     }
 
     @Override
@@ -30,6 +36,21 @@ public class TransactionServicesImpl implements TransactionServices {
         transaction.setModifyTime(modifiedTime);
         TransactionEntity trans = transactionRepository.save(transaction);
         return trans.getId();
+    }
+
+    @Override
+    public TransactionEntity updateTransaction(TransactionEntity transactionEntity) {
+        return transactionRepository.save(transactionEntity);
+    }
+
+    @Override
+    public void deleteTransaction(TransactionEntity transactionEntity) {
+        transactionRepository.delete(transactionEntity);
+    }
+
+    @Override
+    public TransactionEntity getTransactionByTransactionId(int transactionId) {
+        return transactionRepository.findById(transactionId).get();
     }
 
 }

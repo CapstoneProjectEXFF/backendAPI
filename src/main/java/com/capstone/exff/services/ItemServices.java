@@ -10,10 +10,12 @@ public interface ItemServices {
     ItemEntity createItem(String name, int userId, String description, String address, String privacy, Timestamp createTime, int categoryId);
     ResponseEntity updateItem(int id, String name, int userId, String description, String address, String privacy, Timestamp modifyTime, int categoryId);
     ResponseEntity removeItem(int id, int userId);
+    ResponseEntity setItemUnavailable(int id);
 
 
     List<ItemEntity> findItemsByItemName(String itemName);
     List<ItemEntity> loadAllItems();
+    List<ItemEntity> verifyItems(String status, List<Integer> ids);
     List<ItemEntity> getItemsByUserId(int userId);
     ItemEntity getItemById(int itemId);
 }

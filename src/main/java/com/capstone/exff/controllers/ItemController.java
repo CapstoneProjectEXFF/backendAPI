@@ -45,10 +45,11 @@ public class ItemController {
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
             int categoryId = Integer.parseInt((String) body.get("category"));
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
-
-            ArrayList<String> url = (ArrayList<String>) body.get("urls");
-            imageServices.saveImages(url, itemEntity.getId(), true);
-
+            try {
+                ArrayList<String> url = (ArrayList<String>) body.get("urls");
+                imageServices.saveImages(url, itemEntity.getId(), false);
+            } catch (Exception e) {
+            }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
@@ -61,7 +62,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = body.get("description");
         String address = body.get("address");
-        String privacy = (String)body.get("privacy");
+        String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt(body.get("category"));
 
