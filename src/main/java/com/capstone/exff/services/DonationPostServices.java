@@ -11,6 +11,5 @@ public interface DonationPostServices {
     ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId);
     DonationPostEntity getDonationPostById(int id);
     ResponseEntity removeDonationPost(int id, int userId);
-    DonationPostEntity getDonationPostById(int donationPostId);
     List<DonationPostEntity> getDonationPostByUserID(int userID);
 }

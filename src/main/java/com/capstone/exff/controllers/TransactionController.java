@@ -53,7 +53,7 @@ public class TransactionController {
             int receiverId = getLoginUserId(servletRequest);
             TransactionEntity transactionEntity = transactionService.getTransactionByTransactionId(id);
             if (receiverId != transactionEntity.getReceiverId() && receiverId != transactionEntity.getSenderId()) {
-                return new ResponseEntity(new ExffMessage("You are not owner of this transaction"), HttpStatus.FORBIDDEN);
+                return new ResponseEntity(new ExffMessage("You are not owner of this transaction"), HttpStatus.BAD_REQUEST);
             }
             List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(id);
             transactionRequestWrapper.setTransaction(transactionEntity);
@@ -70,10 +70,10 @@ public class TransactionController {
         TransactionDetails transactionDetails = new TransactionDetails();
         int senderId = getLoginUserId(servletRequest);
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
-        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
-        if (!unavailableItems.isEmpty()) {
-            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
-        }
+//        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+//        if (!unavailableItems.isEmpty()) {
+//            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
+//        }
 
         TransactionEntity transaction;
         transaction = requestWrapper.getTransaction();
