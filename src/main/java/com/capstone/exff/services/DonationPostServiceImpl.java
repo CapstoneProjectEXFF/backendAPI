@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import static com.capstone.exff.constants.ExffStatus.DONATION_POST_DISABLE;
 import static com.capstone.exff.constants.ExffStatus.DONATION_POST_ENABLE;
@@ -25,6 +26,11 @@ public class DonationPostServiceImpl implements DonationPostServices {
     @Override
     public DonationPostEntity getDonationPostById(int id) {
         return donationPostRepository.findById(id).get();
+    }
+
+    @Override
+    public List<DonationPostEntity> getDonationPostByUserID(int userID) {
+        return donationPostRepository.findByUserIdOrderByCreateTimeDesc(userID);
     }
 
     @Override
