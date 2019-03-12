@@ -24,21 +24,16 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ItemEntity createItem(String name, int userId, String description, String address, boolean tmpPrivacy, Timestamp createTime, int categoryId) {
+    public ItemEntity createItem(String name, int userId, String description, String address, String privacy, Timestamp createTime, int categoryId) {
         ItemEntity itemEntity = new ItemEntity();
         itemEntity.setName(name);
         itemEntity.setUserId(userId);
         itemEntity.setDescription(description);
         itemEntity.setAddress(address);
+        itemEntity.setPrivacy(privacy);
         itemEntity.setStatus(ITEM_ENABLE);
         itemEntity.setCreateTime(createTime);
         itemEntity.setCategoryId(categoryId);
-
-        if (tmpPrivacy == false){
-            itemEntity.setPrivacy(ITEM_PRIVACY_PUBLIC);
-        } else {
-            itemEntity.setPrivacy(ITEM_PRIVACY_FRIENDS);
-        }
 
         itemEntity = itemRepository.save(itemEntity);
         itemRepository.flush();
@@ -46,7 +41,7 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public ResponseEntity updateItem(int id, String name, int userId, String description, String address, boolean tmpPrivacy, Timestamp modifyTime, int categoryId) {
+    public ResponseEntity updateItem(int id, String name, int userId, String description, String address, String privacy, Timestamp modifyTime, int categoryId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
         if (itemEntity == null){
@@ -57,13 +52,8 @@ public class ItemServiceImpl implements ItemServices {
             itemEntity.setDescription(description);
             itemEntity.setAddress(address);
             itemEntity.setModifyTime(modifyTime);
+            itemEntity.setPrivacy(privacy);
             itemEntity.setCategoryId(categoryId);
-
-            if (tmpPrivacy == false){
-                itemEntity.setPrivacy(ITEM_PRIVACY_PUBLIC);
-            } else {
-                itemEntity.setPrivacy(ITEM_PRIVACY_FRIENDS);
-            }
 
             try {
                 newItemEntity = itemRepository.save(itemEntity);

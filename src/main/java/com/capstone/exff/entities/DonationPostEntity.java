@@ -1,7 +1,11 @@
 package com.capstone.exff.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -9,10 +13,13 @@ import java.util.Objects;
 public class DonationPostEntity {
     private int id;
     private String content;
+    private String address;
     private String status;
     private Timestamp createTime;
     private Timestamp modifyTime;
     private Integer userId;
+    private UserEntity userEntity;
+    private List<ImageEntity> imageEntities;
 
     @Id
     @Column(name = "id")
@@ -36,6 +43,16 @@ public class DonationPostEntity {
     }
 
     @Basic
+    @Column(name = "address")
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Basic
     @Column(name = "status")
     public String getStatus() {
         return status;
@@ -46,7 +63,7 @@ public class DonationPostEntity {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", updatable = false)
     public Timestamp getCreateTime() {
         return createTime;
     }
@@ -66,13 +83,36 @@ public class DonationPostEntity {
     }
 
     @Basic
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false)
+    @JsonIgnore
     public Integer getUserId() {
         return userId;
     }
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonProperty("user")
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    @OneToMany
+    @JoinColumn(name="donation_post_id", insertable = false, updatable = false)
+    @JsonProperty("images")
+    public List<ImageEntity> getImageEntities() {
+        return imageEntities;
+    }
+
+    public void setImageEntities(List<ImageEntity> imageEntities) {
+        this.imageEntities = imageEntities;
     }
 
     @Override
@@ -82,6 +122,7 @@ public class DonationPostEntity {
         DonationPostEntity that = (DonationPostEntity) o;
         return id == that.id &&
                 Objects.equals(content, that.content) &&
+                Objects.equals(address, that.address) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(createTime, that.createTime) &&
                 Objects.equals(modifyTime, that.modifyTime) &&
@@ -90,6 +131,6 @@ public class DonationPostEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, status, createTime, modifyTime, userId);
+        return Objects.hash(id, content, address, status, createTime, modifyTime, userId);
     }
 }

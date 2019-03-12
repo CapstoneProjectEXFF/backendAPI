@@ -1,12 +1,13 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "transaction", schema = "exff")
-public class TransactionEntity {
+public class TransactionEntity implements Serializable {
     private int id;
     private Integer senderId;
     private Integer receiverId;

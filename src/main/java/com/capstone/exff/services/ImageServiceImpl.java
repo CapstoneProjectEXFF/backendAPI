@@ -42,12 +42,16 @@ public class ImageServiceImpl implements ImageServices {
     }
 
     @Override
-    public Iterable<ImageEntity> saveImages(List<String> urls, int itemId) {
+    public Iterable<ImageEntity> saveImages(List<String> urls, int idOfType, boolean typeOfPost) {
         List<ImageEntity> imageEntities = new ArrayList<>();
         for (String url :
                 urls) {
             ImageEntity tmpImage = new ImageEntity();
-            tmpImage.setItemId(itemId);
+            if (typeOfPost) {
+                tmpImage.setItemId(idOfType);
+            } else {
+                tmpImage.setDonationPostId(idOfType);
+            }
             tmpImage.setUrl(url);
             imageEntities.add(tmpImage);
         }

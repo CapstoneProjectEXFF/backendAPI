@@ -1,11 +1,12 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "transaction_detail", schema = "exff")
-public class TransactionDetailEntity {
+public class TransactionDetailEntity implements Serializable {
     private int id;
     private Integer transactionId;
     private Integer itemId;
@@ -41,18 +42,18 @@ public class TransactionDetailEntity {
         this.itemId = itemId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TransactionDetailEntity that = (TransactionDetailEntity) o;
-        return id == that.id &&
-                Objects.equals(transactionId, that.transactionId) &&
-                Objects.equals(itemId, that.itemId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, transactionId, itemId);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        TransactionDetailEntity that = (TransactionDetailEntity) o;
+//        return id == that.id &&
+//                Objects.equals(transactionId, that.transactionId) &&
+//                Objects.equals(itemId, that.itemId);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, transactionId, itemId);
+//    }
 }
