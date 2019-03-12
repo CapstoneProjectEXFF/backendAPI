@@ -38,8 +38,28 @@ public class UserController {
         return userServices.register(phoneNumber, password, fullName);
     }
 
+    @PostMapping("/user/updateInfo")
+    public ResponseEntity updateUserInfo(@RequestBody Map<String, String> body) {
+        int id = Integer.parseInt(body.get("id"));
+        String phoneNumber = body.get("phoneNumber");
+        String fullName = body.get("fullName");
+        String avatar = body.get("avatar");
+        String status = body.get("status");
+        return userServices.updateUserInfo(id, phoneNumber, fullName, avatar, status);
+
+    }
+
+    @PostMapping("/user/changePassword")
+    public ResponseEntity changePassword(@RequestBody Map<String, String> body) {
+        String phoneNumber = body.get("phoneNumber");
+        String oldPassword = (String) body.get("oldPassword");
+        String newPassword = (String) body.get("newPassword");
+        return userServices.changePassword(phoneNumber, oldPassword, newPassword);
+
+    }
+
     @GetMapping("/user")
-    public ResponseEntity getAllUser(){
+    public ResponseEntity getAllUser() {
         return userServices.getAllUser();
     }
 

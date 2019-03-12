@@ -13,6 +13,7 @@ import java.util.Objects;
 public class DonationPostEntity {
     private int id;
     private String content;
+    private String address;
     private String status;
     private Timestamp createTime;
     private Timestamp modifyTime;
@@ -39,6 +40,16 @@ public class DonationPostEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Basic
+    @Column(name = "address")
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Basic
@@ -111,6 +122,7 @@ public class DonationPostEntity {
         DonationPostEntity that = (DonationPostEntity) o;
         return id == that.id &&
                 Objects.equals(content, that.content) &&
+                Objects.equals(address, that.address) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(createTime, that.createTime) &&
                 Objects.equals(modifyTime, that.modifyTime) &&
@@ -119,6 +131,6 @@ public class DonationPostEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, status, createTime, modifyTime, userId);
+        return Objects.hash(id, content, address, status, createTime, modifyTime, userId);
     }
 }

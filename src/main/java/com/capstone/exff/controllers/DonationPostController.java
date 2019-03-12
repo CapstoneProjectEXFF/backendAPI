@@ -15,6 +15,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,13 +43,14 @@ public class DonationPostController {
 
     @PostMapping("/donationPost")
     @Transactional
-    public ResponseEntity createItem(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {
+    public ResponseEntity createDonationPost(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {
         DonationPostEntity donationPostEntity;
         try {
             String content = (String) body.get("content");
+            String address = (String) body.get("address");
             int userId = getLoginUserId(servletRequest);
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            donationPostEntity = donationPostServices.createDonationPost(content, createTime, userId);
+            donationPostEntity = donationPostServices.createDonationPost(content, address, createTime, userId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
             imageServices.saveImages(url, donationPostEntity.getId(), false);
@@ -63,9 +65,10 @@ public class DonationPostController {
     public ResponseEntity updateDonationPost(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
         String content = (String) body.get("content");
+        String address = (String) body.get("address");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
 
-        return donationPostServices.updateDonationPost(id, content, modifyTime, userId);
+        return donationPostServices.updateDonationPost(id, content, address, modifyTime, userId);
     }
 
     @DeleteMapping("/donationPost/{id:[\\d]+}")
@@ -79,5 +82,33 @@ public class DonationPostController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    @GetMapping("/donationPost/{id:[\\d]+}")
+    public ResponseEntity getDonationPostById(@PathVariable("id") int id) {
+        try {
+            DonationPostEntity result = donationPostServices.getDonationPostById(id);
+            if (result == null) {
+                return new ResponseEntity("no donation post found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/user/{userId:[\\d]+}/donationPost")
+    public ResponseEntity getDonationPostByUserID(@PathVariable("userId") int userId) {
+        try {
+            List<DonationPostEntity> result = donationPostServices.getDonationPostByUserID(userId);
+            if (result == null) {
+                return new ResponseEntity("no donation post found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import static com.capstone.exff.constants.ExffStatus.DONATION_POST_DISABLE;
 import static com.capstone.exff.constants.ExffStatus.DONATION_POST_ENABLE;
@@ -28,9 +29,15 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public DonationPostEntity createDonationPost(String content, Timestamp createTime, int userId) {
+    public List<DonationPostEntity> getDonationPostByUserID(int userID) {
+        return donationPostRepository.findByUserIdOrderByCreateTimeDesc(userID);
+    }
+
+    @Override
+    public DonationPostEntity createDonationPost(String content, String address, Timestamp createTime, int userId) {
         DonationPostEntity donationPostEntity = new DonationPostEntity();
         donationPostEntity.setContent(content);
+        donationPostEntity.setAddress(address);
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
         donationPostEntity.setCreateTime(createTime);
         donationPostEntity.setUserId(userId);
@@ -41,7 +48,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public ResponseEntity updateDonationPost(int id, String content, Timestamp modifyTime, int userId) {
+    public ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId) {
         DonationPostEntity donationPostEntity = donationPostRepository.getOne(id);
         DonationPostEntity newDonationPostEntity;
         if (donationPostEntity == null) {
@@ -49,6 +56,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
         }
         if (donationPostEntity.getUserId() == userId && donationPostEntity.getStatus().equals(DONATION_POST_ENABLE)) {
             donationPostEntity.setContent(content);
+            donationPostEntity.setAddress(address);
             donationPostEntity.setModifyTime(modifyTime);
             try {
                 newDonationPostEntity = donationPostRepository.save(donationPostEntity);
