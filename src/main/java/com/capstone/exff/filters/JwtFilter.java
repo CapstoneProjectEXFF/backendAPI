@@ -30,7 +30,7 @@ public class JwtFilter implements Filter {
             filterChain.doFilter(request, response);
         } else {
             String token = (String) request.getHeader("Authorization");
-            if (token != null) {
+            if (token != null && !token.equals("null")) {
                 UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
                 if (userEntity != null) {
                     request.setAttribute("USER_INFO", userEntity);
