@@ -10,4 +10,5 @@ public interface TransactionDetailServices {
     void deleteTransactionDetail(TransactionDetailEntity transactionDetailEntity);
     void deleteTransactionDetailByTransactionId(int transactionId);
     List<TransactionDetailEntity> getTransactionDetailsByTransactionId(int transactionId);
+    void confirmTransactionDetail(List<Integer> itemIdList);
 }

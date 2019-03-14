@@ -17,6 +17,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @RestController
 public class TransactionController {
@@ -64,6 +66,28 @@ public class TransactionController {
         return new ResponseEntity(transactionRequestWrapper, HttpStatus.OK);
     }
 
+    @PutMapping("/transaction/{id:[\\d]+}")
+    public ResponseEntity confirmTransaction(@PathVariable("id") int id, ServletRequest servletRequest) {
+        List<TransactionDetailEntity> transactionDetailEntities;
+        try {
+            int userId = getLoginUserId(servletRequest);
+            if (!transactionService.isValidTransaction(userId, id)) {
+                return new ResponseEntity(new ExffMessage("Invalid user"), HttpStatus.BAD_REQUEST);
+            }
+            TransactionEntity transactionEntity = transactionService.getTransactionByTransactionId(id);
+            transactionDetailEntities = transactionDetailServices.
+                    getTransactionDetailsByTransactionId(id);
+            List<Integer> itemIdList = transactionDetailEntities.stream()
+                    .map(t -> Integer.valueOf(t.getId()))
+                    .collect(Collectors.toList());
+            transactionDetailServices.confirmTransactionDetail(itemIdList);
+            transactionService.confirmTransaction(transactionEntity.getId());
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity("Transaction confirmed", HttpStatus.OK);
+    }
+
     @PostMapping("/transaction")
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
@@ -88,7 +112,7 @@ public class TransactionController {
             transactionDetails.getTransactionDetails().stream()
                     .forEach(t -> {
                         transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId());
-                        itemServices.setItemUnavailable(t.getItemId());
+//                        itemServices.setItemUnavailable(t.getItemId());
                     });
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
@@ -148,6 +172,7 @@ public class TransactionController {
         transaction.setSenderId(transaction.getReceiverId());
         transaction.setReceiverId(tmpSenderId);
     }
+
     private List<ItemEntity> verifyItemsAvailabity(List<Integer> itemIds) {
         List<ItemEntity> result = itemServices.verifyItems(ExffStatus.ITEM_DISABLE, itemIds);
         return result;

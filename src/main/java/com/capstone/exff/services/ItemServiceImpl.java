@@ -1,6 +1,5 @@
 package com.capstone.exff.services;
 
-import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -118,7 +117,7 @@ public class ItemServiceImpl implements ItemServices {
 
     @Override
     public List<ItemEntity> verifyItems(String status, List<Integer> ids) {
-        return itemRepository.verifyItems(status, ids);
+        return itemRepository.filterItems(status, ids);
     }
 
     @Override

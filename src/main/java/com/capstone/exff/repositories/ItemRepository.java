@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     ItemEntity getItemById(int itemId);
 
     @Query("select i from ItemEntity i where i.status = :status and i.id In :ids")
-    List<ItemEntity> verifyItems(String status, List<Integer> ids);
+    List<ItemEntity> filterItems(String status, List<Integer> ids);
 
     List<ItemEntity> findItemEntitiesByUserId(int userId);
 
