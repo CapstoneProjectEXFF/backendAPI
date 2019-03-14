@@ -70,10 +70,10 @@ public class TransactionController {
         TransactionDetails transactionDetails = new TransactionDetails();
         int senderId = getLoginUserId(servletRequest);
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
-//        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
-//        if (!unavailableItems.isEmpty()) {
-//            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
-//        }
+        List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+        if (!unavailableItems.isEmpty()) {
+            return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
+        }
 
         TransactionEntity transaction;
         transaction = requestWrapper.getTransaction();

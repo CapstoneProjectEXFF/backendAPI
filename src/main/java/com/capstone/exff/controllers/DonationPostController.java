@@ -86,6 +86,22 @@ public class DonationPostController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+    @GetMapping("/donationPost")
+    public ResponseEntity getDonationPosts(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        try {
+            List<DonationPostEntity> result = donationPostServices.getDonationPosts(page,size);
+            if (result == null) {
+                return new ResponseEntity("no donation post found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
 
     @GetMapping("/user/{userId:[\\d]+}/donationPost")
     public ResponseEntity getDonationPostByUserID(@PathVariable("userId") int userId) {

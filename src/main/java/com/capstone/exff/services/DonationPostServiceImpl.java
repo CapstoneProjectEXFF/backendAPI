@@ -4,6 +4,8 @@ import com.capstone.exff.entities.DonationPostEntity;
 import com.capstone.exff.repositories.DonationPostRepository;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -87,5 +89,11 @@ public class DonationPostServiceImpl implements DonationPostServices {
         } else {
             return new ResponseEntity("Cannot access this donation post", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public List<DonationPostEntity> getDonationPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return donationPostRepository.findAll(pageable).getContent();
     }
 }
