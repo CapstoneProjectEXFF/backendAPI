@@ -1,20 +1,28 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
+import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.TransactionDetailEntity;
+import com.capstone.exff.entities.TransactionDetails;
+import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.repositories.TransactionDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class TransactionDetailServicesImpl implements TransactionDetailServices {
 
     private TransactionDetailRepository transactionDetailRepository;
+    private ItemRepository itemRepository;
 
     @Autowired
-    public TransactionDetailServicesImpl(TransactionDetailRepository transactionDetailRepository) {
+    public TransactionDetailServicesImpl(TransactionDetailRepository transactionDetailRepository,
+                                         ItemRepository itemRepository) {
         this.transactionDetailRepository = transactionDetailRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
@@ -44,6 +52,21 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
     @Override
     public List<TransactionDetailEntity> getTransactionDetailsByTransactionId(int transactionId) {
         return transactionDetailRepository.findAllByTransactionId(transactionId);
+    }
+
+    @Override
+    public void confirmTransactionDetail(List<Integer> itemIdList) {
+        itemIdList.stream().forEach(t -> {
+            TransactionDetailEntity detailEntity = transactionDetailRepository.getOne(t);
+            if (detailEntity != null) {
+                ItemEntity item = itemRepository.getItemById(detailEntity.getItemId());
+                item.setStatus(ExffStatus.ITEM_DISABLE);
+                try {
+                    itemRepository.save(item);
+                } catch (Exception e) {
+                }
+            }
+        });
     }
 
 

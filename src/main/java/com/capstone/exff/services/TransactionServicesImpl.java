@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.TransactionEntity;
 import com.capstone.exff.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,24 @@ public class TransactionServicesImpl implements TransactionServices {
     @Override
     public TransactionEntity getTransactionByTransactionId(int transactionId) {
         return transactionRepository.findById(transactionId).get();
+    }
+
+    @Override
+    public boolean isValidTransaction(int userId, int transactionId) {
+        TransactionEntity transactionEntity = transactionRepository.getOne(transactionId);
+        return transactionEntity.getReceiverId() == userId;
+    }
+
+    @Override
+    public void confirmTransaction(int transactionId) {
+        TransactionEntity transactionEntity = transactionRepository.getOne(transactionId);
+        if (transactionEntity != null) {
+            transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE);
+            try {
+                transactionRepository.save(transactionEntity);
+            } catch (Exception e) {
+            }
+        }
     }
 
 }

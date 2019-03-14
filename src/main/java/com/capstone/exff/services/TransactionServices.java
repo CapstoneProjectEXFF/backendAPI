@@ -13,4 +13,6 @@ public interface TransactionServices {
     TransactionEntity updateTransaction(TransactionEntity transactionEntity);
     void deleteTransaction(TransactionEntity transactionEntity);
     TransactionEntity getTransactionByTransactionId(int transactionId);
+    boolean isValidTransaction(int userId, int transactionId);
+    void confirmTransaction(int transactionId);
 }
