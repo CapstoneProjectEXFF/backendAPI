@@ -57,14 +57,14 @@ public class ItemController {
     }
 
     @PutMapping("/item/{id:[\\d]+}")
-    public ResponseEntity updateItem(@RequestBody Map<String, String> body, @PathVariable("id") int id, ServletRequest servletRequest) {
-        String name = body.get("name");
+    public ResponseEntity updateItem(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
+        String name = (String) body.get("name");
         int userId = getLoginUserId(servletRequest);
-        String description = body.get("description");
-        String address = body.get("address");
+        String description = (String) body.get("description");
+        String address = (String) body.get("address");
         String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
-        int categoryId = Integer.parseInt(body.get("category"));
+        int categoryId = (int) body.get("category");
 
         return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }

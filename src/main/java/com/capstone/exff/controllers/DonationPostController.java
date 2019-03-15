@@ -42,7 +42,7 @@ public class DonationPostController {
             donationPostEntity = donationPostServices.createDonationPost(content, address, createTime, userId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
-            imageServices.saveImages(url, donationPostEntity.getId(), false);
+            imageServices.saveImages(url, donationPostEntity.getId(), true);
 
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);

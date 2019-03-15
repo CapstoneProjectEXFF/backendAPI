@@ -47,7 +47,7 @@ public class ImageServiceImpl implements ImageServices {
         for (String url :
                 urls) {
             ImageEntity tmpImage = new ImageEntity();
-            if (typeOfPost) {
+            if (!typeOfPost) {
                 tmpImage.setItemId(idOfType);
             } else {
                 tmpImage.setDonationPostId(idOfType);

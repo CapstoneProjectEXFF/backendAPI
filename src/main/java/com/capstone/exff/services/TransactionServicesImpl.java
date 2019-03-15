@@ -21,20 +21,17 @@ public class TransactionServicesImpl implements TransactionServices {
 
     @Override
     public List<TransactionEntity> getTopTransactionByReceiverId(int receiverId) {
-        return transactionRepository.findTop10ByReceiverIdOrderByCreateTime(receiverId);
+        return transactionRepository.findTop10ByReceiverIdAndStatusOrderByCreateTime(receiverId, ExffStatus.RELATIONSHIP_SEND);
     }
 
     @Override
-    public int createTransaction(int senderId, int receiverId, int donationId,
-                                               String status, Timestamp createTime, Timestamp modifiedTime) {
-        TransactionEntity transaction = new TransactionEntity();
+    public int createTransaction(int senderId, TransactionEntity transaction) {
+        Timestamp createTime = new Timestamp(System.currentTimeMillis());
+        Timestamp modifiedTime = createTime;
         transaction.setSenderId(senderId);
-        transaction.setReceiverId(receiverId);
-        if (donationId > 0)
-            transaction.setDonationPostId(donationId);
-        transaction.setStatus(status);
         transaction.setCreateTime(createTime);
         transaction.setModifyTime(modifiedTime);
+        transaction.setStatus(ExffStatus.TRANSACTION_SEND);
         TransactionEntity trans = transactionRepository.save(transaction);
         return trans.getId();
     }

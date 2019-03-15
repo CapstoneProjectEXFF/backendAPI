@@ -15,7 +15,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     @Override
     <S extends TransactionEntity> S save(S s);
 
-    List<TransactionEntity> findTop10ByReceiverIdOrderByCreateTime(int receiverId);
+    List<TransactionEntity> findTop10ByReceiverIdAndStatusOrderByCreateTime(int receiverId, String status);
 
     @Override
     void delete(TransactionEntity transactionEntity);

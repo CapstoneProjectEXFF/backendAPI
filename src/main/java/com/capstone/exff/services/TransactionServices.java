@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface TransactionServices {
     List<TransactionEntity> getTopTransactionByReceiverId(int receiverId);
-    int createTransaction(int senderId, int receiverId, int donationId,
-                                 String status, Timestamp createTime,
-                                 Timestamp modifiedTime);
+    int createTransaction(int senderId, TransactionEntity transaction);
     TransactionEntity updateTransaction(TransactionEntity transactionEntity);
     void deleteTransaction(TransactionEntity transactionEntity);
     TransactionEntity getTransactionByTransactionId(int transactionId);

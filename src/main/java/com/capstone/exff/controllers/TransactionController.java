@@ -85,7 +85,7 @@ public class TransactionController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity("Transaction confirmed", HttpStatus.OK);
+        return new ResponseEntity(new ExffMessage("Transaction confirmed"), HttpStatus.OK);
     }
 
     @PostMapping("/transaction")
@@ -102,12 +102,8 @@ public class TransactionController {
         TransactionEntity transaction;
         transaction = requestWrapper.getTransaction();
         try {
-            Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            Timestamp modifiedTime = createTime;
             int transactionId =
-                    transactionService.createTransaction(senderId, transaction.getReceiverId(),
-                            transaction.getDonationPostId(), transaction.getStatus(),
-                            createTime, modifiedTime);
+                    transactionService.createTransaction(senderId, transaction);
             transactionDetails.setTransactionId(transactionId);
             transactionDetails.getTransactionDetails().stream()
                     .forEach(t -> {
