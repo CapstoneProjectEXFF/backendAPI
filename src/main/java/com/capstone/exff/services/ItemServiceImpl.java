@@ -129,4 +129,9 @@ public class ItemServiceImpl implements ItemServices {
     public ItemEntity getItemById(int itemId) {
         return itemRepository.getItemById(itemId);
     }
+
+    @Override
+    public List<ItemEntity> loadItemsByStatus(String status) {
+        return itemRepository.loadItemsByStatus(status);
+    }
 }

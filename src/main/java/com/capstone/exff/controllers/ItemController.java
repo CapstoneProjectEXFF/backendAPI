@@ -138,4 +138,18 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+    @GetMapping("/itemStatus/{status}")
+    public ResponseEntity loadItemsByStatus(@PathVariable("status") String status) {
+        try {
+            List<ItemEntity> result = itemServices.loadItemsByStatus(status);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
 }

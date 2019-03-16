@@ -22,4 +22,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
 
     List<ItemEntity> findItemEntitiesByUserId(int userId);
 
+    @Query("select i from ItemEntity i where i.status = :status")
+    List<ItemEntity> loadItemsByStatus(String status);
+
 }
