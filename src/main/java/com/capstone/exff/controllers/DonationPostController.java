@@ -51,12 +51,28 @@ public class DonationPostController {
     }
 
     @PutMapping("/donationPost/{id:[\\d]+}")
+    @Transactional
     public ResponseEntity updateDonationPost(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
         String content = (String) body.get("content");
         String address = (String) body.get("address");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
+        ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
+        ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
 
+        try {
+            if (removedUrlIds.size() != 0) {
+                if (imageServices.removeImage(removedUrlIds, userId, true)) {
+                    imageServices.saveImages(newUrls, id, true);
+                } else {
+                    return new ResponseEntity("cannot update donation", HttpStatus.CONFLICT);
+                }
+            } else {
+                imageServices.saveImages(newUrls, id, true);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return donationPostServices.updateDonationPost(id, content, address, modifyTime, userId);
     }
 

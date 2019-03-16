@@ -51,12 +51,12 @@ public class DonationPostServiceImpl implements DonationPostServices {
 
     @Override
     public ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId) {
-        DonationPostEntity donationPostEntity = donationPostRepository.getOne(id);
+        DonationPostEntity donationPostEntity = donationPostRepository.findById(id).get();
         DonationPostEntity newDonationPostEntity;
         if (donationPostEntity == null) {
             return ResponseEntity.notFound().build();
         }
-        if (donationPostEntity.getUserId() == userId && donationPostEntity.getStatus().equals(DONATION_POST_ENABLE)) {
+        if (donationPostEntity.getUserId() == userId && !donationPostEntity.getStatus().equals(DONATION_POST_DISABLE)) {
             donationPostEntity.setContent(content);
             donationPostEntity.setAddress(address);
             donationPostEntity.setModifyTime(modifyTime);

@@ -57,6 +57,7 @@ public class ItemController {
     }
 
     @PutMapping("/item/{id:[\\d]+}")
+    @Transactional
     public ResponseEntity updateItem(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         String name = (String) body.get("name");
         int userId = getLoginUserId(servletRequest);
@@ -65,14 +66,30 @@ public class ItemController {
         String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = (int) body.get("category");
+        ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
+        ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
+
+        try {
+            if (removedUrlIds.size() != 0) {
+                if (imageServices.removeImage(removedUrlIds, userId, false)) {
+                    imageServices.saveImages(newUrls, id, false);
+                } else {
+                    return new ResponseEntity("cannot update item", HttpStatus.CONFLICT);
+                }
+            } else {
+                imageServices.saveImages(newUrls, id, true);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }
 
     @DeleteMapping("item/{id:[\\d]+}")
+    @Transactional
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
-
         return itemServices.removeItem(id, userId);
     }
 
