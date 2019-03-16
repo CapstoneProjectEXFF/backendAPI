@@ -33,7 +33,7 @@ public class ImageEntity {
     }
 
     @Basic
-    @Column(name = "item_id")
+    @Column(name = "item_id", updatable = false)
     public Integer getItemId() {
         return itemId;
     }
@@ -43,7 +43,7 @@ public class ImageEntity {
     }
 
     @Basic
-    @Column(name = "donation_post_id")
+    @Column(name = "donation_post_id", updatable = false)
     public Integer getDonationPostId() {
         return donationPostId;
     }
