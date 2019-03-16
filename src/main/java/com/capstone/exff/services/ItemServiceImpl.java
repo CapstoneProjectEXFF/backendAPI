@@ -93,7 +93,7 @@ public class ItemServiceImpl implements ItemServices {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getStatus().equals(ITEM_ENABLE)) {
-            itemEntity.setStatus(ITEM_DISABLE);
+            itemEntity.setStatus(ITEM_TRADED);
             try {
                 newItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {

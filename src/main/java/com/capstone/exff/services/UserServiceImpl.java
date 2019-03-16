@@ -100,14 +100,13 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
-    public ResponseEntity updateUserInfo(int id, String phoneNumber, String fullName, String avatar, String status) {
+    public ResponseEntity updateUserInfo(String phoneNumber, String fullName, String avatar) {
         UserEntity userEntity = new UserEntity();
         userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
 
         if (userEntity != null) {
             userEntity.setAvatar(avatar);
             userEntity.setFullName(fullName);
-            userEntity.setStatus(status);
             userRepository.save(userEntity);
             Map<String, Object> data = new HashMap<>();
             data.put("User", userEntity);
