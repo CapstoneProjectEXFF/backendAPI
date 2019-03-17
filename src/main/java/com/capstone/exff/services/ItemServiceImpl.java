@@ -93,7 +93,7 @@ public class ItemServiceImpl implements ItemServices {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getStatus().equals(ITEM_ENABLE)) {
-            itemEntity.setStatus(ITEM_DISABLE);
+            itemEntity.setStatus(ITEM_TRADED);
             try {
                 newItemEntity = itemRepository.save(itemEntity);
             } catch (Exception e) {
@@ -128,5 +128,10 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public ItemEntity getItemById(int itemId) {
         return itemRepository.getItemById(itemId);
+    }
+
+    @Override
+    public List<ItemEntity> loadItemsByStatus(String status) {
+        return itemRepository.loadItemsByStatus(status);
     }
 }

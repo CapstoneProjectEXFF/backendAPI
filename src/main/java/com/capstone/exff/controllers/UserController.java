@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -39,19 +41,17 @@ public class UserController {
     }
 
     @PostMapping("/user/updateInfo")
-    public ResponseEntity updateUserInfo(@RequestBody Map<String, String> body) {
-        int id = Integer.parseInt(body.get("id"));
-        String phoneNumber = body.get("phoneNumber");
+    public ResponseEntity updateUserInfo(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
+        String phoneNumber = getPhoneNumber(servletRequest);
         String fullName = body.get("fullName");
         String avatar = body.get("avatar");
-        String status = body.get("status");
-        return userServices.updateUserInfo(id, phoneNumber, fullName, avatar, status);
+        return userServices.updateUserInfo(phoneNumber, fullName, avatar);
 
     }
 
     @PostMapping("/user/changePassword")
-    public ResponseEntity changePassword(@RequestBody Map<String, String> body) {
-        String phoneNumber = body.get("phoneNumber");
+    public ResponseEntity changePassword(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
+        String phoneNumber = getPhoneNumber(servletRequest);
         String oldPassword = (String) body.get("oldPassword");
         String newPassword = (String) body.get("newPassword");
         return userServices.changePassword(phoneNumber, oldPassword, newPassword);
@@ -89,5 +89,12 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    private String getPhoneNumber(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        String phoneNumber = userEntity.getPhoneNumber();
+        return phoneNumber;
     }
 }

@@ -13,7 +13,7 @@ public interface UserServices {
 
     ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleId);
 
-    ResponseEntity updateUserInfo(int id, String phoneNumber, String fullName, String avatar, String status);
+    ResponseEntity updateUserInfo(String phoneNumber, String fullName, String avatar);
 
     ResponseEntity changePassword(String phoneNumber, String oldPassword, String newPassword);
 

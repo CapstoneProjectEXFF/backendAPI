@@ -5,6 +5,7 @@ public class ExffStatus {
     public static final String USER_ENABLE = "1";
     public static final String ITEM_DISABLE = "0";
     public static final String ITEM_ENABLE = "1";
+    public static final String ITEM_TRADED = "2";
     public static final String DONATION_POST_DISABLE = "0";
     public static final String DONATION_POST_ENABLE = "1";
     public static final String DONATION_POST_PAUSE = "2";
