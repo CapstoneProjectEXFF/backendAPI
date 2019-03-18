@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.capstone.exff.constants.ExffStatus.DONATION_POST_DISABLE;
-import static com.capstone.exff.constants.ExffStatus.ITEM_ENABLE;
+import static com.capstone.exff.constants.ExffStatus.*;
 
 @Service
 public class ImageServiceImpl implements ImageServices {
@@ -54,14 +53,14 @@ public class ImageServiceImpl implements ImageServices {
     }
 
     @Override
-    public Iterable<ImageEntity> saveImages(List<String> urls, int idOfType, boolean typeOfPost) {
+    public Iterable<ImageEntity> saveImages(List<String> urls, int idOfType, String typeOfPost) {
         List<ImageEntity> imageEntities = new ArrayList<>();
         for (String url :
                 urls) {
             ImageEntity tmpImage = new ImageEntity();
-            if (!typeOfPost) {
+            if (typeOfPost.equals(ITEM_TYPE)) {
                 tmpImage.setItemId(idOfType);
-            } else {
+            } else if (typeOfPost.equals(DONATION_TYPE)) {
                 tmpImage.setDonationPostId(idOfType);
             }
             tmpImage.setUrl(url);
@@ -76,8 +75,8 @@ public class ImageServiceImpl implements ImageServices {
     }
 
     @Override
-    public boolean removeImage(List<Integer> removedImageIds, int userId, boolean typeOfPost) {
-        if (!typeOfPost) {
+    public boolean removeImage(List<Integer> removedImageIds, int userId, String typeOfPost) {
+        if (typeOfPost.equals(ITEM_TYPE)) {
             ItemEntity itemEntity = new ItemEntity();
             for (int i = 0; i < removedImageIds.size(); i++) {
                 try {
@@ -105,7 +104,7 @@ public class ImageServiceImpl implements ImageServices {
                 System.out.println("failed");
                 return false;
             }
-        } else {
+        } else if (typeOfPost.equals(DONATION_TYPE)){
             DonationPostEntity donationPostEntity = new DonationPostEntity();
             for (int i = 0; i < removedImageIds.size(); i++) {
                 try {
