@@ -95,6 +95,8 @@ public class TransactionController {
         int senderId = getLoginUserId(servletRequest);
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
         List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+        List<ItemEntity> userOwnedItems = checkUserOwnedItem(senderId, transactionDetails.getItemIds());
+
         if (!unavailableItems.isEmpty()) {
             return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
         }
@@ -102,6 +104,11 @@ public class TransactionController {
         TransactionEntity transaction;
         transaction = requestWrapper.getTransaction();
         try {
+            if (transaction.getDonationPostId() != null) {
+                if (userOwnedItems.size() < transactionDetails.getItemIds().size()) {
+                    return new ResponseEntity(new ExffMessage("Cannot donate item"), HttpStatus.BAD_REQUEST);
+                }
+            }
             int transactionId =
                     transactionService.createTransaction(senderId, transaction);
             transactionDetails.setTransactionId(transactionId);
@@ -110,12 +117,12 @@ public class TransactionController {
                         transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId());
 //                        itemServices.setItemUnavailable(t.getItemId());
                     });
+
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(new ExffMessage("Sended"), HttpStatus.OK);
     }
-
 
     @PutMapping("/transaction")
     public ResponseEntity updateTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
@@ -179,5 +186,10 @@ public class TransactionController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    private List<ItemEntity> checkUserOwnedItem(int userId, List<Integer> itemIds) {
+        List<ItemEntity> result = itemServices.checkUserOwnedItems(userId, itemIds);
+        return result;
     }
 }

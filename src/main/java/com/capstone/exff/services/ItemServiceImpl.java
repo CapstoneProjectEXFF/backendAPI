@@ -134,4 +134,9 @@ public class ItemServiceImpl implements ItemServices {
     public List<ItemEntity> loadItemsByStatus(String status) {
         return itemRepository.loadItemsByStatus(status);
     }
+
+    @Override
+    public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
+        return itemRepository.userOwnedItems(userId, itemIds);
+    }
 }
