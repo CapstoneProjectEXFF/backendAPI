@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.capstone.exff.constants.ExffStatus.*;
@@ -138,5 +139,15 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
         return itemRepository.userOwnedItems(userId, itemIds);
+    }
+
+    @Override
+    public void changeItemsStatus(String newStatus, List<Integer> itemIds) {
+//        List<ItemEntity> itemList = new ArrayList<>();
+//        for (int i = 0; i < itemIds.size(); i++){
+//            itemList.add(itemRepository.updateStatusItem(newStatus, itemIds.get(i)));
+//        }
+//        return itemList;
+        itemRepository.updateStatusItems(newStatus, itemIds);
     }
 }

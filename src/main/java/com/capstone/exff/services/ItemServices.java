@@ -21,4 +21,6 @@ public interface ItemServices {
     ItemEntity getItemById(int itemId);
 
     List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds);
+
+    void changeItemsStatus(String newStatus, List<Integer> itemIds);
 }

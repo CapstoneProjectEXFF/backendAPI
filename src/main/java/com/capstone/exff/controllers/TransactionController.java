@@ -9,6 +9,7 @@ import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static com.capstone.exff.constants.ExffStatus.ITEM_DONATED;
 
 @RestController
 public class TransactionController {
@@ -89,6 +92,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transaction")
+    @Transactional
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
         TransactionDetails transactionDetails = new TransactionDetails();
@@ -117,7 +121,9 @@ public class TransactionController {
                         transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId());
 //                        itemServices.setItemUnavailable(t.getItemId());
                     });
-
+            if (transaction.getDonationPostId() != null){
+                itemServices.changeItemsStatus(ITEM_DONATED, transactionDetails.getItemIds());
+            }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
