@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.capstone.exff.constants.ExffStatus.DONATION_TYPE;
+
 @RestController
 public class DonationPostController {
 
@@ -42,7 +44,7 @@ public class DonationPostController {
             donationPostEntity = donationPostServices.createDonationPost(content, address, createTime, userId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
-            imageServices.saveImages(url, donationPostEntity.getId(), true);
+            imageServices.saveImages(url, donationPostEntity.getId(), DONATION_TYPE);
 
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
@@ -62,13 +64,13 @@ public class DonationPostController {
 
         try {
             if (removedUrlIds.size() != 0) {
-                if (imageServices.removeImage(removedUrlIds, userId, true)) {
-                    imageServices.saveImages(newUrls, id, true);
+                if (imageServices.removeImage(removedUrlIds, userId, DONATION_TYPE)) {
+                    imageServices.saveImages(newUrls, id, DONATION_TYPE);
                 } else {
                     return new ResponseEntity("cannot update donation", HttpStatus.CONFLICT);
                 }
             } else {
-                imageServices.saveImages(newUrls, id, true);
+                imageServices.saveImages(newUrls, id, DONATION_TYPE);
             }
         } catch (Exception e){
             e.printStackTrace();

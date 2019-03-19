@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.capstone.exff.constants.ExffStatus.ITEM_TYPE;
+
 @RestController
 public class ItemController {
 
@@ -47,7 +49,7 @@ public class ItemController {
             itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
             try {
                 ArrayList<String> url = (ArrayList<String>) body.get("urls");
-                imageServices.saveImages(url, itemEntity.getId(), false);
+                imageServices.saveImages(url, itemEntity.getId(), ITEM_TYPE);
             } catch (Exception e) {
             }
         } catch (Exception e) {
@@ -65,19 +67,19 @@ public class ItemController {
         String address = (String) body.get("address");
         String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
-        int categoryId = (int) body.get("category");
+        int categoryId = Integer.parseInt((String) body.get("category"));
         ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
         ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
 
         try {
             if (removedUrlIds.size() != 0) {
-                if (imageServices.removeImage(removedUrlIds, userId, false)) {
-                    imageServices.saveImages(newUrls, id, false);
+                if (imageServices.removeImage(removedUrlIds, userId, ITEM_TYPE)) {
+                    imageServices.saveImages(newUrls, id, ITEM_TYPE);
                 } else {
                     return new ResponseEntity("cannot update item", HttpStatus.CONFLICT);
                 }
             } else {
-                imageServices.saveImages(newUrls, id, true);
+                imageServices.saveImages(newUrls, id, ITEM_TYPE);
             }
         } catch (Exception e){
             e.printStackTrace();
