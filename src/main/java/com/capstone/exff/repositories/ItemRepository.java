@@ -2,7 +2,9 @@ package com.capstone.exff.repositories;
 
 import com.capstone.exff.entities.ItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,5 +26,16 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
 
     @Query("select i from ItemEntity i where i.status = :status")
     List<ItemEntity> loadItemsByStatus(String status);
+
+    @Query("select i from ItemEntity i where i.userId = :userId and i.id In :ids")
+    List<ItemEntity> userOwnedItems(int userId, List<Integer> ids);
+
+//    @Query("update ItemEntity i set i.status = :newStatus where i.id = :id")
+//    ItemEntity updateStatusItem(String newStatus, int id);
+
+    @Transactional
+    @Modifying
+    @Query("update ItemEntity i set i.status = :newStatus where i.id in :ids")
+    void updateStatusItems(String newStatus, List<Integer> ids);
 
 }
