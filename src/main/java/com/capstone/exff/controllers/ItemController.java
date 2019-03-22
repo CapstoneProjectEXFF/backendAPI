@@ -140,9 +140,17 @@ public class ItemController {
     }
 
     @GetMapping("user/{userId:[\\d]+}/item")
-    public ResponseEntity getItemsByUserId(@PathVariable("userId") int userId) {
+    public ResponseEntity getItemsByUserId(
+            @PathVariable("userId") int userId,
+            @RequestParam(name = "status", required = false) String status
+    ) {
         try {
-            List<ItemEntity> result = itemServices.getItemsByUserId(userId);
+            List<ItemEntity> result = null;
+            if (status != null && !status.isEmpty()) {
+                result = itemServices.loadItemsByUserIdAndStatus(userId, status);
+            } else {
+                result = itemServices.getItemsByUserId(userId);
+            }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {

@@ -134,4 +134,11 @@ public class ItemServiceImpl implements ItemServices {
     public List<ItemEntity> loadItemsByStatus(String status) {
         return itemRepository.loadItemsByStatus(status);
     }
+
+    @Override
+    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
+        return itemRepository.findAllByUserIdAndStatus(userId,status);
+    }
+
+
 }
