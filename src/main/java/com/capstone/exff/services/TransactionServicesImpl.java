@@ -29,6 +29,11 @@ public class TransactionServicesImpl implements TransactionServices {
     }
 
     @Override
+    public List<TransactionEntity> getTopTransactionBySenderId(int senderId) {
+        return transactionRepository.findTop10BySenderIdAndStatusOrderByCreateTimeAsc(senderId, ExffStatus.TRANSACTION_DONE);
+    }
+
+    @Override
     public int createTransaction(int senderId, TransactionEntity transaction) {
         Timestamp createTime = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedTime = createTime;

@@ -29,4 +29,6 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     @Override
     void delete(TransactionEntity transactionEntity);
+
+    List<TransactionEntity> findTop10BySenderIdAndStatusOrderByCreateTimeAsc(int receiverId, String status);
 }

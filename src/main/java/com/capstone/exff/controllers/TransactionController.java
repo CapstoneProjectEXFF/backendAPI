@@ -45,6 +45,18 @@ public class TransactionController {
         return new ResponseEntity(transactionEntities, HttpStatus.OK);
     }
 
+    @GetMapping("/transaction/confirm")
+    public ResponseEntity getTransactionBySenderId(ServletRequest servletRequest) {
+        List<TransactionEntity> transactionEntities;
+        try {
+            int senderId = getLoginUserId(servletRequest);
+            transactionEntities = transactionService.getTopTransactionBySenderId(senderId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionEntities, HttpStatus.OK);
+    }
+
     @GetMapping("/transaction/{id:[\\d]+}")
     public ResponseEntity getTransactionById(@PathVariable("id") int id, ServletRequest servletRequest) {
         TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
