@@ -122,15 +122,22 @@ public class TransactionController {
                                             ServletRequest servletRequest) {
         try {
             int loginUserId = getLoginUserId(servletRequest);
+            TransactionDetails transactionDetails = new TransactionDetails();
+            transactionDetails.setTransactionDetails(requestWrapper.getDetails());
+//            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
+            List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+            if (!unavailableItems.isEmpty()) {
+                return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
+            }
             TransactionEntity transaction = requestWrapper.getTransaction();
             if (loginUserId == transaction.getReceiverId()) {
                 swapUserId(transaction);
             }
+            transaction.setStatus(ExffStatus.TRANSACTION_SEND);
             transaction.setModifyTime(new Timestamp(System.currentTimeMillis()));
             transactionService.updateTransaction(transaction);
 
-            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
-            transactionDetails.stream()
+            transactionDetails.getTransactionDetails().stream()
                     .forEach((transactionDetail) -> {
                         if (transactionDetail.getTransactionId() == null)
                             transactionDetailServices.deleteTransactionDetail(transactionDetail);
