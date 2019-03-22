@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,5 +198,25 @@ public class TransactionController {
     private List<ItemEntity> checkUserOwnedItem(int userId, List<Integer> itemIds) {
         List<ItemEntity> result = itemServices.checkUserOwnedItems(userId, itemIds);
         return result;
+    }
+
+    @GetMapping("/donators/{donationPostId:[\\d]+}")
+    public ResponseEntity getTransactionByDonationPostId(@PathVariable("donationPostId") int donationPostId, ServletRequest servletRequest) {
+        List<TransactionRequestWrapper> transactionRequestWrapperList = new ArrayList<>();
+        try {
+            List<TransactionEntity> transactionList = transactionService.getTransactionByDonationPostId(donationPostId);
+            if (!transactionList.isEmpty()) {
+                for (int i = 0; i < transactionList.size(); i++){
+                    List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(transactionList.get(i).getId());
+                    TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
+                    transactionRequestWrapper.setDetails(details);
+                    transactionRequestWrapper.setTransaction(transactionList.get(i));
+                    transactionRequestWrapperList.add(transactionRequestWrapper);
+                }
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionRequestWrapperList, HttpStatus.OK);
     }
 }
