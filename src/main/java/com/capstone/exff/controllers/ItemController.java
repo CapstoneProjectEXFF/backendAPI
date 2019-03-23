@@ -117,16 +117,11 @@ public class ItemController {
     }
 
     @GetMapping("/item")
-    public ResponseEntity loadItems() {
-        try {
-            List<ItemEntity> result = itemServices.loadAllItems();
-            if (result == null) {
-                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
-            } else {
-                return new ResponseEntity(result, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+    public ResponseEntity loadItems(@RequestParam(name = "status", required = false) String status) {
+        if (status != null && !status.isEmpty()){
+            return getItemsByStatus(status);
+        } else {
+            return getAllItems();
         }
     }
 
@@ -145,9 +140,17 @@ public class ItemController {
     }
 
     @GetMapping("user/{userId:[\\d]+}/item")
-    public ResponseEntity getItemsByUserId(@PathVariable("userId") int userId) {
+    public ResponseEntity getItemsByUserId(
+            @PathVariable("userId") int userId,
+            @RequestParam(name = "status", required = false) String status
+    ) {
         try {
-            List<ItemEntity> result = itemServices.getItemsByUserId(userId);
+            List<ItemEntity> result = null;
+            if (status != null && !status.isEmpty()) {
+                result = itemServices.loadItemsByUserIdAndStatus(userId, status);
+            } else {
+                result = itemServices.getItemsByUserId(userId);
+            }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
@@ -162,6 +165,32 @@ public class ItemController {
     public ResponseEntity loadItemsByStatus(@PathVariable("status") String status) {
         try {
             List<ItemEntity> result = itemServices.loadItemsByStatus(status);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    private ResponseEntity getItemsByStatus(String status) {
+        try {
+            List<ItemEntity> result = itemServices.loadItemsByStatus(status);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    private ResponseEntity getAllItems() {
+        try {
+            List<ItemEntity> result = itemServices.loadAllItems();
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {

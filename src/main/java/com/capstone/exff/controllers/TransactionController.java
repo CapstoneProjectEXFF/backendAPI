@@ -18,8 +18,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.capstone.exff.constants.ExffStatus.ITEM_DONATED;
@@ -45,7 +43,7 @@ public class TransactionController {
         List<TransactionEntity> transactionEntities;
         try {
             int receiverId = getLoginUserId(servletRequest);
-            transactionEntities = transactionService.getTopTransactionByReceiverId(receiverId);
+            transactionEntities = transactionService.getTopTransactionByUserId(receiverId);
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -136,15 +134,23 @@ public class TransactionController {
                                             ServletRequest servletRequest) {
         try {
             int loginUserId = getLoginUserId(servletRequest);
+            TransactionDetails transactionDetails = new TransactionDetails();
+            transactionDetails.setTransactionDetails(requestWrapper.getDetails());
+//            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
+            List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
+            if (!unavailableItems.isEmpty()) {
+                return new ResponseEntity(new ExffMessage("There are unavailable items: " + unavailableItems), HttpStatus.OK);
+            }
             TransactionEntity transaction = requestWrapper.getTransaction();
             if (loginUserId == transaction.getReceiverId()) {
-                swapUserId(transaction);
+                transaction.setStatus(ExffStatus.TRANSACTION_RESEND);
+            } else {
+                transaction.setStatus(ExffStatus.TRANSACTION_SEND);
             }
             transaction.setModifyTime(new Timestamp(System.currentTimeMillis()));
             transactionService.updateTransaction(transaction);
 
-            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
-            transactionDetails.stream()
+            transactionDetails.getTransactionDetails().stream()
                     .forEach((transactionDetail) -> {
                         if (transactionDetail.getTransactionId() == null)
                             transactionDetailServices.deleteTransactionDetail(transactionDetail);
@@ -165,22 +171,17 @@ public class TransactionController {
         try {
             int loginUserId = getLoginUserId(servletRequest);
             TransactionEntity transaction = requestWrapper.getTransaction();
+            transaction = transactionService.getTransactionByTransactionId(transaction.getId());
             if (loginUserId == transaction.getReceiverId()) {
                 transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
                 transactionService.deleteTransaction(transaction);
             } else {
-                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
             }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
-    }
-
-    private void swapUserId(TransactionEntity transaction) {
-        Integer tmpSenderId = transaction.getSenderId();
-        transaction.setSenderId(transaction.getReceiverId());
-        transaction.setReceiverId(tmpSenderId);
     }
 
     private List<ItemEntity> verifyItemsAvailabity(List<Integer> itemIds) {

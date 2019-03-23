@@ -60,7 +60,7 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
             TransactionDetailEntity detailEntity = transactionDetailRepository.getOne(t);
             if (detailEntity != null) {
                 ItemEntity item = itemRepository.getItemById(detailEntity.getItemId());
-                item.setStatus(ExffStatus.ITEM_DISABLE);
+                item.setStatus(ExffStatus.ITEM_TRADED);
                 try {
                     itemRepository.save(item);
                 } catch (Exception e) {

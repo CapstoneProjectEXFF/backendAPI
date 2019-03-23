@@ -27,6 +27,8 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Query("select i from ItemEntity i where i.status = :status")
     List<ItemEntity> loadItemsByStatus(String status);
 
+    List<ItemEntity> findAllByUserIdAndStatus(int userId, String status);
+  
     @Query("select i from ItemEntity i where i.userId = :userId and i.id In :ids")
     List<ItemEntity> userOwnedItems(int userId, List<Integer> ids);
 
@@ -34,5 +36,6 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Modifying
     @Query("update ItemEntity i set i.status = :newStatus where i.id in :ids")
     void updateStatusItems(String newStatus, List<Integer> ids);
+
 
 }

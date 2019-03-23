@@ -13,6 +13,7 @@ public class ExffStatus {
     public static final String TRANSACTION_DISABLE = "0";
     public static final String TRANSACTION_SEND = "1";
     public static final String TRANSACTION_DONE = "2";
+    public static final String TRANSACTION_RESEND = "4";
     public static final String TRANSACTION_DONATE = "3";
     public static final String RELATIONSHIP_SEND = "1";
     public static final String RELATIONSHIP_ACCEPTED = "2";
