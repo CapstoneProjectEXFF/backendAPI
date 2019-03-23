@@ -32,9 +32,6 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Query("select i from ItemEntity i where i.userId = :userId and i.id In :ids")
     List<ItemEntity> userOwnedItems(int userId, List<Integer> ids);
 
-//    @Query("update ItemEntity i set i.status = :newStatus where i.id = :id")
-//    ItemEntity updateStatusItem(String newStatus, int id);
-
     @Transactional
     @Modifying
     @Query("update ItemEntity i set i.status = :newStatus where i.id in :ids")

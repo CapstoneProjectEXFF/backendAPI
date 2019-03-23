@@ -29,4 +29,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     @Override
     void delete(TransactionEntity transactionEntity);
+
+    @Query("select t from TransactionEntity t where t.donationPostId = :donationPostId")
+    List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
 }

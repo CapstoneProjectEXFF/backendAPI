@@ -149,11 +149,6 @@ public class ItemServiceImpl implements ItemServices {
 
     @Override
     public void changeItemsStatus(String newStatus, List<Integer> itemIds) {
-//        List<ItemEntity> itemList = new ArrayList<>();
-//        for (int i = 0; i < itemIds.size(); i++){
-//            itemList.add(itemRepository.updateStatusItem(newStatus, itemIds.get(i)));
-//        }
-//        return itemList;
         itemRepository.updateStatusItems(newStatus, itemIds);
     }
 }

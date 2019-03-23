@@ -13,4 +13,5 @@ public interface TransactionServices {
     TransactionEntity getTransactionByTransactionId(int transactionId);
     boolean isValidTransaction(int userId, int transactionId);
     void confirmTransaction(int transactionId);
+    List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
 }

@@ -76,4 +76,9 @@ public class TransactionServicesImpl implements TransactionServices {
             }
         }
     }
+
+    @Override
+    public List<TransactionEntity> getTransactionByDonationPostId(int donationPostId) {
+        return transactionRepository.getTransactionByDonationPostId(donationPostId);
+    }
 }
