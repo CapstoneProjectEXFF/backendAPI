@@ -20,4 +20,8 @@ public interface ItemServices {
     List<ItemEntity> verifyItems(String status, List<Integer> ids);
     List<ItemEntity> getItemsByUserId(int userId);
     ItemEntity getItemById(int itemId);
+
+    List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds);
+
+    void changeItemsStatus(String newStatus, List<Integer> itemIds);
 }

@@ -35,7 +35,11 @@ public class TransactionServicesImpl implements TransactionServices {
         transaction.setSenderId(senderId);
         transaction.setCreateTime(createTime);
         transaction.setModifyTime(modifiedTime);
-        transaction.setStatus(ExffStatus.TRANSACTION_SEND);
+        if (transaction.getDonationPostId() != null){
+            transaction.setStatus(ExffStatus.TRANSACTION_DONATE);
+        } else {
+            transaction.setStatus(ExffStatus.TRANSACTION_SEND);
+        }
         TransactionEntity trans = transactionRepository.save(transaction);
         return trans.getId();
     }
@@ -72,5 +76,4 @@ public class TransactionServicesImpl implements TransactionServices {
             }
         }
     }
-
 }
