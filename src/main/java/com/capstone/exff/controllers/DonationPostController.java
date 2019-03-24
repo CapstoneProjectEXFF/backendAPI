@@ -37,11 +37,12 @@ public class DonationPostController {
     public ResponseEntity createDonationPost(@RequestBody Map<String, Object> body, ServletRequest servletRequest) {
         DonationPostEntity donationPostEntity;
         try {
+            String title = (String) body.get("title");
             String content = (String) body.get("content");
             String address = (String) body.get("address");
             int userId = getLoginUserId(servletRequest);
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
-            donationPostEntity = donationPostServices.createDonationPost(content, address, createTime, userId);
+            donationPostEntity = donationPostServices.createDonationPost(title, content, address, createTime, userId);
 
             ArrayList<String> url = (ArrayList<String>) body.get("urls");
             imageServices.saveImages(url, donationPostEntity.getId(), DONATION_TYPE);
@@ -56,6 +57,7 @@ public class DonationPostController {
     @Transactional
     public ResponseEntity updateDonationPost(@RequestBody Map<String, Object> body, @PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
+        String title = (String) body.get("title");
         String content = (String) body.get("content");
         String address = (String) body.get("address");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
@@ -72,10 +74,10 @@ public class DonationPostController {
             } else {
                 imageServices.saveImages(newUrls, id, DONATION_TYPE);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return donationPostServices.updateDonationPost(id, content, address, modifyTime, userId);
+        return donationPostServices.updateDonationPost(id, title, content, address, modifyTime, userId);
     }
 
     @DeleteMapping("/donationPost/{id:[\\d]+}")
@@ -104,13 +106,14 @@ public class DonationPostController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
     @GetMapping("/donationPost")
     public ResponseEntity getDonationPosts(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         try {
-            List<DonationPostEntity> result = donationPostServices.getDonationPosts(page,size);
+            List<DonationPostEntity> result = donationPostServices.getDonationPosts(page, size);
             if (result == null) {
                 return new ResponseEntity("no donation post found", HttpStatus.OK);
             } else {

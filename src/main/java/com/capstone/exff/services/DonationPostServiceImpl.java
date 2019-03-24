@@ -36,8 +36,9 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public DonationPostEntity createDonationPost(String content, String address, Timestamp createTime, int userId) {
+    public DonationPostEntity createDonationPost(String title, String content, String address, Timestamp createTime, int userId) {
         DonationPostEntity donationPostEntity = new DonationPostEntity();
+        donationPostEntity.setTitle(title);
         donationPostEntity.setContent(content);
         donationPostEntity.setAddress(address);
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
@@ -50,13 +51,14 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId) {
+    public ResponseEntity updateDonationPost(int id, String title, String content, String address, Timestamp modifyTime, int userId) {
         DonationPostEntity donationPostEntity = donationPostRepository.findById(id).get();
         DonationPostEntity newDonationPostEntity;
         if (donationPostEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (donationPostEntity.getUserId() == userId && !donationPostEntity.getStatus().equals(DONATION_POST_DISABLE)) {
+            donationPostEntity.setTitle(title);
             donationPostEntity.setContent(content);
             donationPostEntity.setAddress(address);
             donationPostEntity.setModifyTime(modifyTime);
