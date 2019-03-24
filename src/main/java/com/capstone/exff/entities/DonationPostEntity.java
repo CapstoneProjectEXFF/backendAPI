@@ -12,6 +12,7 @@ import java.util.Objects;
 @Table(name = "donation_post", schema = "exff")
 public class DonationPostEntity {
     private int id;
+    private String title;
     private String content;
     private String address;
     private String status;
@@ -30,6 +31,16 @@ public class DonationPostEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Basic
+    @Column(name = "title")
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Basic
