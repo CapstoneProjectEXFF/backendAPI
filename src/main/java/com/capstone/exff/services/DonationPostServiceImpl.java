@@ -38,6 +38,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
     @Override
     public DonationPostEntity createDonationPost(String title, String content, String address, Timestamp createTime, int userId) {
         DonationPostEntity donationPostEntity = new DonationPostEntity();
+
         donationPostEntity.setTitle(title);
         donationPostEntity.setContent(content);
         donationPostEntity.setAddress(address);
