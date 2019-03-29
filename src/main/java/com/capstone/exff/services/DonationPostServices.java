@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface DonationPostServices {
-    DonationPostEntity createDonationPost(String content, String address, Timestamp createTime, int userId);
-    ResponseEntity updateDonationPost(int id, String content, String address, Timestamp modifyTime, int userId);
+    DonationPostEntity createDonationPost(String title, String content, String address, Timestamp createTime, int userId);
+    ResponseEntity updateDonationPost(int id, String title, String content, String address, Timestamp modifyTime, int userId);
     DonationPostEntity getDonationPostById(int id);
     ResponseEntity removeDonationPost(int id, int userId);
     List<DonationPostEntity> getDonationPosts(int page, int size);
