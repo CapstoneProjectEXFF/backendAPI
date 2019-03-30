@@ -15,6 +15,8 @@ public class RelationshipEntity {
     private Integer senderId;
     private Integer receiverId;
     private String status;
+    private UserEntity sender;
+    private UserEntity receiver;
 
     @Id
     @Column(name = "id")
@@ -55,6 +57,26 @@ public class RelationshipEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", insertable = false, updatable = false)
+    public UserEntity getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntity sender) {
+        this.sender = sender;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", insertable = false, updatable = false)
+    public UserEntity getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver;
     }
 
     @Override

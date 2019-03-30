@@ -26,11 +26,11 @@ public class JwtFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        if ("GET".equals(request.getMethod())) {
+        if ("GET".equals(request.getMethod()) && request.getHeader("Authorization") == null) {
             filterChain.doFilter(request, response);
         } else {
             String token = (String) request.getHeader("Authorization");
-            if (token != null) {
+            if (token != null && !token.equals("null")) {
                 UserEntity userEntity = TokenAuthenticationService.getUserFromToken(token);
                 if (userEntity != null) {
                     request.setAttribute("USER_INFO", userEntity);

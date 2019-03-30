@@ -29,6 +29,8 @@ public class ExffApplication {
         registrationBean.addUrlPatterns("/user/*", "/relationship");
         registrationBean.addUrlPatterns("/item/*");
         registrationBean.addUrlPatterns("/image/*");
+        registrationBean.addUrlPatterns("/transaction/*");
+        registrationBean.addUrlPatterns("/donationPost/*");
 
         return registrationBean;
     }
@@ -37,7 +39,7 @@ public class ExffApplication {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:9000");
+        config.addAllowedOrigin("*");
         config.setAllowedMethods(Arrays.asList("POST", "OPTIONS", "GET", "DELETE", "PUT", "OPTION"));
         config.setAllowedHeaders(Arrays.asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization"));
         source.registerCorsConfiguration("/**", config);

@@ -1,6 +1,5 @@
 package com.capstone.exff.services;
 
-import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -10,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.capstone.exff.constants.ExffStatus.*;
@@ -19,7 +19,7 @@ public class ItemServiceImpl implements ItemServices {
     private ItemRepository itemRepository;
 
     @Autowired
-    public ItemServiceImpl(ItemRepository itemRepository){
+    public ItemServiceImpl(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
     }
 
@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemServices {
     public ResponseEntity updateItem(int id, String name, int userId, String description, String address, String privacy, Timestamp modifyTime, int categoryId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity newItemEntity;
-        if (itemEntity == null){
+        if (itemEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemServices {
     public ResponseEntity removeItem(int id, int userId) {
         ItemEntity itemEntity = itemRepository.getOne(id);
         ItemEntity removedItemEntity;
-        if (itemEntity == null){
+        if (itemEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (itemEntity.getUserId() == userId && itemEntity.getStatus().equals(ITEM_ENABLE)) {
@@ -87,6 +87,26 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public ResponseEntity setItemUnavailable(int id) {
+        ItemEntity itemEntity = itemRepository.getOne(id);
+        ItemEntity newItemEntity;
+        if (itemEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (itemEntity.getStatus().equals(ITEM_ENABLE)) {
+            itemEntity.setStatus(ITEM_TRADED);
+            try {
+                newItemEntity = itemRepository.save(itemEntity);
+            } catch (Exception e) {
+                return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(newItemEntity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
+        }
+    }
+
+    @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
         return itemRepository.findItemsByItemName(itemName);
     }
@@ -97,6 +117,11 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public List<ItemEntity> verifyItems(String status, List<Integer> ids) {
+        return itemRepository.filterItems(status, ids);
+    }
+
+    @Override
     public List<ItemEntity> getItemsByUserId(int userId) {
         return itemRepository.findItemEntitiesByUserId(userId);
     }
@@ -104,5 +129,26 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public ItemEntity getItemById(int itemId) {
         return itemRepository.getItemById(itemId);
+    }
+
+    @Override
+    public List<ItemEntity> loadItemsByStatus(String status) {
+        return itemRepository.loadItemsByStatus(status);
+    }
+
+    @Override
+    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
+        return itemRepository.findAllByUserIdAndStatus(userId,status);
+    }
+
+
+
+    public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
+        return itemRepository.userOwnedItems(userId, itemIds);
+    }
+
+    @Override
+    public void changeItemsStatus(String newStatus, List<Integer> itemIds) {
+        itemRepository.updateStatusItems(newStatus, itemIds);
     }
 }

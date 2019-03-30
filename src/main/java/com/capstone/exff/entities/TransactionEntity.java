@@ -1,12 +1,13 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "transaction", schema = "exff")
-public class TransactionEntity {
+public class TransactionEntity implements Serializable {
     private int id;
     private Integer senderId;
     private Integer receiverId;
@@ -14,6 +15,8 @@ public class TransactionEntity {
     private String status;
     private Timestamp createTime;
     private Timestamp modifyTime;
+    private UserEntity sender;
+    private UserEntity receiver;
 
     @Id
     @Column(name = "id")
@@ -27,7 +30,7 @@ public class TransactionEntity {
     }
 
     @Basic
-    @Column(name = "sender_id")
+    @Column(name = "sender_id", updatable = false)
     public Integer getSenderId() {
         return senderId;
     }
@@ -37,7 +40,7 @@ public class TransactionEntity {
     }
 
     @Basic
-    @Column(name = "receiver_id")
+    @Column(name = "receiver_id", updatable = false)
     public Integer getReceiverId() {
         return receiverId;
     }
@@ -67,7 +70,7 @@ public class TransactionEntity {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", updatable = false)
     public Timestamp getCreateTime() {
         return createTime;
     }
@@ -84,6 +87,26 @@ public class TransactionEntity {
 
     public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntity sender) {
+        this.sender = sender;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver;
     }
 
     @Override

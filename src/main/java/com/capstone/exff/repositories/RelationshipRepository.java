@@ -1,6 +1,8 @@
 package com.capstone.exff.repositories;
 
 import com.capstone.exff.entities.RelationshipEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,12 +14,14 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
     @Override
     <S extends RelationshipEntity> S save(S s);
 
+    Page<RelationshipEntity> findAllByReceiverIdAndStatus(int receiverId, String status, Pageable pageable);
+
     @Override
     void deleteById(Integer integer);
 
     @Modifying
-    @Query("UPDATE RelationshipEntity r set r.status = :status where r.id = :id and (r.senderId = :userId or r.receiverId = :userId)")
-    void acceptRelationshipRequest(@Param("id") int id,@Param("status") String status, @Param("userId") int userId);
+    @Query("update RelationshipEntity r set r.status = :status where r.id = :id and r.receiverId = :userId")
+    void acceptRelationshipRequest(@Param("id") Integer id,@Param("status") String status, @Param("userId") Integer userId);
 
     @Query("SELECT r " +
             "FROM RelationshipEntity r " +

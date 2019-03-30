@@ -56,6 +56,29 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
+    public ResponseEntity changePassword(String phoneNumber, String oldPassword, String newPassword) {
+        UserEntity userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+        if (userEntity != null && passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            try {
+                userEntity.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(userEntity);
+            } catch (Exception e) {
+                return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put(
+                    TokenAuthenticationService.HEADER_STRING,
+                    TokenAuthenticationService.createToken(userEntity));
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } else if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
+            return new ResponseEntity<>(new ExffMessage("Wrong Password"), HttpStatus.BAD_REQUEST);
+        }
+
+        return null;
+    }
+
+
+    @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname) {
         return register(phoneNumber, password, fullname, this.userRole);
     }
@@ -77,6 +100,26 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
+    public ResponseEntity updateUserInfo(String phoneNumber, String fullName, String avatar) {
+        UserEntity userEntity = new UserEntity();
+        userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
+
+        if (userEntity != null) {
+            userEntity.setAvatar(avatar);
+            userEntity.setFullName(fullName);
+            userRepository.save(userEntity);
+            Map<String, Object> data = new HashMap<>();
+            data.put("User", userEntity);
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ExffMessage("Cannot Update"), HttpStatus.BAD_REQUEST);
+
+        }
+
+    }
+
+
+    @Override
     public ResponseEntity getAllUser() {
         List users;
         try {
@@ -85,6 +128,11 @@ public class UserServiceImpl implements UserServices {
             return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @Override
+    public UserEntity getUserById(int id) {
+        return userRepository.findById(id).get();
     }
 
     @Override

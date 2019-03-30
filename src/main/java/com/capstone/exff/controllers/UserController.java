@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +40,40 @@ public class UserController {
         return userServices.register(phoneNumber, password, fullName);
     }
 
+    @PostMapping("/user/updateInfo")
+    public ResponseEntity updateUserInfo(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
+        String phoneNumber = getPhoneNumber(servletRequest);
+        String fullName = body.get("fullName");
+        String avatar = body.get("avatar");
+        return userServices.updateUserInfo(phoneNumber, fullName, avatar);
+
+    }
+
+    @PostMapping("/user/changePassword")
+    public ResponseEntity changePassword(@RequestBody Map<String, String> body, ServletRequest servletRequest) {
+        String phoneNumber = getPhoneNumber(servletRequest);
+        String oldPassword = (String) body.get("oldPassword");
+        String newPassword = (String) body.get("newPassword");
+        return userServices.changePassword(phoneNumber, oldPassword, newPassword);
+
+    }
+
     @GetMapping("/user")
-    public ResponseEntity getAllUser(){
+    public ResponseEntity getAllUser() {
         return userServices.getAllUser();
+    }
+
+    @GetMapping("/user/{id:[\\d]+}")
+    public ResponseEntity getUserById(@PathVariable("id") int id, ServletRequest servletRequest) {
+        UserEntity userEntity = null;
+        try {
+            userEntity = userServices.getUserById(getUserId(servletRequest));
+        } catch (Exception e){
+        }
+        if (userEntity == null) {
+            return new ResponseEntity(new ExffMessage("Get fails"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userEntity, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/name")
@@ -57,17 +90,30 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/phone")
-    public ResponseEntity findUserByPhone(@Param("phone") String phone) {
+    @GetMapping(value = "/phone")
+    public ResponseEntity findUserByPhone(@RequestParam("phone") String phone) {
         try {
             UserEntity result = userServices.findUserByPhone(phone);
             if (result == null) {
-                return new ResponseEntity("no user found", HttpStatus.OK);
+                return new ResponseEntity("no user found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    private String getPhoneNumber(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        String phoneNumber = userEntity.getPhoneNumber();
+        return phoneNumber;
+    }
+    private int getUserId(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        int id = userEntity.getId();
+        return id;
     }
 }
