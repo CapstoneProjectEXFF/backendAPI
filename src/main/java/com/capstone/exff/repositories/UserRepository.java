@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     UserEntity findFirstByPhoneNumber(String phoneNumber);
@@ -16,6 +17,9 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     UserEntity findUserEntitiesByPhoneNumber(String phone);
 
     UserEntity findTop1ByPhoneNumber(String phoneNumber);
+
+    @Override
+    Optional<UserEntity> findById(Integer integer);
 
     @Override
     <S extends UserEntity> S save(S s);

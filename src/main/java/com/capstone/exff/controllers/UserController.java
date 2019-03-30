@@ -63,6 +63,19 @@ public class UserController {
         return userServices.getAllUser();
     }
 
+    @GetMapping("/user/{id:[\\d]+}")
+    public ResponseEntity getUserById(@PathVariable("id") int id, ServletRequest servletRequest) {
+        UserEntity userEntity = null;
+        try {
+            userEntity = userServices.getUserById(getUserId(servletRequest));
+        } catch (Exception e){
+        }
+        if (userEntity == null) {
+            return new ResponseEntity(new ExffMessage("Get fails"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userEntity, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/name")
     public ResponseEntity findUsersByName(@Param("name") String name) {
         try {
@@ -77,12 +90,12 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/phone")
-    public ResponseEntity findUserByPhone(@Param("phone") String phone) {
+    @GetMapping(value = "/phone")
+    public ResponseEntity findUserByPhone(@RequestParam("phone") String phone) {
         try {
             UserEntity result = userServices.findUserByPhone(phone);
             if (result == null) {
-                return new ResponseEntity("no user found", HttpStatus.OK);
+                return new ResponseEntity("no user found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
@@ -96,5 +109,11 @@ public class UserController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         String phoneNumber = userEntity.getPhoneNumber();
         return phoneNumber;
+    }
+    private int getUserId(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        int id = userEntity.getId();
+        return id;
     }
 }
