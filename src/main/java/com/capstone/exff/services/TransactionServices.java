@@ -25,5 +25,6 @@ public interface TransactionServices {
     void confirmTransaction(int transactionId);
     List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
 
+
     int getCountAllTransactionsByUserID(int userId);
 }
