@@ -32,4 +32,10 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
     @Query("select t from TransactionEntity t where t.donationPostId = :donationPostId")
     List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
+
+    List<TransactionEntity> findTop10BySenderIdAndStatusOrderByCreateTimeAsc(int receiverId, String status);
+
+    List<TransactionEntity> findBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
+
+    int countBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
 }

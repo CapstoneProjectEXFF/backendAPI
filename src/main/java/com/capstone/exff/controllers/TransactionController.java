@@ -50,6 +50,47 @@ public class TransactionController {
         return new ResponseEntity(transactionEntities, HttpStatus.OK);
     }
 
+    @GetMapping("/transaction/history/count")
+    public ResponseEntity getCountAllTransactionsByUserID(ServletRequest servletRequest) {
+        int i = 0;
+        try {
+            int userID = getLoginUserId(servletRequest);
+            i = transactionService.getCountAllTransactionsByUserID(userID);
+
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+
+        }
+        return new ResponseEntity(i, HttpStatus.OK);
+    }
+
+    @GetMapping("/transaction/history")
+    public ResponseEntity getAllTransactionsByUserID(ServletRequest servletRequest) {
+        List<TransactionEntity> transactionEntities;
+        try {
+            int userID = getLoginUserId(servletRequest);
+            transactionEntities = transactionService.getAllTransactionByUserID(userID);
+
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+
+        }
+        return new ResponseEntity(transactionEntities, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/transaction/confirm")
+    public ResponseEntity getTransactionBySenderId(ServletRequest servletRequest) {
+        List<TransactionEntity> transactionEntities;
+        try {
+            int senderId = getLoginUserId(servletRequest);
+            transactionEntities = transactionService.getTopTransactionBySenderId(senderId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionEntities, HttpStatus.OK);
+    }
+
     @GetMapping("/transaction/{id:[\\d]+}")
     public ResponseEntity getTransactionById(@PathVariable("id") int id, ServletRequest servletRequest) {
         TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
@@ -120,7 +161,7 @@ public class TransactionController {
                         transactionDetailServices.createDetailTrans(transactionId, t.getItemId(), t.getUserId());
 //                        itemServices.setItemUnavailable(t.getItemId());
                     });
-            if (transaction.getDonationPostId() != null){
+            if (transaction.getDonationPostId() != null) {
                 itemServices.changeItemsStatus(ITEM_DONATED, transactionDetails.getItemIds());
             }
         } catch (Exception e) {
@@ -207,7 +248,7 @@ public class TransactionController {
         try {
             List<TransactionEntity> transactionList = transactionService.getTransactionByDonationPostId(donationPostId);
             if (!transactionList.isEmpty()) {
-                for (int i = 0; i < transactionList.size(); i++){
+                for (int i = 0; i < transactionList.size(); i++) {
                     List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(transactionList.get(i).getId());
                     TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
                     transactionRequestWrapper.setDetails(details);

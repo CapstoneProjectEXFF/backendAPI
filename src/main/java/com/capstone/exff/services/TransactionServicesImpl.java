@@ -29,13 +29,23 @@ public class TransactionServicesImpl implements TransactionServices {
     }
 
     @Override
+    public List<TransactionEntity> getAllTransactionByUserID(int userId) {
+        return transactionRepository.findBySenderIdOrReceiverIdOrderByCreateTimeAsc(userId, userId);
+    }
+
+    @Override
+    public List<TransactionEntity> getTopTransactionBySenderId(int senderId) {
+        return transactionRepository.findTop10BySenderIdAndStatusOrderByCreateTimeAsc(senderId, ExffStatus.TRANSACTION_DONE);
+    }
+
+    @Override
     public int createTransaction(int senderId, TransactionEntity transaction) {
         Timestamp createTime = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedTime = createTime;
         transaction.setSenderId(senderId);
         transaction.setCreateTime(createTime);
         transaction.setModifyTime(modifiedTime);
-        if (transaction.getDonationPostId() != null){
+        if (transaction.getDonationPostId() != null) {
             transaction.setStatus(ExffStatus.TRANSACTION_DONATE);
         } else {
             transaction.setStatus(ExffStatus.TRANSACTION_SEND);
@@ -80,5 +90,10 @@ public class TransactionServicesImpl implements TransactionServices {
     @Override
     public List<TransactionEntity> getTransactionByDonationPostId(int donationPostId) {
         return transactionRepository.getTransactionByDonationPostId(donationPostId);
+    }
+
+    @Override
+    public int getCountAllTransactionsByUserID(int userId) {
+        return transactionRepository.countBySenderIdOrReceiverIdOrderByCreateTimeAsc(userId, userId);
     }
 }
