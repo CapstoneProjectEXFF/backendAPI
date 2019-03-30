@@ -27,7 +27,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
 
     @Override
     public DonationPostEntity getDonationPostById(int id) {
-        return donationPostRepository.findById(id).get();
+        return donationPostRepository.findById(id).orElse(null);
     }
 
     @Override

@@ -103,6 +103,7 @@ public class DonationPostController {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
