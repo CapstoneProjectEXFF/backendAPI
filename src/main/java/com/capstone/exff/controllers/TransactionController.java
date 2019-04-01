@@ -225,6 +225,24 @@ public class TransactionController {
         return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
     }
 
+    @DeleteMapping("/transaction/{id:[\\d]+}")
+    public ResponseEntity cancelTransactionByID(@PathVariable("id") int id,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+           TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
+            if (loginUserId == transaction.getReceiverId() || loginUserId == transaction.getSenderId()) {
+                transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
+                transactionService.deleteTransaction(transaction);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
+    }
+
     private List<ItemEntity> verifyItemsAvailabity(List<Integer> itemIds) {
         List<ItemEntity> result = itemServices.verifyItems(ExffStatus.ITEM_DISABLE, itemIds);
         return result;

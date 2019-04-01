@@ -81,7 +81,7 @@ public class ItemController {
             } else {
                 imageServices.saveImages(newUrls, id, ITEM_TYPE);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -118,7 +118,7 @@ public class ItemController {
 
     @GetMapping("/item")
     public ResponseEntity loadItems(@RequestParam(name = "status", required = false) String status) {
-        if (status != null && !status.isEmpty()){
+        if (status != null && !status.isEmpty()) {
             return getItemsByStatus(status);
         } else {
             return getAllItems();
