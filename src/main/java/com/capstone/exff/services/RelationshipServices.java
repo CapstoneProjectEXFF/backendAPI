@@ -11,4 +11,5 @@ public interface RelationshipServices {
     boolean acceptAddRelationshipRequest(int id, int userId);
     boolean removeRelationship(int id);
     List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable);
+    String checkFriend(int senderId, int receiverId);
 }

@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffRole;
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.repositories.RelationshipRepository;
@@ -58,7 +59,19 @@ public class RelationshipServiceImpl implements RelationshipServices {
 
     @Override
     public List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable) {
-        return relationshipRepository.findAllByReceiverIdAndStatus(userId, ExffStatus.RELATIONSHIP_SEND,pageable).getContent();
+        return relationshipRepository.findAllByReceiverIdAndStatus(userId, ExffStatus.RELATIONSHIP_SEND, pageable).getContent();
+    }
+
+    @Override
+    public String checkFriend(int senderId, int receiverId) {
+        try {
+            List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
+            if (res.isEmpty()) {
+                return "0";
+            } else return res.get(0).getStatus();
+        } catch (Exception e) {
+            return "-1";
+        }
     }
 
     @Transactional
