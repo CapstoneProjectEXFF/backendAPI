@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -78,12 +79,12 @@ public class RelationshipController {
     }
 
 
-    @GetMapping("/relationship/check")
-    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
+    @GetMapping("/relationship/{userId:[\\d]+}")
+    public ResponseEntity checkRelationship(ServletRequest servletRequest, @PathVariable("userId") int userId) {
         try {
             int senderId = getLoginUserId(servletRequest);
             System.out.println("test senderID " + senderId);
-            int receiverId = Integer.parseInt(body.get("receiverId"));
+            int receiverId = userId;
             String check = relationshipServices.checkFriend(senderId, receiverId);
             switch (check) {
                 case ExffStatus.RELATIONSHIP_ACCEPTED:
@@ -108,6 +109,22 @@ public class RelationshipController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
+    }
+
+    @DeleteMapping("/relationship/{id:[\\d]+}")
+    public ResponseEntity deleteRequest(ServletRequest servletRequest, @PathVariable("id") int id) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            RelationshipEntity relationshipEntity = relationshipServices.getRelationshipByRelationshipId(id);
+            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
+                relationshipServices.deleteRelationship(relationshipEntity);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
     }
 
 }

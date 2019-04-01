@@ -74,6 +74,16 @@ public class RelationshipServiceImpl implements RelationshipServices {
         }
     }
 
+    @Override
+    public RelationshipEntity getRelationshipByRelationshipId(int relationshipId) {
+        return relationshipRepository.findById(relationshipId).get();
+    }
+
+    @Override
+    public void deleteRelationship(RelationshipEntity relationshipEntity) {
+        relationshipRepository.delete(relationshipEntity);
+    }
+
     @Transactional
     public boolean updateRelationshipStatus(int id, String status, int userId) {
         try {

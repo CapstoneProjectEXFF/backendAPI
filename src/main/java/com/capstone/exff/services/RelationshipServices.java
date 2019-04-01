@@ -1,6 +1,7 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.entities.RelationshipEntity;
+import com.capstone.exff.entities.TransactionEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,6 @@ public interface RelationshipServices {
     boolean removeRelationship(int id);
     List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable);
     String checkFriend(int senderId, int receiverId);
+    RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
+    void deleteRelationship(RelationshipEntity relationshipEntity);
 }
