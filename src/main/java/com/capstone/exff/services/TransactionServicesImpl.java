@@ -72,7 +72,7 @@ public class TransactionServicesImpl implements TransactionServices {
     @Override
     public boolean isValidTransaction(int userId, int transactionId) {
         TransactionEntity transactionEntity = transactionRepository.getOne(transactionId);
-        return transactionEntity.getReceiverId() == userId;
+        return (transactionEntity.getReceiverId() == userId) || (transactionEntity.getSenderId() == userId);
     }
 
     @Override
