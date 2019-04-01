@@ -19,6 +19,8 @@ public interface UserServices {
 
     ResponseEntity getAllUser();
 
+    UserEntity getUserById(int id);
+
     List<UserEntity> findUsersByName(String name);
 
     UserEntity findUserByPhone(String phone);

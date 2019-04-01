@@ -131,6 +131,11 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
+    public UserEntity getUserById(int id) {
+        return userRepository.findById(id).get();
+    }
+
+    @Override
     public List<UserEntity> findUsersByName(String name) {
         return userRepository.findUserEntitiesByFullName(name);
     }

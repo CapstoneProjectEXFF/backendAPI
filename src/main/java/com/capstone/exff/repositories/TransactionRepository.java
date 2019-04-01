@@ -38,5 +38,4 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     List<TransactionEntity> findBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
 
     int countBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
-
 }
