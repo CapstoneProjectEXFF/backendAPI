@@ -16,16 +16,21 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     Page<RelationshipEntity> findAllByReceiverIdAndStatus(int receiverId, String status, Pageable pageable);
 
+    List<RelationshipEntity> findAllBySenderIdAndStatus(@Param("senderId") int senderId, @Param("status") String status);
+
+    List<RelationshipEntity> findAllBySenderIdOrReceiverIdAndStatus(@Param("senderId") int senderId, @Param("receiverId") int receiverId, @Param("status") String status);
+
     @Override
     void deleteById(Integer integer);
 
     @Modifying
     @Query("update RelationshipEntity r set r.status = :status where r.id = :id and r.receiverId = :userId")
-    void acceptRelationshipRequest(@Param("id") Integer id,@Param("status") String status, @Param("userId") Integer userId);
+    void acceptRelationshipRequest(@Param("id") Integer id, @Param("status") String status, @Param("userId") Integer userId);
 
     @Query("SELECT r " +
             "FROM RelationshipEntity r " +
             "WHERE (r.senderId = :senderId and r.receiverId = :receiverId) " +
             "OR (r.receiverId = :senderId and r.senderId = :receiverId) ")
     List<RelationshipEntity> findRelationshipEntitiesByUserId(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
+
 }

@@ -29,6 +29,31 @@ public class RelationshipController {
         this.relationshipServices = relationshipServices;
     }
 
+
+    @GetMapping("/relationship/accepted")
+    public ResponseEntity getAcceptedFriendRequestByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        List<RelationshipEntity> relationshipEntities;
+        try {
+            int userId = userEntity.getId();
+            relationshipEntities = relationshipServices.getAcceptedFriendRequestByUserId(userId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(relationshipEntities, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/friend")
+    public ResponseEntity getFriendsByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        List<RelationshipEntity> relationshipEntities;
+        try {
+            int userId = userEntity.getId();
+            relationshipEntities = relationshipServices.getFriendsByUserId(userId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(relationshipEntities, HttpStatus.OK);
+    }
+
     @GetMapping("/relationship")
     public ResponseEntity getRequestAddRelationship(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -105,7 +130,6 @@ public class RelationshipController {
 
     private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
@@ -126,5 +150,4 @@ public class RelationshipController {
         }
         return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
     }
-
 }

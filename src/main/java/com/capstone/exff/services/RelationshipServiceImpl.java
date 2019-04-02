@@ -63,6 +63,16 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
+    public List<RelationshipEntity> getAcceptedFriendRequestByUserId(int userId) {
+        return relationshipRepository.findAllBySenderIdAndStatus(userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<RelationshipEntity> getFriendsByUserId(int userId) {
+        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
     public String checkFriend(int senderId, int receiverId) {
         try {
             List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
