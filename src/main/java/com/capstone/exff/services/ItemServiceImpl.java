@@ -113,10 +113,9 @@ public class ItemServiceImpl implements ItemServices {
     }
 
 
-
     @Override
-    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int supercategoryId, int userId) {
-        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, supercategoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId) {
+        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
     @Override
