@@ -17,6 +17,9 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Query("select i from ItemEntity i where i.name like concat('%', :itemName, '%')")
     List<ItemEntity> findItemsByItemName(String itemName);
 
+    @Query("select i from ItemEntity i where i.name like concat('%', :itemName, '%') and i.status = :itemStatus and (i.categoryId = :categoryId or i.categoryId in (select r.id from CategoryEntity r where r.suppercategoryId = :supercategoryId)) and  (i.privacy = :itemPublic or (i.privacy = :itemPrivate  and (i.userId in(select r.senderId from RelationshipEntity r where r.receiverId = :userId and r.status = :friendStatus)or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :userId and r.status = :friendStatus))))")
+    List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int supercategoryId, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
+
     @Query("select i from ItemEntity i where i.id = :itemId")
     ItemEntity getItemById(int itemId);
 
@@ -42,13 +45,13 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "(i.privacy = :itemPrivate and (" +
             "i.userId in(select r.senderId from RelationshipEntity r where r.receiverId = :userId and r.status = :friendStatus) " +
             "or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :userId and r.status = :friendStatus)))")
-    List<ItemEntity> getAllItemWithPrivacy(int userId,String itemStatus,String itemPublic,String itemPrivate, String friendStatus);
+    List<ItemEntity> getAllItemWithPrivacy(int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
 
     @Query("select i from ItemEntity i where i.userId = :userId and i.status = :itemStatus and (i.privacy = :itemPublic or " +
             "(i.privacy = :itemPrivate  and (" +
             "i.userId in(select r.senderId from RelationshipEntity r where r.receiverId = :targetUserId and r.status = :friendStatus) " +
             "or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :targetUserId and r.status = :friendStatus))))")
-    List<ItemEntity> getAllItemByUserIdWithPrivacy(int userId, int targetUserId, String itemStatus,String itemPublic,String itemPrivate, String friendStatus);
+    List<ItemEntity> getAllItemByUserIdWithPrivacy(int userId, int targetUserId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
 
 
 }

@@ -18,6 +18,8 @@ public interface ItemServices {
 
     List<ItemEntity> findItemsByItemName(String itemName);
 
+    List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int supercategoryId, int userId);
+
     List<ItemEntity> loadAllItems();
 
     List<ItemEntity> loadItemsByStatus(String status);

@@ -112,6 +112,13 @@ public class ItemServiceImpl implements ItemServices {
         return itemRepository.findItemsByItemName(itemName);
     }
 
+
+
+    @Override
+    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int supercategoryId, int userId) {
+        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, supercategoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
     @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
@@ -147,6 +154,7 @@ public class ItemServiceImpl implements ItemServices {
         return itemRepository.getAllItemByUserIdWithPrivacy(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
+
     @Override
     public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
         return itemRepository.findAllByUserIdAndStatus(userId, status);
@@ -156,6 +164,7 @@ public class ItemServiceImpl implements ItemServices {
     public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
         return itemRepository.userOwnedItems(userId, itemIds);
     }
+
 
     @Override
     public void changeItemsStatus(String newStatus, List<Integer> itemIds) {

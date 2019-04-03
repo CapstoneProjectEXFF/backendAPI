@@ -110,6 +110,21 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/item/search/privacy")
+    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId, @RequestParam(value = "supercategoryId", required = false) Integer supercategoryId) {
+        try {
+            int userId = getLoginUserId(servletRequest);
+            List<ItemEntity> results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, supercategoryId, userId);
+            if (results.isEmpty()) {
+                return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(results, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
     private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
