@@ -50,9 +50,9 @@ public class RelationshipController {
         try {
             int senderId = userEntity.getId();
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            boolean res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
-            if (res) {
-                return new ResponseEntity(new ExffMessage("Relationship request has been created"), HttpStatus.OK);
+            RelationshipEntity res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
             } else {
                 return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
             }
@@ -78,22 +78,15 @@ public class RelationshipController {
     }
 
 
-    @GetMapping("/relationship/check")
+    @RequestMapping("/relationship/check")
     public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
         try {
             int senderId = getLoginUserId(servletRequest);
-            System.out.println("test senderID " + senderId);
+//            System.out.println("test senderID " + senderId);
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            String check = relationshipServices.checkFriend(senderId, receiverId);
-            switch (check) {
-                case ExffStatus.RELATIONSHIP_ACCEPTED:
-                    return new ResponseEntity(new ExffMessage("Friend"), HttpStatus.OK);
-                case "0":
-                    return new ResponseEntity(new ExffMessage("Not Friend"), HttpStatus.OK);
-                case ExffStatus.RELATIONSHIP_SEND:
-                    return new ResponseEntity(new ExffMessage("Request Sent"), HttpStatus.OK);
-                case "-1":
-                    return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
+            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
             }
         } catch (Exception e) {
             e.printStackTrace();
