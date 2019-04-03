@@ -143,6 +143,11 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId) {
+        return itemRepository.getAllItemByUserIdWithPrivacy(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
     public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
         return itemRepository.findAllByUserIdAndStatus(userId, status);
     }

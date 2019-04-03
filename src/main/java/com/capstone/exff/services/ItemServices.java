@@ -24,7 +24,7 @@ public interface ItemServices {
 
     List<ItemEntity> getAllItemWithPrivacy(int userId);
 
-
+    List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId);
 
     List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status);
 

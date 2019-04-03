@@ -1,5 +1,6 @@
 package com.capstone.exff.controllers;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ImageServices;
@@ -146,6 +147,27 @@ public class ItemController {
             ItemEntity result = itemServices.getItemById(id);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("user/{userId:[\\d]+}/item/privacy")
+    public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
+                                                      @PathVariable("userId") int userId) {
+        int targetUserId = getLoginUserId(servletRequest);
+        try {
+            List<ItemEntity> result = null;
+            if (targetUserId == userId) {
+                result = itemServices.loadItemsByUserIdAndStatus(userId, ExffStatus.ITEM_ENABLE);
+            } else {
+                result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
+            }
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }

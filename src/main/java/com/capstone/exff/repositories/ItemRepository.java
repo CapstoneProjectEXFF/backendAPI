@@ -44,4 +44,11 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :userId and r.status = :friendStatus)))")
     List<ItemEntity> getAllItemWithPrivacy(int userId,String itemStatus,String itemPublic,String itemPrivate, String friendStatus);
 
+    @Query("select i from ItemEntity i where i.userId = :userId and i.status = :itemStatus and (i.privacy = :itemPublic or " +
+            "(i.privacy = :itemPrivate  and (" +
+            "i.userId in(select r.senderId from RelationshipEntity r where r.receiverId = :targetUserId and r.status = :friendStatus) " +
+            "or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :targetUserId and r.status = :friendStatus))))")
+    List<ItemEntity> getAllItemByUserIdWithPrivacy(int userId, int targetUserId, String itemStatus,String itemPublic,String itemPrivate, String friendStatus);
+
+
 }
