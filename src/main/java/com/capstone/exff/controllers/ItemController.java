@@ -125,6 +125,21 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/item/privacy")
+    public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
+        try {
+            int userId = getLoginUserId(servletRequest);
+            List<ItemEntity> result = itemServices.getAllItemWithPrivacy(userId);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
     @GetMapping("/item/{id:[\\d]+}")
     public ResponseEntity getItemById(@PathVariable("id") int id) {
         try {
@@ -200,4 +215,6 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+
 }

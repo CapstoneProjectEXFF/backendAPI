@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -137,10 +138,14 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
-        return itemRepository.findAllByUserIdAndStatus(userId,status);
+    public List<ItemEntity> getAllItemWithPrivacy(int userId) {
+        return itemRepository.getAllItemWithPrivacy(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
+    @Override
+    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
+        return itemRepository.findAllByUserIdAndStatus(userId, status);
+    }
 
 
     public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
