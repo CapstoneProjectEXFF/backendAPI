@@ -47,10 +47,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return updateRelationshipStatus(id, ExffStatus.RELATIONSHIP_ACCEPTED, userId);
     }
 
+    @Transactional
     @Override
-    public boolean removeRelationship(int id) {
+    public boolean removeRelationship(int id, int userId) {
         try {
-            relationshipRepository.deleteById(id);
+            relationshipRepository.deleteByIdAndUserId(id, userId);
         } catch (Exception e) {
             return false;
         }

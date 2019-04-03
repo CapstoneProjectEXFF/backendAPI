@@ -16,8 +16,9 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     Page<RelationshipEntity> findAllByReceiverIdAndStatus(int receiverId, String status, Pageable pageable);
 
-    @Override
-    void deleteById(Integer integer);
+    @Modifying
+    @Query("delete from RelationshipEntity r where r.id = :id and (r.receiverId = :userId or r.senderId = :userId)")
+    void deleteByIdAndUserId(@Param("id") int id,@Param("userId") int userId);
 
     @Modifying
     @Query("update RelationshipEntity r set r.status = :status where r.id = :id and r.receiverId = :userId")
