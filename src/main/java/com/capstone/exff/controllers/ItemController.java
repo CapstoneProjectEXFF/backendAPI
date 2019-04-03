@@ -113,8 +113,14 @@ public class ItemController {
     @GetMapping("/item/search/privacy")
     public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId, @RequestParam(value = "supercategoryId", required = false) Integer supercategoryId) {
         try {
+            List<ItemEntity> results;
             int userId = getLoginUserId(servletRequest);
-            List<ItemEntity> results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, supercategoryId, userId);
+            if (categoryId == 0 && supercategoryId == 0) {
+                results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
+            } else {
+                results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, supercategoryId, userId);
+
+            }
             if (results.isEmpty()) {
                 return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
             } else {

@@ -120,6 +120,11 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
+    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId) {
+        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
     }
