@@ -102,6 +102,11 @@ public class RelationshipController {
 //            System.out.println("test senderID " + senderId);
             int id = Integer.parseInt(body.get("id"));
             boolean res = relationshipServices.removeRelationship(id, senderId);
+            if (res) {
+                return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
