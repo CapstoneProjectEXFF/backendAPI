@@ -182,22 +182,4 @@ public class RelationshipController {
         }
         return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
     }
-
-    @DeleteMapping("/relationship")
-    public ResponseEntity unfriend(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
-        try {
-            int loginUserId = getLoginUserId(servletRequest);
-            int firstID = Integer.parseInt(body.get("firstID"));
-            int secondID = Integer.parseInt(body.get("secondID"));
-            RelationshipEntity relationshipEntity = relationshipServices.getFriendRelationshipByUserId(firstID, secondID);
-            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
-                relationshipServices.deleteRelationship(relationshipEntity);
-            } else {
-                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
-    }
 }
