@@ -20,6 +20,8 @@ public interface RelationshipServices {
 
     List<RelationshipEntity> getFriendsByUserId(int userId);
 
+    int countFriendsByUserId(int userId);
+
     String checkFriend(int senderId, int receiverId);
 
     RelationshipEntity getRelationshipByRelationshipId(int relationshipId);

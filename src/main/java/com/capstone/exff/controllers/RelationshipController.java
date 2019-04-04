@@ -49,9 +49,21 @@ public class RelationshipController {
             int userId = userEntity.getId();
             relationshipEntities = relationshipServices.getFriendsByUserId(userId);
         } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(relationshipEntities, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/friend/count")
+    public ResponseEntity countFriendsByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        int count;
+        try {
+            int userId = userEntity.getId();
+            count = relationshipServices.countFriendsByUserId(userId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot count friend"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(count, HttpStatus.OK);
     }
 
     @GetMapping("/relationship")
