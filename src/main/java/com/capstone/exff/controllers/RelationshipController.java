@@ -166,20 +166,4 @@ public class RelationshipController {
         int userId = userEntity.getId();
         return userId;
     }
-
-    @DeleteMapping("/relationship/{id:[\\d]+}")
-    public ResponseEntity deleteRequest(ServletRequest servletRequest, @PathVariable("id") int id) {
-        try {
-            int loginUserId = getLoginUserId(servletRequest);
-            RelationshipEntity relationshipEntity = relationshipServices.getRelationshipByRelationshipId(id);
-            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
-                relationshipServices.deleteRelationship(relationshipEntity);
-            } else {
-                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
-    }
 }
