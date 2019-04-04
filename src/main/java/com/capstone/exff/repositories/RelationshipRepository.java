@@ -20,6 +20,12 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     List<RelationshipEntity> findAllBySenderIdOrReceiverIdAndStatus(@Param("senderId") int senderId, @Param("receiverId") int receiverId, @Param("status") String status);
 
+    @Query("SELECT r " +
+            "FROM RelationshipEntity r " +
+            "WHERE r.status = :status and (r.senderId = :senderId and r.receiverId = :receiverId) " +
+            "OR (r.receiverId = :senderId and r.senderId = :receiverId) ")
+    RelationshipEntity findFriendRelationshipByUserId(@Param("senderId") int senderId, @Param("receiverId") int receiverId, @Param("status") String status);
+
     @Override
     void deleteById(Integer integer);
 
@@ -32,5 +38,7 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
             "WHERE (r.senderId = :senderId and r.receiverId = :receiverId) " +
             "OR (r.receiverId = :senderId and r.senderId = :receiverId) ")
     List<RelationshipEntity> findRelationshipEntitiesByUserId(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
+
+
 
 }

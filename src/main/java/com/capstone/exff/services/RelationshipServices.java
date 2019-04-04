@@ -26,5 +26,7 @@ public interface RelationshipServices {
 
     RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
 
+    RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID);
+
     void deleteRelationship(RelationshipEntity relationshipEntity);
 }

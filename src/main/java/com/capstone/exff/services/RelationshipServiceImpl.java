@@ -95,6 +95,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
+    public RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID) {
+        return relationshipRepository.findFriendRelationshipByUserId(firstID, secondID, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
     public void deleteRelationship(RelationshipEntity relationshipEntity) {
         relationshipRepository.delete(relationshipEntity);
     }
