@@ -23,7 +23,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
-    public boolean sendAddRelationshipRequest(int senderId, int receiverId) {
+    public RelationshipEntity sendAddRelationshipRequest(int senderId, int receiverId) {
         RelationshipEntity entity = new RelationshipEntity();
         entity.setSenderId(senderId);
         entity.setReceiverId(receiverId);
@@ -31,13 +31,13 @@ public class RelationshipServiceImpl implements RelationshipServices {
         try {
             List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
             if (res.isEmpty())
-                relationshipRepository.save(entity);
+                entity = relationshipRepository.save(entity);
             else
-                return false;
+                return null;
         } catch (Exception e) {
-            return false;
+            return null;
         }
-        return true;
+        return entity;
     }
 
 
@@ -47,10 +47,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return updateRelationshipStatus(id, ExffStatus.RELATIONSHIP_ACCEPTED, userId);
     }
 
+    @Transactional
     @Override
-    public boolean removeRelationship(int id) {
+    public boolean removeRelationship(int id, int userId) {
         try {
-            relationshipRepository.deleteById(id);
+            relationshipRepository.deleteByIdAndUserId(id, userId);
         } catch (Exception e) {
             return false;
         }
@@ -78,14 +79,14 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
-    public String checkFriend(int senderId, int receiverId) {
+    public RelationshipEntity checkFriend(int senderId, int receiverId) {
         try {
             List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
             if (res.isEmpty()) {
-                return "0";
-            } else return res.get(0).getStatus();
+                return null;
+            } else return res.get(0);
         } catch (Exception e) {
-            return "-1";
+            return null;
         }
     }
 
