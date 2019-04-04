@@ -64,6 +64,21 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
+    public List<RelationshipEntity> getAcceptedFriendRequestByUserId(int userId) {
+        return relationshipRepository.findAllBySenderIdAndStatus(userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<RelationshipEntity> getFriendsByUserId(int userId) {
+        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public int countFriendsByUserId(int userId) {
+        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
+    }
+
+    @Override
     public RelationshipEntity checkFriend(int senderId, int receiverId) {
         try {
             List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
@@ -73,6 +88,21 @@ public class RelationshipServiceImpl implements RelationshipServices {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public RelationshipEntity getRelationshipByRelationshipId(int relationshipId) {
+        return relationshipRepository.findById(relationshipId).get();
+    }
+
+    @Override
+    public RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID) {
+        return relationshipRepository.findFriendRelationshipByUserId(firstID, secondID, ExffStatus.RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public void deleteRelationship(RelationshipEntity relationshipEntity) {
+        relationshipRepository.delete(relationshipEntity);
     }
 
     @Transactional

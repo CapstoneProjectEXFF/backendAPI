@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,52 @@ public class RelationshipController {
     @Autowired
     public RelationshipController(RelationshipServices relationshipServices) {
         this.relationshipServices = relationshipServices;
+    }
+
+
+    @GetMapping("/relationship/accepted")
+    public ResponseEntity getAcceptedFriendRequestByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        List<RelationshipEntity> relationshipEntities;
+        try {
+            int userId = userEntity.getId();
+            relationshipEntities = relationshipServices.getAcceptedFriendRequestByUserId(userId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(relationshipEntities, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/friend")
+    public ResponseEntity getFriendsByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        List<RelationshipEntity> relationshipEntities;
+        List<UserEntity> friendList = new ArrayList<>();
+        try {
+            int userId = userEntity.getId();
+            relationshipEntities = relationshipServices.getFriendsByUserId(userId);
+
+            for (int i = 0; i < relationshipEntities.size(); i++) {
+                if (relationshipEntities.get(i).getSenderId() == userId) {
+                    friendList.add(relationshipEntities.get(i).getReceiver());
+                } else {
+                    friendList.add(relationshipEntities.get(i).getSender());
+                }
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(friendList, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/friend/count")
+    public ResponseEntity countFriendsByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
+        int count;
+        try {
+            int userId = userEntity.getId();
+            count = relationshipServices.countFriendsByUserId(userId);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot count friend"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(count, HttpStatus.OK);
     }
 
     @GetMapping("/relationship")
@@ -78,7 +126,6 @@ public class RelationshipController {
         }
     }
 
-
     @RequestMapping("/relationship/check")
     public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
         try {
@@ -115,10 +162,42 @@ public class RelationshipController {
 
     private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
     }
 
+    @DeleteMapping("/relationship/{id:[\\d]+}")
+    public ResponseEntity deleteRequest(ServletRequest servletRequest, @PathVariable("id") int id) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            RelationshipEntity relationshipEntity = relationshipServices.getRelationshipByRelationshipId(id);
+            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
+                relationshipServices.deleteRelationship(relationshipEntity);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/relationship")
+    public ResponseEntity unfriend(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            int firstID = Integer.parseInt(body.get("firstID"));
+            int secondID = Integer.parseInt(body.get("secondID"));
+            RelationshipEntity relationshipEntity = relationshipServices.getFriendRelationshipByUserId(firstID, secondID);
+            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
+                relationshipServices.deleteRelationship(relationshipEntity);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
+    }
 }

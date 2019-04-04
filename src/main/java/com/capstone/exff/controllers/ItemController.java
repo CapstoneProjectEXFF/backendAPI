@@ -1,5 +1,6 @@
 package com.capstone.exff.controllers;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ImageServices;
@@ -109,6 +110,26 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/item/search/privacy")
+    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+        try {
+            List<ItemEntity> results;
+            int userId = getLoginUserId(servletRequest);
+            if (categoryId == 0) {
+                results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
+            } else {
+                results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId);
+            }
+            if (results.isEmpty()) {
+                return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(results, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
     private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
@@ -125,12 +146,48 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/item/privacy")
+    public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
+        try {
+            int userId = getLoginUserId(servletRequest);
+            List<ItemEntity> result = itemServices.getAllItemWithPrivacy(userId);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
     @GetMapping("/item/{id:[\\d]+}")
     public ResponseEntity getItemById(@PathVariable("id") int id) {
         try {
             ItemEntity result = itemServices.getItemById(id);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.OK);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("user/{userId:[\\d]+}/item/privacy")
+    public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
+                                                      @PathVariable("userId") int userId) {
+        int targetUserId = getLoginUserId(servletRequest);
+        try {
+            List<ItemEntity> result = null;
+            if (targetUserId == userId) {
+                result = itemServices.loadItemsByUserIdAndStatus(userId, ExffStatus.ITEM_ENABLE);
+            } else {
+                result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
+            }
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
@@ -200,4 +257,6 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+
 }

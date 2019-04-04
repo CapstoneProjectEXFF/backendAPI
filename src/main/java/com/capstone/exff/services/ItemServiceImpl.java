@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -111,6 +112,17 @@ public class ItemServiceImpl implements ItemServices {
         return itemRepository.findItemsByItemName(itemName);
     }
 
+
+    @Override
+    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId) {
+        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId) {
+        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
     @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
@@ -137,15 +149,26 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
-        return itemRepository.findAllByUserIdAndStatus(userId,status);
+    public List<ItemEntity> getAllItemWithPrivacy(int userId) {
+        return itemRepository.getAllItemWithPrivacy(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
+    @Override
+    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId) {
+        return itemRepository.getAllItemByUserIdWithPrivacy(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+
+    @Override
+    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
+        return itemRepository.findAllByUserIdAndStatus(userId, status);
+    }
 
 
     public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
         return itemRepository.userOwnedItems(userId, itemIds);
     }
+
 
     @Override
     public void changeItemsStatus(String newStatus, List<Integer> itemIds) {
