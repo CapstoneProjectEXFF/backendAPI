@@ -8,7 +8,7 @@ import java.util.Objects;
 public class CategoryEntity {
     private int id;
     private String name;
-    private Integer suppercategoryId;
+    private Integer supercategoryId;
 
     @Id
     @Column(name = "id")
@@ -33,12 +33,12 @@ public class CategoryEntity {
 
     @Basic
     @Column(name = "supercategory_id")
-    public Integer getSuppercategoryId() {
-        return suppercategoryId;
+    public Integer getSupercategoryId() {
+        return supercategoryId;
     }
 
-    public void setSuppercategoryId(Integer suppercategoryId) {
-        this.suppercategoryId = suppercategoryId;
+    public void setSupercategoryId(Integer suppercategoryId) {
+        this.supercategoryId = suppercategoryId;
     }
 
     @Override
@@ -48,12 +48,12 @@ public class CategoryEntity {
         CategoryEntity that = (CategoryEntity) o;
         return id == that.id &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(suppercategoryId, that.suppercategoryId);
+                Objects.equals(supercategoryId, that.supercategoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, suppercategoryId);
+        return Objects.hash(id, name, supercategoryId);
     }
 
 }
