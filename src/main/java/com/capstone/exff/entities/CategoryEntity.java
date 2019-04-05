@@ -32,7 +32,7 @@ public class CategoryEntity {
     }
 
     @Basic
-    @Column(name = "suppercategory_id")
+    @Column(name = "supercategory_id")
     public Integer getSuppercategoryId() {
         return suppercategoryId;
     }
