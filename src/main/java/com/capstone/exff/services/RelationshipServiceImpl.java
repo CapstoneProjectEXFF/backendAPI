@@ -25,7 +25,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
-    public RelationshipEntity sendAddRelationshipRequest(int senderId, int receiverId) {
+    public boolean sendAddRelationshipRequest(int senderId, int receiverId) {
         RelationshipEntity entity = new RelationshipEntity();
         entity.setSenderId(senderId);
         entity.setReceiverId(receiverId);
@@ -35,11 +35,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
             if (res.isEmpty())
                 entity = relationshipRepository.save(entity);
             else
-                return null;
+                return false;
         } catch (Exception e) {
-            return null;
+            return false;
         }
-        return entity;
+        return true;
     }
 
 
@@ -49,16 +49,21 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return updateRelationshipStatus(id, ExffStatus.RELATIONSHIP_ACCEPTED, userId);
     }
 
-    @Transactional
     @Override
-    public boolean removeRelationship(int id, int userId) {
-        try {
-            relationshipRepository.deleteByIdAndUserId(id, userId);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
+    public boolean removeRelationship(int id) {
+        return false;
     }
+
+//    @Transactional
+//    @Override
+//    public boolean removeRelationship(int id, int userId) {
+//        try {
+//            relationshipRepository.deleteByIdAndUserId(id, userId);
+//        } catch (Exception e) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable) {
@@ -80,17 +85,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
     }
 
-    @Override
-    public RelationshipEntity checkFriend(int senderId, int receiverId) {
-        try {
-            List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
-            if (res.isEmpty()) {
-                return null;
-            } else return res.get(0);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+
 
     @Override
     public RelationshipEntity getRelationshipByRelationshipId(int relationshipId) {

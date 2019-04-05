@@ -131,14 +131,13 @@ public class RelationshipController {
     }
 
 
-
     @PostMapping("/relationship")
     public ResponseEntity requestAddRelationship(@RequestBody Map<String, String> body, @RequestAttribute("USER_INFO") UserEntity userEntity) {
         try {
             int senderId = userEntity.getId();
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            RelationshipEntity res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
-            if (res != null) {
+            boolean res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
+            if (res != false) {
                 return new ResponseEntity(res, HttpStatus.OK);
             } else {
                 return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
@@ -164,29 +163,14 @@ public class RelationshipController {
         }
     }
 
-    @RequestMapping("/relationship/check")
-    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
-        try {
-            int senderId = getLoginUserId(servletRequest);
-//            System.out.println("test senderID " + senderId);
-            int receiverId = Integer.parseInt(body.get("receiverId"));
-            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
-            if (res != null) {
-                return new ResponseEntity(res, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
-    }
 
     @DeleteMapping("/relationship")
-    public ResponseEntity removeRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body){
+    public ResponseEntity removeRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
         try {
             int senderId = getLoginUserId(servletRequest);
 //            System.out.println("test senderID " + senderId);
             int id = Integer.parseInt(body.get("id"));
-            boolean res = relationshipServices.removeRelationship(id, senderId);
+            boolean res = relationshipServices.removeRelationship(id);
             if (res) {
                 return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
             } else {

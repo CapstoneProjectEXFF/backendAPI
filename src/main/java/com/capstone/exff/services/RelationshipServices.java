@@ -2,6 +2,7 @@ package com.capstone.exff.services;
 
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.TransactionEntity;
+import com.capstone.exff.entities.UserEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -22,11 +23,14 @@ public interface RelationshipServices {
 
     int countFriendsByUserId(int userId);
 
-    String checkFriend(int senderId, int receiverId);
 
     RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
 
     RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID);
 
     void deleteRelationship(RelationshipEntity relationshipEntity);
+
+    List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList);
+
+    List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
 }
