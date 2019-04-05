@@ -2,12 +2,9 @@ package com.capstone.exff.services;
 
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.TransactionEntity;
-import com.capstone.exff.entities.UserEntity;
-import org.apache.catalina.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface RelationshipServices {
@@ -32,9 +29,4 @@ public interface RelationshipServices {
     RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID);
 
     void deleteRelationship(RelationshipEntity relationshipEntity);
-
-    List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList);
-
-    List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
-
 }

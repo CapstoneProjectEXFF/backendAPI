@@ -28,8 +28,10 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
             "OR (r.receiverId = :senderId and r.senderId = :receiverId) ")
     RelationshipEntity findFriendRelationshipByUserId(@Param("senderId") int senderId, @Param("receiverId") int receiverId, @Param("status") String status);
 
-    @Override
-    void deleteById(Integer integer);
+    @Modifying
+    @Query("delete from RelationshipEntity r where r.id = :id and (r.receiverId = :userId or r.senderId = :userId)")
+    void deleteByIdAndUserId(@Param("id") int id,@Param("userId") int userId);
+
 
     @Modifying
     @Query("update RelationshipEntity r set r.status = :status where r.id = :id and r.receiverId = :userId")

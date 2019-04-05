@@ -3,6 +3,7 @@ package com.capstone.exff.controllers;
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.UserEntity;
+import com.capstone.exff.repositories.RelationshipRepository;
 import com.capstone.exff.services.RelationshipServices;
 import com.capstone.exff.services.UserServices;
 import com.capstone.exff.utilities.ExffMessage;
@@ -136,9 +137,9 @@ public class RelationshipController {
         try {
             int senderId = userEntity.getId();
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            boolean res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
-            if (res) {
-                return new ResponseEntity(new ExffMessage("Relationship request has been created"), HttpStatus.OK);
+            RelationshipEntity res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
             } else {
                 return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
             }
@@ -163,23 +164,15 @@ public class RelationshipController {
         }
     }
 
-
-    @GetMapping("/relationship/{userId:[\\d]+}")
-    public ResponseEntity checkRelationship(ServletRequest servletRequest, @PathVariable("userId") int userId) {
+    @RequestMapping("/relationship/check")
+    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
         try {
             int senderId = getLoginUserId(servletRequest);
-            System.out.println("test senderID " + senderId);
-            int receiverId = userId;
-            String check = relationshipServices.checkFriend(senderId, receiverId);
-            switch (check) {
-                case ExffStatus.RELATIONSHIP_ACCEPTED:
-                    return new ResponseEntity(new ExffMessage("Friend"), HttpStatus.OK);
-                case "0":
-                    return new ResponseEntity(new ExffMessage("Not Friend"), HttpStatus.OK);
-                case ExffStatus.RELATIONSHIP_SEND:
-                    return new ResponseEntity(new ExffMessage("Request Sent"), HttpStatus.OK);
-                case "-1":
-                    return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
+//            System.out.println("test senderID " + senderId);
+            int receiverId = Integer.parseInt(body.get("receiverId"));
+            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,6 +180,23 @@ public class RelationshipController {
         return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
     }
 
+    @DeleteMapping("/relationship")
+    public ResponseEntity removeRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body){
+        try {
+            int senderId = getLoginUserId(servletRequest);
+//            System.out.println("test senderID " + senderId);
+            int id = Integer.parseInt(body.get("id"));
+            boolean res = relationshipServices.removeRelationship(id, senderId);
+            if (res) {
+                return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+    }
 
     private int getLoginUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
