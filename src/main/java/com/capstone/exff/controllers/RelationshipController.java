@@ -4,6 +4,7 @@ import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.RelationshipServices;
+import com.capstone.exff.services.UserServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +25,12 @@ import java.util.Map;
 public class RelationshipController {
 
     private final RelationshipServices relationshipServices;
+    private final UserServices userServices;
 
     @Autowired
-    public RelationshipController(RelationshipServices relationshipServices) {
+    public RelationshipController(RelationshipServices relationshipServices, UserServices userServices) {
         this.relationshipServices = relationshipServices;
+        this.userServices = userServices;
     }
 
 
@@ -92,6 +95,41 @@ public class RelationshipController {
         }
         return new ResponseEntity(relationshipEntities, HttpStatus.OK);
     }
+
+    @PostMapping("/relationship/contact")
+    public ResponseEntity getUserFromContact(ServletRequest servletRequest, @RequestBody ArrayList<String> body) {
+        int userID = getLoginUserId(servletRequest);
+        List<UserEntity> allUser = new ArrayList<>();
+        List<UserEntity> userList = new ArrayList<>();
+        List<Integer> userIdList = new ArrayList<>();
+        try {
+            allUser = userServices.findUsersbyPhoneNumberList(body);
+            if (allUser != null) {
+                for (int i = 0; i < allUser.size(); i++) {
+                    userIdList.add(allUser.get(i).getId());
+                }
+                userList = relationshipServices.getNotFriendUserFromPhoneUserList(userID, userIdList);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity(new ExffMessage("Cannot import friend"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userList, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/explore")
+    public ResponseEntity getNewUsersToAddFriend(ServletRequest servletRequest) {
+        int userID = getLoginUserId(servletRequest);
+        List<UserEntity> userList = new ArrayList<>();
+        List<Integer> userIdList = new ArrayList<>();
+        try {
+            userList = relationshipServices.getNewUsersToAddFriendByUserId(userID);
+        } catch (Exception ex) {
+            return new ResponseEntity(new ExffMessage("Cannot Explore friend"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userList, HttpStatus.OK);
+    }
+
+
 
     @PostMapping("/relationship")
     public ResponseEntity requestAddRelationship(@RequestBody Map<String, String> body, @RequestAttribute("USER_INFO") UserEntity userEntity) {

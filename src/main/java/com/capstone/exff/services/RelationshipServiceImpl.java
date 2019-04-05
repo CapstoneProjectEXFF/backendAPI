@@ -3,6 +3,7 @@ package com.capstone.exff.services;
 import com.capstone.exff.constants.ExffRole;
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
+import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RelationshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -102,6 +104,16 @@ public class RelationshipServiceImpl implements RelationshipServices {
     @Override
     public void deleteRelationship(RelationshipEntity relationshipEntity) {
         relationshipRepository.delete(relationshipEntity);
+    }
+
+    @Override
+    public List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList) {
+        return relationshipRepository.getNotFriendUserFromPhoneUserList(userId, userIdList);
+    }
+
+    @Override
+    public List<UserEntity> getNewUsersToAddFriendByUserId(int userId) {
+        return relationshipRepository.getNewUsersToAddFriendByUserId(userId);
     }
 
     @Transactional

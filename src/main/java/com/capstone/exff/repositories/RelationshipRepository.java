@@ -1,6 +1,7 @@
 package com.capstone.exff.repositories;
 
 import com.capstone.exff.entities.RelationshipEntity;
+import com.capstone.exff.entities.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface RelationshipRepository extends CrudRepository<RelationshipEntity, Integer> {
@@ -39,6 +41,12 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
             "OR (r.receiverId = :senderId and r.senderId = :receiverId) ")
     List<RelationshipEntity> findRelationshipEntitiesByUserId(@Param("senderId") int senderId, @Param("receiverId") int receiverId);
 
+
+    @Query("SELECT i FROM UserEntity i WHERE i.id IN :ids AND i.id NOT IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.receiverId = :userId) AND i.id NOT IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.senderId = :userId)")
+    List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> ids);
+
+    @Query("SELECT i FROM UserEntity i WHERE i.id NOT IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.receiverId = :userId) AND i.id NOT IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.senderId = :userId)")
+    List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
 
 
 }

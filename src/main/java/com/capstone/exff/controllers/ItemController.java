@@ -110,30 +110,39 @@ public class ItemController {
         }
     }
 
-    @GetMapping("/item/search/privacy")
+    @GetMapping("/item/search")
     public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+        List<ItemEntity> results = new ArrayList<>();
         try {
-            List<ItemEntity> results;
             int userId = getLoginUserId(servletRequest);
-            if (categoryId == 0) {
-                results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
+            if (userId == 0) {
+                results = itemServices.findItemsByItemNameWithPrivacy(itemName);
             } else {
-                results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId);
-            }
-            if (results.isEmpty()) {
-                return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
-            } else {
-                return new ResponseEntity(results, HttpStatus.OK);
+                if (categoryId == 0) {
+                    results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
+                } else {
+                    results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId);
+                }
             }
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
+        if (results.isEmpty()) {
+            return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity(results, HttpStatus.OK);
+        }
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-        int userId = userEntity.getId();
+        int userId = 0;
+        try {
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+            userId = userEntity.getId();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return userId;
     }
 
