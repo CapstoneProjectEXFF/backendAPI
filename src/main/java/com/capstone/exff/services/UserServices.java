@@ -4,6 +4,7 @@ import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface UserServices {
@@ -24,4 +25,7 @@ public interface UserServices {
     List<UserEntity> findUsersByName(String name);
 
     UserEntity findUserByPhone(String phone);
+
+    List<UserEntity> findUsersbyPhoneNumberList(ArrayList<String> phoneNumberList);
+
 }

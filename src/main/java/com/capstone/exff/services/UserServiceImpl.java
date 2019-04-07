@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserServices {
@@ -143,6 +140,11 @@ public class UserServiceImpl implements UserServices {
     @Override
     public UserEntity findUserByPhone(String phone) {
         return userRepository.findUserEntitiesByPhoneNumber(phone);
+    }
+
+    @Override
+    public List<UserEntity> findUsersbyPhoneNumberList(ArrayList<String> phoneNumberList) {
+        return userRepository.findByPhoneNumberInAndStatus(phoneNumberList, ExffStatus.USER_ENABLE);
     }
 
 
