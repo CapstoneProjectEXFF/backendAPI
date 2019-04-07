@@ -116,7 +116,11 @@ public class ItemController {
         try {
             int userId = getLoginUserId(servletRequest);
             if (userId == 0) {
-                results = itemServices.findItemsByItemNameWithPrivacy(itemName);
+                if(categoryId != 0) {
+                    results = itemServices.findItemsByItemNameWithPrivacy(itemName, categoryId);
+                } else {
+                    results = itemServices.findItemsByItemName(itemName);
+                }
             } else {
                 if (categoryId == 0) {
                     results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
@@ -147,16 +151,21 @@ public class ItemController {
 
     @GetMapping("/item")
     public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
+        List<ItemEntity> result;
         try {
             int userId = getLoginUserId(servletRequest);
-            List<ItemEntity> result = itemServices.getAllItemWithPrivacy(userId);
-            if (result == null) {
-                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            if (userId != 0) {
+                result = itemServices.getAllItemWithPrivacy(userId);
             } else {
-                return new ResponseEntity(result, HttpStatus.OK);
+                result = itemServices.loadAllItemsWithPublicPrivacy();
             }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        if (result == null) {
+            return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity(result, HttpStatus.OK);
         }
     }
 

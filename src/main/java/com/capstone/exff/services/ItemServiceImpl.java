@@ -109,7 +109,7 @@ public class ItemServiceImpl implements ItemServices {
 
     @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
-        return itemRepository.findItemsByItemName(itemName);
+        return itemRepository.findItemsByItemName(itemName,ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
 
@@ -119,18 +119,18 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId) {
-        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
-    }
-
-    @Override
-    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName) {
-        return itemRepository.findItemsByItemNameWithPrivacy(itemName, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int categoryId) {
+        return itemRepository.findItemsByItemNameandCategoryWithPrivacy(itemName, categoryId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
     @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
+    }
+
+    @Override
+    public List<ItemEntity> loadAllItemsWithPublicPrivacy() {
+        return itemRepository.findAllByStatusAndPrivacy(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
     @Override

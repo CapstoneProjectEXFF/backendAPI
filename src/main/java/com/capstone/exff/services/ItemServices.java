@@ -20,11 +20,12 @@ public interface ItemServices {
 
     List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId);
 
-    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName,  int userId);
+    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName,  int categoryId);
 
-    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName);
 
     List<ItemEntity> loadAllItems();
+
+    List<ItemEntity> loadAllItemsWithPublicPrivacy();
 
     List<ItemEntity> loadItemsByStatus(String status);
 

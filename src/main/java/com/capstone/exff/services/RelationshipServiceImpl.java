@@ -1,17 +1,14 @@
 package com.capstone.exff.services;
 
-import com.capstone.exff.constants.ExffRole;
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RelationshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,7 +22,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
-    public boolean sendAddRelationshipRequest(int senderId, int receiverId) {
+    public RelationshipEntity sendAddRelationshipRequest(int senderId, int receiverId) {
         RelationshipEntity entity = new RelationshipEntity();
         entity.setSenderId(senderId);
         entity.setReceiverId(receiverId);
@@ -35,11 +32,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
             if (res.isEmpty())
                 entity = relationshipRepository.save(entity);
             else
-                return false;
+                return null;
         } catch (Exception e) {
-            return false;
+            return null;
         }
-        return true;
+        return entity;
     }
 
 
@@ -49,21 +46,18 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return updateRelationshipStatus(id, ExffStatus.RELATIONSHIP_ACCEPTED, userId);
     }
 
+
+
+    @Transactional
     @Override
     public boolean removeRelationship(int id) {
-        return false;
+        try {
+            relationshipRepository.deleteById(id);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
-
-//    @Transactional
-//    @Override
-//    public boolean removeRelationship(int id, int userId) {
-//        try {
-//            relationshipRepository.deleteByIdAndUserId(id, userId);
-//        } catch (Exception e) {
-//            return false;
-//        }
-//        return true;
-//    }
 
     @Override
     public List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable) {
@@ -84,7 +78,6 @@ public class RelationshipServiceImpl implements RelationshipServices {
     public int countFriendsByUserId(int userId) {
         return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
     }
-
 
 
     @Override
@@ -110,6 +103,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
     @Override
     public List<UserEntity> getNewUsersToAddFriendByUserId(int userId) {
         return relationshipRepository.getNewUsersToAddFriendByUserId(userId);
+    }
+
+    @Override
+    public List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2) {
+        return relationshipRepository.getMutualFriends(userId1, userId2, ExffStatus.RELATIONSHIP_ACCEPTED);
     }
 
     @Transactional

@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class RelationshipController {
@@ -65,7 +63,7 @@ public class RelationshipController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(friendList, HttpStatus.OK);
+        return new ResponseEntity(relationshipEntities, HttpStatus.OK);
     }
 
     @GetMapping("/relationship/friend/count")
@@ -78,6 +76,21 @@ public class RelationshipController {
             return new ResponseEntity(new ExffMessage("Cannot count friend"), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/relationship/friend/mutual")
+    public ResponseEntity getMutual(@RequestAttribute("USER_INFO") UserEntity userEntity, @RequestBody Map<String, String> body) {
+        List<UserEntity> userEntityList;
+        List<UserEntity> friendList = new ArrayList<>();
+        try {
+            int userId = userEntity.getId();
+            int userId2 = Integer.parseInt(body.get("id"));
+            userEntityList = relationshipServices.getMutualFriendFromUserID(userId, userId2);
+
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userEntityList, HttpStatus.OK);
     }
 
     @GetMapping("/relationship")
@@ -121,14 +134,26 @@ public class RelationshipController {
     public ResponseEntity getNewUsersToAddFriend(ServletRequest servletRequest) {
         int userID = getLoginUserId(servletRequest);
         List<UserEntity> userList = new ArrayList<>();
-        List<Integer> userIdList = new ArrayList<>();
+        List<UserEntity> resultList = new ArrayList<>();
+        List<RelationshipWrapper> relationshipWrapperList = new ArrayList<>();
         try {
             userList = relationshipServices.getNewUsersToAddFriendByUserId(userID);
+            if (userList.size() != 0) {
+                for (int i = 0; i < userList.size(); i++) {
+                    relationshipWrapperList.add(new RelationshipWrapper(userList.get(i), relationshipServices.getMutualFriendFromUserID(userID, userList.get(i).getId()).size()));
+                }
+                Collections.sort(relationshipWrapperList, Collections.reverseOrder());
+                for (int i = 0; i < relationshipWrapperList.size(); i++) {
+                    resultList.add(relationshipWrapperList.get(i).getUser());
+                    System.out.println(relationshipWrapperList.get(i).getMutualFriendNumber());
+                }
+            }
         } catch (Exception ex) {
             return new ResponseEntity(new ExffMessage("Cannot Explore friend"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(userList, HttpStatus.OK);
+        return new ResponseEntity(resultList, HttpStatus.OK);
     }
+
 
 
     @PostMapping("/relationship")
@@ -136,8 +161,8 @@ public class RelationshipController {
         try {
             int senderId = userEntity.getId();
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            boolean res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
-            if (res != false) {
+            RelationshipEntity res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
+            if (res != null) {
                 return new ResponseEntity(res, HttpStatus.OK);
             } else {
                 return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
