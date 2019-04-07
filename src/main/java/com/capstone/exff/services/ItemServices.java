@@ -22,6 +22,8 @@ public interface ItemServices {
 
     List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName,  int userId);
 
+    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName);
+
     List<ItemEntity> loadAllItems();
 
     List<ItemEntity> loadItemsByStatus(String status);
