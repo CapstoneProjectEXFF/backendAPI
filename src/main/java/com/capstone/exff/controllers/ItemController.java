@@ -147,15 +147,6 @@ public class ItemController {
     }
 
     @GetMapping("/item")
-    public ResponseEntity loadItems(@RequestParam(name = "status", required = false) String status) {
-        if (status != null && !status.isEmpty()) {
-            return getItemsByStatus(status);
-        } else {
-            return getAllItems();
-        }
-    }
-
-    @GetMapping("/item/privacy")
     public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
         try {
             int userId = getLoginUserId(servletRequest);
