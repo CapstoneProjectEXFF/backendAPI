@@ -5,6 +5,7 @@ import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RelationshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +48,6 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
 
-
     @Transactional
     @Override
     public boolean removeRelationship(int id) {
@@ -57,6 +57,12 @@ public class RelationshipServiceImpl implements RelationshipServices {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return relationshipRepository.findByUserFullName(fullName, ExffStatus.RELATIONSHIP_ACCEPTED, pageable).getContent();
     }
 
     @Override
@@ -77,6 +83,18 @@ public class RelationshipServiceImpl implements RelationshipServices {
     @Override
     public int countFriendsByUserId(int userId) {
         return relationshipRepository.findFriendByUserId(userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
+    }
+
+    @Override
+    public RelationshipEntity checkFriend(int senderId, int receiverId) {
+        try {
+            List<RelationshipEntity> res = relationshipRepository.findRelationshipEntitiesByUserId(senderId, receiverId);
+            if (res.isEmpty()) {
+                return null;
+            } else return res.get(0);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 

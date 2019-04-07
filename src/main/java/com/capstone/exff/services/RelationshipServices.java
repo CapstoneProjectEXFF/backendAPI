@@ -13,6 +13,8 @@ public interface RelationshipServices {
 
     boolean removeRelationship(int id);
 
+    List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size);
+
     List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable);
 
     List<RelationshipEntity> getAcceptedFriendRequestByUserId(int userId);
@@ -21,6 +23,7 @@ public interface RelationshipServices {
 
     int countFriendsByUserId(int userId);
 
+    RelationshipEntity checkFriend(int senderId, int receiverId);
 
     RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
 

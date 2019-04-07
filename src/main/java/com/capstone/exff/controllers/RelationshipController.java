@@ -154,7 +154,21 @@ public class RelationshipController {
         return new ResponseEntity(resultList, HttpStatus.OK);
     }
 
-
+    @RequestMapping("/relationship/check")
+    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
+        try {
+            int senderId = getLoginUserId(servletRequest);
+//            System.out.println("test senderID " + senderId);
+            int receiverId = Integer.parseInt(body.get("receiverId"));
+            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
+    }
 
     @PostMapping("/relationship")
     public ResponseEntity requestAddRelationship(@RequestBody Map<String, String> body, @RequestAttribute("USER_INFO") UserEntity userEntity) {

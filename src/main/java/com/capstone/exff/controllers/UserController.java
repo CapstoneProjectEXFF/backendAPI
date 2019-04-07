@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/name")
-    public ResponseEntity findUsersByName(@Param("name") String name) {
+    public ResponseEntity findUsersByName(@RequestParam("name") String name) {
         try {
             List<UserEntity> results = userServices.findUsersByName(name);
             if (results.isEmpty()) {
