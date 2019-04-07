@@ -51,7 +51,7 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
     List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
 
     @Query("SELECT i FROM UserEntity i WHERE (i.id IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.status = :status AND r.receiverId = :userId1) OR i.id IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.status = :status AND r.senderId = :userId1))" +
-            " AND (i.id IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.status = :status AND r.receiverId = :userId2) OR i.id IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.status = :status AND r.senderId = :userId2)) ")
+            " AND (i.id IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.status = :status AND r.receiverId = :userId2) OR i.id IN  (SELECT r.receiverId FROM RelationshipEntity r WHERE r.status = :status AND r.senderId = :userId2)) ")
     List<UserEntity> getMutualFriends(int userId1, int userId2, String status);
 
 

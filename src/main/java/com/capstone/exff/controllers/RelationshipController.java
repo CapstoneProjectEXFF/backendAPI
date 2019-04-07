@@ -63,7 +63,7 @@ public class RelationshipController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(friendList, HttpStatus.OK);
+        return new ResponseEntity(relationshipEntities, HttpStatus.OK);
     }
 
     @GetMapping("/relationship/friend/count")
@@ -155,20 +155,14 @@ public class RelationshipController {
     }
 
 
-    private int getMutualFriendByUserId(int userId1, int userId2) {
-
-
-        return 0;
-    }
-
 
     @PostMapping("/relationship")
     public ResponseEntity requestAddRelationship(@RequestBody Map<String, String> body, @RequestAttribute("USER_INFO") UserEntity userEntity) {
         try {
             int senderId = userEntity.getId();
             int receiverId = Integer.parseInt(body.get("receiverId"));
-            boolean res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
-            if (res != false) {
+            RelationshipEntity res = relationshipServices.sendAddRelationshipRequest(senderId, receiverId);
+            if (res != null) {
                 return new ResponseEntity(res, HttpStatus.OK);
             } else {
                 return new ResponseEntity(new ExffMessage("Cannot create relationship request"), HttpStatus.BAD_REQUEST);
