@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class RelationshipController {
@@ -80,6 +78,21 @@ public class RelationshipController {
         return new ResponseEntity(count, HttpStatus.OK);
     }
 
+    @GetMapping("/relationship/friend/mutual")
+    public ResponseEntity getMutual(@RequestAttribute("USER_INFO") UserEntity userEntity, @RequestBody Map<String, String> body) {
+        List<UserEntity> userEntityList;
+        List<UserEntity> friendList = new ArrayList<>();
+        try {
+            int userId = userEntity.getId();
+            int userId2 = Integer.parseInt(body.get("id"));
+            userEntityList = relationshipServices.getMutualFriendFromUserID(userId, userId2);
+
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage("Cannot get relationship"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(userEntityList, HttpStatus.OK);
+    }
+
     @GetMapping("/relationship")
     public ResponseEntity getRequestAddRelationship(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -121,13 +134,31 @@ public class RelationshipController {
     public ResponseEntity getNewUsersToAddFriend(ServletRequest servletRequest) {
         int userID = getLoginUserId(servletRequest);
         List<UserEntity> userList = new ArrayList<>();
-        List<Integer> userIdList = new ArrayList<>();
+        List<UserEntity> resultList = new ArrayList<>();
+        List<RelationshipWrapper> relationshipWrapperList = new ArrayList<>();
         try {
             userList = relationshipServices.getNewUsersToAddFriendByUserId(userID);
+            if (userList.size() != 0) {
+                for (int i = 0; i < userList.size(); i++) {
+                    relationshipWrapperList.add(new RelationshipWrapper(userList.get(i), relationshipServices.getMutualFriendFromUserID(userID, userList.get(i).getId()).size()));
+                }
+                Collections.sort(relationshipWrapperList, Collections.reverseOrder());
+                for (int i = 0; i < relationshipWrapperList.size(); i++) {
+                    resultList.add(relationshipWrapperList.get(i).getUser());
+                    System.out.println(relationshipWrapperList.get(i).getMutualFriendNumber());
+                }
+            }
         } catch (Exception ex) {
             return new ResponseEntity(new ExffMessage("Cannot Explore friend"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(userList, HttpStatus.OK);
+        return new ResponseEntity(resultList, HttpStatus.OK);
+    }
+
+
+    private int getMutualFriendByUserId(int userId1, int userId2) {
+
+
+        return 0;
     }
 
 
@@ -187,39 +218,5 @@ public class RelationshipController {
         UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
         int userId = userEntity.getId();
         return userId;
-    }
-
-    @DeleteMapping("/relationship/{id:[\\d]+}")
-    public ResponseEntity deleteRequest(ServletRequest servletRequest, @PathVariable("id") int id) {
-        try {
-            int loginUserId = getLoginUserId(servletRequest);
-            RelationshipEntity relationshipEntity = relationshipServices.getRelationshipByRelationshipId(id);
-            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
-                relationshipServices.deleteRelationship(relationshipEntity);
-            } else {
-                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/relationship")
-    public ResponseEntity unfriend(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
-        try {
-            int loginUserId = getLoginUserId(servletRequest);
-            int firstID = Integer.parseInt(body.get("firstID"));
-            int secondID = Integer.parseInt(body.get("secondID"));
-            RelationshipEntity relationshipEntity = relationshipServices.getFriendRelationshipByUserId(firstID, secondID);
-            if (loginUserId == relationshipEntity.getReceiverId() || loginUserId == relationshipEntity.getSenderId()) {
-                relationshipServices.deleteRelationship(relationshipEntity);
-            } else {
-                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
     }
 }

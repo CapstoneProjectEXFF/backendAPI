@@ -30,7 +30,7 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     @Modifying
     @Query("delete from RelationshipEntity r where r.id = :id and (r.receiverId = :userId or r.senderId = :userId)")
-    void deleteByIdAndUserId(@Param("id") int id,@Param("userId") int userId);
+    void deleteByIdAndUserId(@Param("id") int id, @Param("userId") int userId);
 
 
     @Modifying
@@ -49,6 +49,10 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     @Query("SELECT i FROM UserEntity i WHERE i.id NOT IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.receiverId = :userId) AND i.id NOT IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.senderId = :userId)")
     List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
+
+    @Query("SELECT i FROM UserEntity i WHERE (i.id IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.status = :status AND r.receiverId = :userId1) OR i.id IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.status = :status AND r.senderId = :userId1))" +
+            " AND (i.id IN (SELECT r.senderId FROM RelationshipEntity r WHERE r.status = :status AND r.receiverId = :userId2) OR i.id IN (SELECT r.receiverId FROM RelationshipEntity r WHERE r.status = :status AND r.senderId = :userId2)) ")
+    List<UserEntity> getMutualFriends(int userId1, int userId2, String status);
 
 
 }

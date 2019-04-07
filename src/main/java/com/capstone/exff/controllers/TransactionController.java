@@ -136,7 +136,8 @@ public class TransactionController {
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
         TransactionDetails transactionDetails = new TransactionDetails();
-        int senderId = getLoginUserId(servletRequest);
+        //int senderId = getLoginUserId(servletRequest);
+        int senderId = requestWrapper.getTransaction().getSenderId();
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
         List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
         List<ItemEntity> userOwnedItems = checkUserOwnedItem(senderId, transactionDetails.getItemIds());
@@ -167,7 +168,7 @@ public class TransactionController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity(new ExffMessage("Sended"), HttpStatus.OK);
+        return new ResponseEntity(new ExffMessage("Sent"), HttpStatus.OK);
     }
 
     @PutMapping("/transaction")

@@ -33,4 +33,6 @@ public interface RelationshipServices {
     List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList);
 
     List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
+
+    List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2);
 }

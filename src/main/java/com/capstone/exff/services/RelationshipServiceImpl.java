@@ -86,7 +86,6 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
 
-
     @Override
     public RelationshipEntity getRelationshipByRelationshipId(int relationshipId) {
         return relationshipRepository.findById(relationshipId).get();
@@ -110,6 +109,11 @@ public class RelationshipServiceImpl implements RelationshipServices {
     @Override
     public List<UserEntity> getNewUsersToAddFriendByUserId(int userId) {
         return relationshipRepository.getNewUsersToAddFriendByUserId(userId);
+    }
+
+    @Override
+    public List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2) {
+        return relationshipRepository.getMutualFriends(userId1, userId2, ExffStatus.RELATIONSHIP_ACCEPTED);
     }
 
     @Transactional
