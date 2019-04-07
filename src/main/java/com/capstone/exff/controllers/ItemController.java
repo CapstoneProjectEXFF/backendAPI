@@ -132,7 +132,7 @@ public class ItemController {
             return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
         if (results.isEmpty()) {
-            return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
+            return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity(results, HttpStatus.OK);
         }
