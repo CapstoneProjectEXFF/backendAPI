@@ -117,7 +117,7 @@ public class ItemController {
             int userId = getLoginUserId(servletRequest);
             if (userId == 0) {
                 if(categoryId != 0) {
-                    results = itemServices.findItemsByItemNameWithPrivacy(itemName, categoryId);
+                    results = itemServices.findItemsByItemNamePublic(itemName, categoryId);
                 } else {
                     results = itemServices.findItemsByItemName(itemName);
                 }

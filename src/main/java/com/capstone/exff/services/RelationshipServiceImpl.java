@@ -71,12 +71,12 @@ public class RelationshipServiceImpl implements RelationshipServices {
 
     @Override
     public List<RelationshipEntity> getFriendsByUserId(int userId) {
-        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+        return relationshipRepository.findFriendByUserId(userId, ExffStatus.RELATIONSHIP_ACCEPTED);
     }
 
     @Override
     public int countFriendsByUserId(int userId) {
-        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
+        return relationshipRepository.findFriendByUserId(userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
     }
 
 
