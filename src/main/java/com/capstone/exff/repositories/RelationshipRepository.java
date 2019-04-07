@@ -20,7 +20,8 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     List<RelationshipEntity> findAllBySenderIdAndStatus(@Param("senderId") int senderId, @Param("status") String status);
 
-    List<RelationshipEntity> findAllBySenderIdOrReceiverIdAndStatus(@Param("senderId") int senderId, @Param("receiverId") int receiverId, @Param("status") String status);
+    @Query("SELECT r FROM RelationshipEntity r WHERE r.status = :status AND (r.receiverId = :userId OR r.senderId = :userId)")
+    List<RelationshipEntity> findFriendByUserId(int userId, String status);
 
     @Query("SELECT r " +
             "FROM RelationshipEntity r " +
