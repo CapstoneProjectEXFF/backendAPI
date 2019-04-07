@@ -111,7 +111,7 @@ public class ItemController {
     }
 
     @GetMapping("/item/search/privacy")
-    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
         try {
             List<ItemEntity> results;
             int userId = getLoginUserId(servletRequest);
@@ -130,12 +130,6 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest) {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-        int userId = userEntity.getId();
-        return userId;
-    }
 
     @GetMapping("/item")
     public ResponseEntity loadItems(@RequestParam(name = "status", required = false) String status) {
@@ -258,5 +252,10 @@ public class ItemController {
         }
     }
 
-
+    private int getLoginUserId(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        int userId = userEntity.getId();
+        return userId;
+    }
 }
