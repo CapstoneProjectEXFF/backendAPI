@@ -50,9 +50,9 @@ public class RelationshipServiceImpl implements RelationshipServices {
 
     @Transactional
     @Override
-    public boolean removeRelationship(int id) {
+    public boolean removeRelationship(int id, int userId) {
         try {
-            relationshipRepository.deleteById(id);
+            relationshipRepository.deleteByIdAndUserId(id, userId);
         } catch (Exception e) {
             return false;
         }
@@ -106,11 +106,6 @@ public class RelationshipServiceImpl implements RelationshipServices {
     @Override
     public RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID) {
         return relationshipRepository.findFriendRelationshipByUserId(firstID, secondID, ExffStatus.RELATIONSHIP_ACCEPTED);
-    }
-
-    @Override
-    public void deleteRelationship(RelationshipEntity relationshipEntity) {
-        relationshipRepository.delete(relationshipEntity);
     }
 
     @Override

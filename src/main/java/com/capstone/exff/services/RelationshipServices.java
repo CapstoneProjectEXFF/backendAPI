@@ -11,7 +11,7 @@ public interface RelationshipServices {
 
     boolean acceptAddRelationshipRequest(int id, int userId);
 
-    boolean removeRelationship(int id);
+    boolean removeRelationship(int id, int userId);
 
     List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size);
 
@@ -28,8 +28,6 @@ public interface RelationshipServices {
     RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
 
     RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID);
-
-    void deleteRelationship(RelationshipEntity relationshipEntity);
 
     List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList);
 

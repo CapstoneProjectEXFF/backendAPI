@@ -209,7 +209,7 @@ public class RelationshipController {
             int senderId = getLoginUserId(servletRequest);
 //            System.out.println("test senderID " + senderId);
             int id = Integer.parseInt(body.get("id"));
-            boolean res = relationshipServices.removeRelationship(id);
+            boolean res = relationshipServices.removeRelationship(id, senderId);
             if (res) {
                 return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
             } else {
