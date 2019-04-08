@@ -47,13 +47,26 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
 
-
     @Transactional
     @Override
     public boolean removeRelationship(int id) {
         try {
             relationshipRepository.deleteById(id);
         } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeRelationshipByUserId(int userId1, int userId2) {
+        try {
+            List<Integer> temp = relationshipRepository.getRelationshipByUserID(userId1, userId2);
+            for (int i = 0; i < temp.size(); i++) {
+                relationshipRepository.deleteById(temp.get(i));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return false;
         }
         return true;
