@@ -111,7 +111,7 @@ public class ItemController {
     }
 
     @GetMapping("/item/search")
-    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false, defaultValue = "0") Integer categoryId) {
         List<ItemEntity> results = new ArrayList<>();
         try {
             int userId = getLoginUserId(servletRequest);
@@ -132,7 +132,7 @@ public class ItemController {
             return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
         if (results.isEmpty()) {
-            return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.OK);
+            return new ResponseEntity(new ExffMessage("no item found"), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity(results, HttpStatus.OK);
         }
@@ -145,7 +145,6 @@ public class ItemController {
             UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
             userId = userEntity.getId();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
         return userId;
     }

@@ -99,4 +99,10 @@ public class DonationPostServiceImpl implements DonationPostServices {
         Pageable pageable = PageRequest.of(page, size);
         return donationPostRepository.findAll(pageable).getContent();
     }
+
+    @Override
+    public List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return donationPostRepository.findByContentContainingOrTitleContaining(searchValue,searchValue,pageable).getContent();
+    }
 }

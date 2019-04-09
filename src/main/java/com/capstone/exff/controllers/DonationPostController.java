@@ -116,7 +116,24 @@ public class DonationPostController {
         try {
             List<DonationPostEntity> result = donationPostServices.getDonationPosts(page, size);
             if (result == null) {
-                return new ResponseEntity("no donation post found", HttpStatus.OK);
+                return new ResponseEntity("no donation post found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+    @GetMapping("/donationPost/search")
+    public ResponseEntity searchDonationPosts(
+            @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        try {
+            List<DonationPostEntity> result = donationPostServices.searchDonationPosts(searchValue,page, size);
+            if (result == null) {
+                return new ResponseEntity("no donation post found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }

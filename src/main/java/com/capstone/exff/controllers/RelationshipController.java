@@ -194,7 +194,7 @@ public class RelationshipController {
             try {
                 int senderId = getLoginUserId(servletRequest);
                 int id = Integer.parseInt(body.get("id"));
-                boolean res = relationshipServices.removeRelationship(id);
+                boolean res = relationshipServices.removeRelationship(id, senderId);
                 if (res) {
                     return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
                 } else {
@@ -218,6 +218,7 @@ public class RelationshipController {
             }
         }
         return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {
@@ -227,3 +228,5 @@ public class RelationshipController {
         return userId;
     }
 }
+
+

@@ -20,6 +20,13 @@ public interface RelationshipRepository extends CrudRepository<RelationshipEntit
 
     Page<RelationshipEntity> findAllByReceiverIdAndStatus(int receiverId, String status, Pageable pageable);
 
+    @Query("select r " +
+            "from RelationshipEntity r " +
+            "where (r.sender.fullName like concat('%', :fullName, '%') " +
+            "or r.receiver.fullName like concat('%', :fullName, '%')) " +
+            "and r.status = :status")
+    Page<RelationshipEntity> findByUserFullName(@Param("fullName") String fullName, @Param("status") String status, Pageable pageable);
+
     List<RelationshipEntity> findAllBySenderIdAndStatus(@Param("senderId") int senderId, @Param("status") String status);
 
     @Query("SELECT r FROM RelationshipEntity r WHERE r.status = :status AND (r.receiverId = :userId OR r.senderId = :userId)")
