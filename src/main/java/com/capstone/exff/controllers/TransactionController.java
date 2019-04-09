@@ -175,7 +175,8 @@ public class TransactionController {
     public ResponseEntity updateTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
         try {
-            int loginUserId = getLoginUserId(servletRequest);
+            //int loginUserId = getLoginUserId(servletRequest);
+            int loginUserId = requestWrapper.getTransaction().getSenderId();
             TransactionDetails transactionDetails = new TransactionDetails();
             transactionDetails.setTransactionDetails(requestWrapper.getDetails());
 //            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
