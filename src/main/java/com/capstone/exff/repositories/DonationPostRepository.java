@@ -16,6 +16,8 @@ public interface DonationPostRepository extends JpaRepository<DonationPostEntity
     @Override
     Page<DonationPostEntity> findAll(Pageable pageable);
 
+    Page<DonationPostEntity> findByContentContainingOrTitleContaining(String content, String title, Pageable pageable);
+
     @Override
     Optional<DonationPostEntity> findById(Integer integer);
 

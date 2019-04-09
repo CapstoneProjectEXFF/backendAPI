@@ -1,8 +1,8 @@
 package com.capstone.exff.services;
 
-import com.capstone.exff.constants.ExffRole;
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.RelationshipEntity;
+import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.repositories.RelationshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +47,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
         return updateRelationshipStatus(id, ExffStatus.RELATIONSHIP_ACCEPTED, userId);
     }
 
+
     @Transactional
     @Override
     public boolean removeRelationship(int id, int userId) {
@@ -56,6 +57,12 @@ public class RelationshipServiceImpl implements RelationshipServices {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return relationshipRepository.findByUserFullName(fullName, ExffStatus.RELATIONSHIP_ACCEPTED, pageable).getContent();
     }
 
     @Override
@@ -70,12 +77,12 @@ public class RelationshipServiceImpl implements RelationshipServices {
 
     @Override
     public List<RelationshipEntity> getFriendsByUserId(int userId) {
-        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED);
+        return relationshipRepository.findFriendByUserId(userId, ExffStatus.RELATIONSHIP_ACCEPTED);
     }
 
     @Override
     public int countFriendsByUserId(int userId) {
-        return relationshipRepository.findAllBySenderIdOrReceiverIdAndStatus(userId, userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
+        return relationshipRepository.findFriendByUserId(userId, ExffStatus.RELATIONSHIP_ACCEPTED).size();
     }
 
     @Override
@@ -90,6 +97,7 @@ public class RelationshipServiceImpl implements RelationshipServices {
         }
     }
 
+
     @Override
     public RelationshipEntity getRelationshipByRelationshipId(int relationshipId) {
         return relationshipRepository.findById(relationshipId).get();
@@ -101,8 +109,18 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
-    public void deleteRelationship(RelationshipEntity relationshipEntity) {
-        relationshipRepository.delete(relationshipEntity);
+    public List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList) {
+        return relationshipRepository.getNotFriendUserFromPhoneUserList(userId, userIdList);
+    }
+
+    @Override
+    public List<UserEntity> getNewUsersToAddFriendByUserId(int userId) {
+        return relationshipRepository.getNewUsersToAddFriendByUserId(userId);
+    }
+
+    @Override
+    public List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2) {
+        return relationshipRepository.getMutualFriends(userId1, userId2, ExffStatus.RELATIONSHIP_ACCEPTED);
     }
 
     @Transactional
