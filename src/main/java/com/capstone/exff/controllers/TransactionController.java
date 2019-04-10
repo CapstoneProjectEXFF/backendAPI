@@ -6,6 +6,7 @@ import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.services.TransactionDetailServices;
 import com.capstone.exff.services.TransactionServices;
 import com.capstone.exff.utilities.ExffMessage;
+import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,6 +136,7 @@ public class TransactionController {
     @Transactional
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
+        int transId;
         TransactionDetails transactionDetails = new TransactionDetails();
         //int senderId = getLoginUserId(servletRequest);
         int senderId = requestWrapper.getTransaction().getSenderId();
@@ -165,10 +167,11 @@ public class TransactionController {
             if (transaction.getDonationPostId() != null) {
                 itemServices.changeItemsStatus(ITEM_DONATED, transactionDetails.getItemIds());
             }
+            transId = transactionId;
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity(new ExffMessage("Sent"), HttpStatus.OK);
+       return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
     }
 
     @PutMapping("/transaction")
