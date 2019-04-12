@@ -60,6 +60,20 @@ public class RelationshipServiceImpl implements RelationshipServices {
     }
 
     @Override
+    public boolean removeRelationshipByUserId(int userId1, int userId2) {
+        try {
+            List<Integer> temp = relationshipRepository.getRelationshipByUserID(userId1, userId2);
+            for (int i = 0; i < temp.size(); i++) {
+                relationshipRepository.deleteById(temp.get(i));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+
     public List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return relationshipRepository.findByUserFullName(fullName, ExffStatus.RELATIONSHIP_ACCEPTED, pageable).getContent();

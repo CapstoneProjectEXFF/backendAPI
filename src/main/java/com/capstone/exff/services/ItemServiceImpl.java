@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemServices {
             }
             return new ResponseEntity(removedItemEntity, HttpStatus.OK);
         } else {
-            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
+            return new ResponseEntity("Cannot access this item", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -106,6 +106,7 @@ public class ItemServiceImpl implements ItemServices {
             return new ResponseEntity("Cannot access this item", HttpStatus.OK);
         }
     }
+
 
     @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
@@ -165,14 +166,19 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId) {
-        return itemRepository.getAllItemByUserIdWithPrivacy(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int loginUserId) {
+        return itemRepository.getAllItemByUserIdWithPrivacyOrderByModifyTimeDesc(userId, loginUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<ItemEntity> getPublicItemsByUserId(int userId) {
+        return itemRepository.findByUserIdAndStatusAndPrivacyOrderByCreateTimeDesc(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
 
     @Override
     public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
-        return itemRepository.findAllByUserIdAndStatus(userId, status);
+        return itemRepository.findAllByUserIdAndStatusOrderByCreateTimeDesc(userId, status);
     }
 
 

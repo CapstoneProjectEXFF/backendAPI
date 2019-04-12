@@ -61,10 +61,10 @@ public class DonationPostController {
         String content = (String) body.get("content");
         String address = (String) body.get("address");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
-        ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
-        ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
 
         try {
+            ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
+            ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
             if (removedUrlIds.size() != 0) {
                 if (imageServices.removeImage(removedUrlIds, userId, DONATION_TYPE)) {
                     imageServices.saveImages(newUrls, id, DONATION_TYPE);
@@ -84,13 +84,6 @@ public class DonationPostController {
     public ResponseEntity removeDonationPost(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
         return donationPostServices.removeDonationPost(id, userId);
-    }
-
-    private int getLoginUserId(ServletRequest servletRequest) {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-        int userId = userEntity.getId();
-        return userId;
     }
 
     @GetMapping("/donationPost/{id:[\\d]+}")
@@ -124,6 +117,7 @@ public class DonationPostController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
     @GetMapping("/donationPost/search")
     public ResponseEntity searchDonationPosts(
             @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
@@ -131,7 +125,7 @@ public class DonationPostController {
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         try {
-            List<DonationPostEntity> result = donationPostServices.searchDonationPosts(searchValue,page, size);
+            List<DonationPostEntity> result = donationPostServices.searchDonationPosts(searchValue, page, size);
             if (result == null) {
                 return new ResponseEntity("no donation post found", HttpStatus.BAD_REQUEST);
             } else {
@@ -147,7 +141,7 @@ public class DonationPostController {
         try {
             List<DonationPostEntity> result = donationPostServices.getDonationPostByUserID(userId);
             if (result == null) {
-                return new ResponseEntity("no donation post found", HttpStatus.OK);
+                return new ResponseEntity("no donation post found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
@@ -155,4 +149,12 @@ public class DonationPostController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+    private int getLoginUserId(ServletRequest servletRequest) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+        int userId = userEntity.getId();
+        return userId;
+    }
+
 }

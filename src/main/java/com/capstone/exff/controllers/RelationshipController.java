@@ -32,6 +32,21 @@ public class RelationshipController {
         this.userServices = userServices;
     }
 
+    @RequestMapping("/relationship/check")
+    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
+        try {
+            int senderId = getLoginUserId(servletRequest);
+//            System.out.println("test senderID " + senderId);
+            int receiverId = Integer.parseInt(body.get("receiverId"));
+            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
+            if (res != null) {
+                return new ResponseEntity(res, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
+    }
 
     @GetMapping("/relationship/accepted")
     public ResponseEntity getAcceptedFriendRequestByUserId(@RequestAttribute("USER_INFO") UserEntity userEntity) {
@@ -154,21 +169,6 @@ public class RelationshipController {
         return new ResponseEntity(resultList, HttpStatus.OK);
     }
 
-    @RequestMapping("/relationship/check")
-    public ResponseEntity checkRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
-        try {
-            int senderId = getLoginUserId(servletRequest);
-//            System.out.println("test senderID " + senderId);
-            int receiverId = Integer.parseInt(body.get("receiverId"));
-            RelationshipEntity res = relationshipServices.checkFriend(senderId, receiverId);
-            if (res != null) {
-                return new ResponseEntity(res, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity(new ExffMessage("Can not check"), HttpStatus.BAD_REQUEST);
-    }
 
     @PostMapping("/relationship")
     public ResponseEntity requestAddRelationship(@RequestBody Map<String, String> body, @RequestAttribute("USER_INFO") UserEntity userEntity) {
@@ -205,20 +205,35 @@ public class RelationshipController {
 
     @DeleteMapping("/relationship")
     public ResponseEntity removeRelationship(ServletRequest servletRequest, @RequestBody Map<String, String> body) {
-        try {
-            int senderId = getLoginUserId(servletRequest);
-//            System.out.println("test senderID " + senderId);
-            int id = Integer.parseInt(body.get("id"));
-            boolean res = relationshipServices.removeRelationship(id, senderId);
-            if (res) {
-                return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
-            } else {
-                return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+        if (body.containsKey("id")) {
+            try {
+                int senderId = getLoginUserId(servletRequest);
+                int id = Integer.parseInt(body.get("id"));
+                boolean res = relationshipServices.removeRelationship(id, senderId);
+                if (res) {
+                    return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else if (body.containsKey("userId")) {
+            try {
+                int senderId = getLoginUserId(servletRequest);
+                int receiverId = Integer.parseInt(body.get("userId"));
+                boolean res = relationshipServices.removeRelationshipByUserId(senderId, receiverId);
+                if (res) {
+                    return new ResponseEntity(new ExffMessage("Done"), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         return new ResponseEntity(new ExffMessage("Fail"), HttpStatus.BAD_REQUEST);
+
     }
 
     private int getLoginUserId(ServletRequest servletRequest) {
@@ -228,3 +243,5 @@ public class RelationshipController {
         return userId;
     }
 }
+
+

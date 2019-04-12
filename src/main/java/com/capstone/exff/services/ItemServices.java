@@ -15,6 +15,7 @@ public interface ItemServices {
 
     ResponseEntity setItemUnavailable(int id);
 
+    List<ItemEntity> getPublicItemsByUserId(int userId);
 
     List<ItemEntity> findItemsByItemName(String itemName);
 

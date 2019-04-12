@@ -15,6 +15,8 @@ public interface RelationshipServices {
 
     List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size);
 
+    boolean removeRelationshipByUserId(int userId1, int userId2);
+
     List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable);
 
     List<RelationshipEntity> getAcceptedFriendRequestByUserId(int userId);
@@ -34,4 +36,6 @@ public interface RelationshipServices {
     List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
 
     List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2);
+
+
 }

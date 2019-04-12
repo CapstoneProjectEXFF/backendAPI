@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.capstone.exff.constants.ExffStatus.ITEM_ENABLE;
 import static com.capstone.exff.constants.ExffStatus.ITEM_TYPE;
 
 @RestController
@@ -85,11 +86,10 @@ public class ItemController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }
 
-    @DeleteMapping("item/{id:[\\d]+}")
+    @DeleteMapping("/item/{id:[\\d]+}")
     @Transactional
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);
@@ -116,7 +116,7 @@ public class ItemController {
         try {
             int userId = getLoginUserId(servletRequest);
             if (userId == 0) {
-                if(categoryId != 0) {
+                if (categoryId != 0) {
                     results = itemServices.findItemsByItemNamePublic(itemName, categoryId);
                 } else {
                     results = itemServices.findItemsByItemName(itemName);
@@ -138,16 +138,6 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest) {
-        int userId = 0;
-        try {
-            HttpServletRequest request = (HttpServletRequest) servletRequest;
-            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-            userId = userEntity.getId();
-        } catch (Exception e) {
-        }
-        return userId;
-    }
 
     @GetMapping("/item")
     public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
@@ -183,16 +173,18 @@ public class ItemController {
         }
     }
 
-    @GetMapping("user/{userId:[\\d]+}/item/privacy")
+    @GetMapping("/user/{userId:[\\d]+}/item")
     public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
                                                       @PathVariable("userId") int userId) {
-        int targetUserId = getLoginUserId(servletRequest);
+        int loginUserId = getLoginUserId(servletRequest);
         try {
             List<ItemEntity> result = null;
-            if (targetUserId == userId) {
-                result = itemServices.loadItemsByUserIdAndStatus(userId, ExffStatus.ITEM_ENABLE);
+            if (loginUserId == 0) {
+                result = itemServices.getPublicItemsByUserId(userId);
+            } else if (loginUserId == userId) {
+                result = itemServices.loadItemsByUserIdAndStatus(userId, ITEM_ENABLE);
             } else {
-                result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
+                result = itemServices.getItemsByUserIdwithPrivacy(userId, loginUserId);
             }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
@@ -204,18 +196,13 @@ public class ItemController {
         }
     }
 
-    @GetMapping("user/{userId:[\\d]+}/item")
-    public ResponseEntity getItemsByUserId(
-            @PathVariable("userId") int userId,
-            @RequestParam(name = "status", required = false) String status
-    ) {
+
+    @GetMapping("/user/my/item")
+    public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
+        int targetUserId = getLoginUserId(servletRequest);
+        List<ItemEntity> result = null;
         try {
-            List<ItemEntity> result = null;
-            if (status != null && !status.isEmpty()) {
-                result = itemServices.loadItemsByUserIdAndStatus(userId, status);
-            } else {
-                result = itemServices.getItemsByUserId(userId);
-            }
+            result = itemServices.loadItemsByUserIdAndStatus(targetUserId, status);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
@@ -224,7 +211,30 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+
     }
+//
+//    @GetMapping("/user/{userId:[\\d]+}/item")
+//    public ResponseEntity getItemsByUserId(
+//            @PathVariable("userId") int userId,
+//            @RequestParam(name = "status", required = false) String status
+//    ) {
+//        try {
+//            List<ItemEntity> result = null;
+//            if (status != null && !status.isEmpty()) {
+//                result = itemServices.loadItemsByUserIdAndStatus(userId, status);
+//            } else {
+//                result = itemServices.getItemsByUserId(userId);
+//            }
+//            if (result == null) {
+//                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+//            } else {
+//                return new ResponseEntity(result, HttpStatus.OK);
+//            }
+//        } catch (Exception e) {
+//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+//        }
+//    }
 
     @GetMapping("/itemStatus/{status}")
     public ResponseEntity loadItemsByStatus(@PathVariable("status") String status) {
@@ -238,6 +248,17 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    private int getLoginUserId(ServletRequest servletRequest) {
+        int userId = 0;
+        try {
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+            userId = userEntity.getId();
+        } catch (Exception e) {
+        }
+        return userId;
     }
 
     private ResponseEntity getItemsByStatus(String status) {
