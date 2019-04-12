@@ -166,8 +166,8 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId) {
-        return itemRepository.getAllItemByUserIdWithPrivacyOrderByModifyTimeDesc(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int loginUserId) {
+        return itemRepository.getAllItemByUserIdWithPrivacyOrderByModifyTimeDesc(userId, loginUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
     @Override

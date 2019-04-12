@@ -44,6 +44,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
         donationPostEntity.setAddress(address);
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
         donationPostEntity.setCreateTime(createTime);
+        donationPostEntity.setModifyTime(createTime);
         donationPostEntity.setUserId(userId);
 
         donationPostEntity = donationPostRepository.save(donationPostEntity);

@@ -138,16 +138,6 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest) {
-        int userId = 0;
-        try {
-            HttpServletRequest request = (HttpServletRequest) servletRequest;
-            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-            userId = userEntity.getId();
-        } catch (Exception e) {
-        }
-        return userId;
-    }
 
     @GetMapping("/item")
     public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
@@ -186,15 +176,15 @@ public class ItemController {
     @GetMapping("/user/{userId:[\\d]+}/item")
     public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
                                                       @PathVariable("userId") int userId) {
-        int targetUserId = getLoginUserId(servletRequest);
+        int loginUserId = getLoginUserId(servletRequest);
         try {
             List<ItemEntity> result = null;
-            if (targetUserId == 0) {
+            if (loginUserId == 0) {
                 result = itemServices.getPublicItemsByUserId(userId);
-            } else if (targetUserId == userId) {
+            } else if (loginUserId == userId) {
                 result = itemServices.loadItemsByUserIdAndStatus(userId, ITEM_ENABLE);
             } else {
-                result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
+                result = itemServices.getItemsByUserIdwithPrivacy(userId, loginUserId);
             }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
@@ -205,7 +195,6 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
-
 
 
     @GetMapping("/user/my/item")
@@ -259,6 +248,17 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    private int getLoginUserId(ServletRequest servletRequest) {
+        int userId = 0;
+        try {
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+            userId = userEntity.getId();
+        } catch (Exception e) {
+        }
+        return userId;
     }
 
     private ResponseEntity getItemsByStatus(String status) {
