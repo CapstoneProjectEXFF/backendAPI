@@ -69,10 +69,10 @@ public class ItemController {
         String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt((String) body.get("category"));
-        ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
-        ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
 
         try {
+            ArrayList<String> newUrls = (ArrayList<String>) body.get("newUrls");
+            ArrayList<Integer> removedUrlIds = (ArrayList<Integer>) body.get("removedUrlIds");
             if (removedUrlIds.size() != 0) {
                 if (imageServices.removeImage(removedUrlIds, userId, ITEM_TYPE)) {
                     imageServices.saveImages(newUrls, id, ITEM_TYPE);
