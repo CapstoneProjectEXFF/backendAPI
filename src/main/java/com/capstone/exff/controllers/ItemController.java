@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.capstone.exff.constants.ExffStatus.ITEM_ENABLE;
 import static com.capstone.exff.constants.ExffStatus.ITEM_TYPE;
 
 @RestController
@@ -191,7 +192,7 @@ public class ItemController {
             if (targetUserId == 0) {
                 result = itemServices.getPublicItemsByUserId(userId);
             } else if (targetUserId == userId) {
-                result = itemServices.loadItemsByUserIdAndStatus(userId, ExffStatus.ITEM_ENABLE);
+                result = itemServices.loadItemsByUserIdAndStatus(userId, ITEM_ENABLE);
             } else {
                 result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
             }
@@ -205,12 +206,14 @@ public class ItemController {
         }
     }
 
+
+
     @GetMapping("/user/my/item")
-    public ResponseEntity getMyItems(ServletRequest servletRequest) {
+    public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
         int targetUserId = getLoginUserId(servletRequest);
         List<ItemEntity> result = null;
         try {
-            result = itemServices.loadItemsByUserIdAndStatus(targetUserId, ExffStatus.ITEM_ENABLE);
+            result = itemServices.loadItemsByUserIdAndStatus(targetUserId, status);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
