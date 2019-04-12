@@ -13,6 +13,7 @@ public class UserEntity {
     private String password;
     private String fullName;
     private String avatar;
+    private String address;
     private String status;
     private RoleEntity roleByRoleId;
 
@@ -66,6 +67,16 @@ public class UserEntity {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    @Basic
+    @Column(name = "address")
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Basic

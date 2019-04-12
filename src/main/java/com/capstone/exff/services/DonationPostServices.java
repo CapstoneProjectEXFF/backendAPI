@@ -12,5 +12,6 @@ public interface DonationPostServices {
     DonationPostEntity getDonationPostById(int id);
     ResponseEntity removeDonationPost(int id, int userId);
     List<DonationPostEntity> getDonationPosts(int page, int size);
+    List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size);
     List<DonationPostEntity> getDonationPostByUserID(int userID);
 }

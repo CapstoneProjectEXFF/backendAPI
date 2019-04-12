@@ -29,6 +29,12 @@ public class TransactionDetailServicesImpl implements TransactionDetailServices 
     public TransactionDetailEntity createDetailTrans(int transactionId, int itemId, int userId) {
         TransactionDetailEntity detailEntity = new TransactionDetailEntity();
         detailEntity.setItemId(itemId);
+        ItemEntity item = itemRepository.getItemById(itemId);
+        item.setStatus(ExffStatus.ITEM_TRADED);
+        try {
+            itemRepository.save(item);
+        } catch (Exception e) {
+        }
         detailEntity.setUserId(userId);
         detailEntity.setTransactionId(transactionId);
         return transactionDetailRepository.save(detailEntity);

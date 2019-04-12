@@ -1,7 +1,6 @@
 package com.capstone.exff.seeders;
 
 import com.capstone.exff.constants.ExffRole;
-import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.CategoryEntity;
 import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
@@ -124,7 +123,7 @@ public class DatabaseSeeder {
                 for (Object name : arr) {
                     CategoryEntity categoryEntity = new CategoryEntity();
                     categoryEntity.setName((String) name);
-                    categoryEntity.setSuppercategoryId(superCategoryId);
+                    categoryEntity.setSupercategoryId(superCategoryId);
                     cateEntities.add(categoryEntity);
                 }
                 categoryRepository.saveAll(cateEntities);
@@ -138,7 +137,7 @@ public class DatabaseSeeder {
         if (userEntity == null) {
             RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_ADMIN);
             String adminPassword = "password00100";
-            userServices.register(adminAccount,adminPassword,"admin", roleEntity);
+            userServices.register(adminAccount,adminPassword,"admin", "", roleEntity);
         }
     }
 }

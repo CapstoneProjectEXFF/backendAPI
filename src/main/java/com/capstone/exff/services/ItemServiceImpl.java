@@ -1,5 +1,6 @@
 package com.capstone.exff.services;
 
+import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
@@ -82,7 +83,7 @@ public class ItemServiceImpl implements ItemServices {
             }
             return new ResponseEntity(removedItemEntity, HttpStatus.OK);
         } else {
-            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
+            return new ResponseEntity("Cannot access this item", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -106,14 +107,37 @@ public class ItemServiceImpl implements ItemServices {
         }
     }
 
+
     @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
-        return itemRepository.findItemsByItemName(itemName);
+        return itemRepository.findItemsByItemName(itemName, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    }
+
+
+    @Override
+    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId) {
+        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<ItemEntity> findItemsByItemNamePublic(String itemName, int categoryId) {
+        return itemRepository.findItemsByItemNameandCategoryWithPrivacy(itemName, categoryId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    }
+
+
+    @Override
+    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId) {
+        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
     @Override
     public List<ItemEntity> loadAllItems() {
         return itemRepository.findAll();
+    }
+
+    @Override
+    public List<ItemEntity> loadAllItemsWithPublicPrivacy() {
+        return itemRepository.findAllByStatusAndPrivacy(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
     @Override
@@ -137,15 +161,31 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
-        return itemRepository.findAllByUserIdAndStatus(userId,status);
+    public List<ItemEntity> getAllItemWithPrivacy(int userId) {
+        return itemRepository.getAllItemWithPrivacy(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
     }
 
+    @Override
+    public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int loginUserId) {
+        return itemRepository.getAllItemByUserIdWithPrivacyOrderByModifyTimeDesc(userId, loginUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<ItemEntity> getPublicItemsByUserId(int userId) {
+        return itemRepository.findByUserIdAndStatusAndPrivacyOrderByCreateTimeDesc(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    }
+
+
+    @Override
+    public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
+        return itemRepository.findAllByUserIdAndStatusOrderByCreateTimeDesc(userId, status);
+    }
 
 
     public List<ItemEntity> checkUserOwnedItems(int userId, List<Integer> itemIds) {
         return itemRepository.userOwnedItems(userId, itemIds);
     }
+
 
     @Override
     public void changeItemsStatus(String newStatus, List<Integer> itemIds) {

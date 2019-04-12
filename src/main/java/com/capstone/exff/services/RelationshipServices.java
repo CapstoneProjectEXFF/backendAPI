@@ -1,14 +1,41 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.entities.RelationshipEntity;
-import org.springframework.data.domain.PageRequest;
+import com.capstone.exff.entities.UserEntity;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface RelationshipServices {
-    boolean sendAddRelationshipRequest(int senderId, int receiverId);
+    RelationshipEntity sendAddRelationshipRequest(int senderId, int receiverId);
+
     boolean acceptAddRelationshipRequest(int id, int userId);
-    boolean removeRelationship(int id);
+
+    boolean removeRelationship(int id, int userId);
+
+    List<RelationshipEntity> getAcceptedRelationshipByFullname(String fullName, int page, int size);
+
+    boolean removeRelationshipByUserId(int userId1, int userId2);
+
     List<RelationshipEntity> getAddRelationshipRequest(int userId, Pageable pageable);
+
+    List<RelationshipEntity> getAcceptedFriendRequestByUserId(int userId);
+
+    List<RelationshipEntity> getFriendsByUserId(int userId);
+
+    int countFriendsByUserId(int userId);
+
+    RelationshipEntity checkFriend(int senderId, int receiverId);
+
+    RelationshipEntity getRelationshipByRelationshipId(int relationshipId);
+
+    RelationshipEntity getFriendRelationshipByUserId(int firstID, int secondID);
+
+    List<UserEntity> getNotFriendUserFromPhoneUserList(int userId, List<Integer> userIdList);
+
+    List<UserEntity> getNewUsersToAddFriendByUserId(int userId);
+
+    List<UserEntity> getMutualFriendFromUserID(int userId1, int userId2);
+
+
 }

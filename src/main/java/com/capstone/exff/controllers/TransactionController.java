@@ -6,6 +6,7 @@ import com.capstone.exff.services.ItemServices;
 import com.capstone.exff.services.TransactionDetailServices;
 import com.capstone.exff.services.TransactionServices;
 import com.capstone.exff.utilities.ExffMessage;
+import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,8 +136,10 @@ public class TransactionController {
     @Transactional
     public ResponseEntity createTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
+        int transId;
         TransactionDetails transactionDetails = new TransactionDetails();
-        int senderId = getLoginUserId(servletRequest);
+        //int senderId = getLoginUserId(servletRequest);
+        int senderId = requestWrapper.getTransaction().getSenderId();
         transactionDetails.setTransactionDetails(requestWrapper.getDetails());
         List<ItemEntity> unavailableItems = verifyItemsAvailabity(transactionDetails.getItemIds());
         List<ItemEntity> userOwnedItems = checkUserOwnedItem(senderId, transactionDetails.getItemIds());
@@ -164,17 +167,19 @@ public class TransactionController {
             if (transaction.getDonationPostId() != null) {
                 itemServices.changeItemsStatus(ITEM_DONATED, transactionDetails.getItemIds());
             }
+            transId = transactionId;
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-        return new ResponseEntity(new ExffMessage("Sended"), HttpStatus.OK);
+       return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
     }
 
     @PutMapping("/transaction")
     public ResponseEntity updateTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
         try {
-            int loginUserId = getLoginUserId(servletRequest);
+            //int loginUserId = getLoginUserId(servletRequest);
+            int loginUserId = requestWrapper.getTransaction().getSenderId();
             TransactionDetails transactionDetails = new TransactionDetails();
             transactionDetails.setTransactionDetails(requestWrapper.getDetails());
 //            List<TransactionDetailEntity> transactionDetails = requestWrapper.getDetails();
@@ -214,6 +219,24 @@ public class TransactionController {
             TransactionEntity transaction = requestWrapper.getTransaction();
             transaction = transactionService.getTransactionByTransactionId(transaction.getId());
             if (loginUserId == transaction.getReceiverId()) {
+                transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
+                transactionService.deleteTransaction(transaction);
+            } else {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(new ExffMessage("Deleted"), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/transaction/{id:[\\d]+}")
+    public ResponseEntity cancelTransactionByID(@PathVariable("id") int id,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+           TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
+            if (loginUserId == transaction.getReceiverId() || loginUserId == transaction.getSenderId()) {
                 transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
                 transactionService.deleteTransaction(transaction);
             } else {

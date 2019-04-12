@@ -37,7 +37,11 @@ public class UserController {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
-        return userServices.register(phoneNumber, password, fullName);
+        String address = body.get("address");
+        if (fullName == null || fullName.length() == 0){
+            return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
+        }
+        return userServices.register(phoneNumber, password, fullName, address);
     }
 
     @PostMapping("/user/updateInfo")
@@ -45,7 +49,11 @@ public class UserController {
         String phoneNumber = getPhoneNumber(servletRequest);
         String fullName = body.get("fullName");
         String avatar = body.get("avatar");
-        return userServices.updateUserInfo(phoneNumber, fullName, avatar);
+        String address = body.get("address");
+        if (fullName == null || fullName.length() == 0){
+            return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
+        }
+        return userServices.updateUserInfo(phoneNumber, fullName, address, avatar);
 
     }
 
@@ -59,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity getAllUser() {
+    public ResponseEntity getUsers() {
         return userServices.getAllUser();
     }
 
@@ -67,8 +75,12 @@ public class UserController {
     public ResponseEntity getUserById(@PathVariable("id") int id, ServletRequest servletRequest) {
         UserEntity userEntity = null;
         try {
-            userEntity = userServices.getUserById(getUserId(servletRequest));
-        } catch (Exception e){
+            int userId = getUserId(servletRequest);
+            if (userId != -1) {
+                id = userId;
+            }
+            userEntity = userServices.getUserById(id);
+        } catch (Exception e) {
         }
         if (userEntity == null) {
             return new ResponseEntity(new ExffMessage("Get fails"), HttpStatus.BAD_REQUEST);
@@ -77,7 +89,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/name")
-    public ResponseEntity findUsersByName(@Param("name") String name) {
+    public ResponseEntity findUsersByName(@RequestParam("name") String name) {
         try {
             List<UserEntity> results = userServices.findUsersByName(name);
             if (results.isEmpty()) {
@@ -110,10 +122,14 @@ public class UserController {
         String phoneNumber = userEntity.getPhoneNumber();
         return phoneNumber;
     }
+
     private int getUserId(ServletRequest servletRequest) {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-        int id = userEntity.getId();
-        return id;
+        if (request.getAttribute("USER_INFO") != null) {
+            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+            int id = userEntity.getId();
+            return id;
+        }
+        return -1;
     }
 }

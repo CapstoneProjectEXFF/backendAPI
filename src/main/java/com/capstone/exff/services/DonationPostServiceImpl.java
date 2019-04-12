@@ -44,6 +44,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
         donationPostEntity.setAddress(address);
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
         donationPostEntity.setCreateTime(createTime);
+        donationPostEntity.setModifyTime(createTime);
         donationPostEntity.setUserId(userId);
 
         donationPostEntity = donationPostRepository.save(donationPostEntity);
@@ -98,5 +99,11 @@ public class DonationPostServiceImpl implements DonationPostServices {
     public List<DonationPostEntity> getDonationPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return donationPostRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return donationPostRepository.findByContentContainingOrTitleContaining(searchValue,searchValue,pageable).getContent();
     }
 }
