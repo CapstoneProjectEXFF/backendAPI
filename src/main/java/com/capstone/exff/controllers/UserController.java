@@ -37,7 +37,11 @@ public class UserController {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
         String fullName = body.get("fullName");
-        return userServices.register(phoneNumber, password, fullName);
+        String address = body.get("address");
+        if (fullName == null || fullName.length() == 0){
+            return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
+        }
+        return userServices.register(phoneNumber, password, fullName, address);
     }
 
     @PostMapping("/user/updateInfo")
@@ -45,7 +49,11 @@ public class UserController {
         String phoneNumber = getPhoneNumber(servletRequest);
         String fullName = body.get("fullName");
         String avatar = body.get("avatar");
-        return userServices.updateUserInfo(phoneNumber, fullName, avatar);
+        String address = body.get("address");
+        if (fullName == null || fullName.length() == 0){
+            return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
+        }
+        return userServices.updateUserInfo(phoneNumber, fullName, address, avatar);
 
     }
 
