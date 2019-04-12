@@ -115,7 +115,7 @@ public class ItemController {
         try {
             int userId = getLoginUserId(servletRequest);
             if (userId == 0) {
-                if(categoryId != 0) {
+                if (categoryId != 0) {
                     results = itemServices.findItemsByItemNamePublic(itemName, categoryId);
                 } else {
                     results = itemServices.findItemsByItemName(itemName);
@@ -188,7 +188,7 @@ public class ItemController {
         int targetUserId = getLoginUserId(servletRequest);
         try {
             List<ItemEntity> result = null;
-            if(targetUserId == 0) {
+            if (targetUserId == 0) {
                 result = itemServices.getPublicItemsByUserId(userId);
             } else if (targetUserId == userId) {
                 result = itemServices.loadItemsByUserIdAndStatus(userId, ExffStatus.ITEM_ENABLE);
@@ -203,6 +203,23 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping("/user/my/item")
+    public ResponseEntity getMyItems(ServletRequest servletRequest) {
+        int targetUserId = getLoginUserId(servletRequest);
+        List<ItemEntity> result = null;
+        try {
+            result = itemServices.loadItemsByUserIdAndStatus(targetUserId, ExffStatus.ITEM_ENABLE);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+
     }
 //
 //    @GetMapping("/user/{userId:[\\d]+}/item")

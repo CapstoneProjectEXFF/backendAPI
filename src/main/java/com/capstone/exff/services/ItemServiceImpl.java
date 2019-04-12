@@ -178,7 +178,7 @@ public class ItemServiceImpl implements ItemServices {
 
     @Override
     public List<ItemEntity> loadItemsByUserIdAndStatus(int userId, String status) {
-        return itemRepository.findAllByUserIdAndStatus(userId, status);
+        return itemRepository.findAllByUserIdAndStatusOrderByCreateTimeAsc(userId, status);
     }
 
 
