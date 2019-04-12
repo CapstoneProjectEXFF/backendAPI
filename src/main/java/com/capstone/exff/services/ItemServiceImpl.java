@@ -107,6 +107,7 @@ public class ItemServiceImpl implements ItemServices {
         }
     }
 
+
     @Override
     public List<ItemEntity> findItemsByItemName(String itemName) {
         return itemRepository.findItemsByItemName(itemName, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
@@ -167,6 +168,11 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId) {
         return itemRepository.getAllItemByUserIdWithPrivacy(userId, targetUserId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    }
+
+    @Override
+    public List<ItemEntity> getPublicItemsByUserId(int userId) {
+        return itemRepository.findByUserIdAndStatusAndPrivacyOrderByCreateTimeAsc(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
     }
 
 
