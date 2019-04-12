@@ -89,7 +89,7 @@ public class ItemController {
         return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
     }
 
-    @DeleteMapping("item/{id:[\\d]+}")
+    @DeleteMapping("/item/{id:[\\d]+}")
     @Transactional
     public ResponseEntity removeItem(@PathVariable("id") int id, ServletRequest servletRequest) {
         int userId = getLoginUserId(servletRequest);

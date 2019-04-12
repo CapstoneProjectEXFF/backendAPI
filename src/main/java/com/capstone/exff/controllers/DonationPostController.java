@@ -142,12 +142,12 @@ public class DonationPostController {
         }
     }
 
-    @GetMapping("/user/{userId:[\\d]+}/donationPost")
+    @GetMapping("/getdonationPost/{userId:[\\d]+}")
     public ResponseEntity getDonationPostByUserID(@PathVariable("userId") int userId) {
         try {
             List<DonationPostEntity> result = donationPostServices.getDonationPostByUserID(userId);
             if (result == null) {
-                return new ResponseEntity("no donation post found", HttpStatus.OK);
+                return new ResponseEntity("no donation post found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }

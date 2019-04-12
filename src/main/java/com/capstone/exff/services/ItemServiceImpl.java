@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemServices {
             }
             return new ResponseEntity(removedItemEntity, HttpStatus.OK);
         } else {
-            return new ResponseEntity("Cannot access this item", HttpStatus.OK);
+            return new ResponseEntity("Cannot access this item", HttpStatus.FORBIDDEN);
         }
     }
 
