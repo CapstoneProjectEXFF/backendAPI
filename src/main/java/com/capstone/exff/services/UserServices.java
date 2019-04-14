@@ -10,11 +10,11 @@ import java.util.List;
 public interface UserServices {
     ResponseEntity login(String phoneNumber, String password);
 
-    ResponseEntity register(String phoneNumber, String password, String fullname);
+    ResponseEntity register(String phoneNumber, String password, String fullname, String address);
 
-    ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleId);
+    ResponseEntity register(String phoneNumber, String password, String fullname, String address, RoleEntity roleId);
 
-    ResponseEntity updateUserInfo(String phoneNumber, String fullName, String avatar);
+    ResponseEntity updateUserInfo(String phoneNumber, String fullName, String address, String avatar);
 
     ResponseEntity changePassword(String phoneNumber, String oldPassword, String newPassword);
 

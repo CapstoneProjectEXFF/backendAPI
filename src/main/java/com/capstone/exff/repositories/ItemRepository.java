@@ -34,13 +34,15 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "   and (i.categoryId = :categoryId " +
             "       or i.categoryId in (select r.id " +
             "                           from CategoryEntity r " +
-            "                           where r.supercategoryId = :categoryId)" +
-            "       ) " +
+            "                           where r.supercategoryId = :categoryId)) " +
             "   and (i.privacy = :itemPublic " +
-            "           or (i.privacy = :itemPrivate " +
-            "               and (i.userId in(select r.senderId from RelationshipEntity r where r.receiverId = :userId and r.status = :friendStatus) " +
-            "                   or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :userId and r.status = :friendStatus)))" +
-            "       ) " +
+            "       or (i.privacy = :itemPrivate " +
+            "           and (i.userId in(select r.senderId " +
+            "                           from RelationshipEntity r " +
+            "                           where r.receiverId = :userId and r.status = :friendStatus) " +
+            "               or i.userId in (select r.receiverId " +
+            "                               from RelationshipEntity r " +
+            "                               where r.senderId = :userId and r.status = :friendStatus)))) " +
             "order by i.modifyTime desc")
     List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
 
@@ -50,8 +52,12 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "   and i.status = :itemStatus " +
             "   and (i.privacy = :itemPublic " +
             "       or (i.privacy = :itemPrivate  " +
-            "           and (i.userId in (select r.senderId from RelationshipEntity r where r.receiverId = :userId and r.status = :friendStatus) " +
-            "               or i.userId in (select r.receiverId from RelationshipEntity r where r.senderId = :userId and r.status = :friendStatus)))) " +
+            "           and (i.userId in (select r.senderId " +
+            "                           from RelationshipEntity r " +
+            "                           where r.receiverId = :userId and r.status = :friendStatus) " +
+            "               or i.userId in (select r.receiverId " +
+            "                               from RelationshipEntity r " +
+            "                               where r.senderId = :userId and r.status = :friendStatus)))) " +
             "order by i.modifyTime desc")
     List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
 
@@ -100,7 +106,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "               from RelationshipEntity r " +
             "               where r.senderId = :userId " +
             "               and r.status = :friendStatus))) " +
-            "   order by i.modifyTime desc")
+            "order by i.modifyTime desc")
     Page<ItemEntity> getAllItemWithPrivacy(int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus, Pageable pageable);
 
     @Query("select i " +
@@ -117,7 +123,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "                           from RelationshipEntity r " +
             "                           where r.senderId = :targetUserId " +
             "                           and r.status = :friendStatus)))) " +
-            "   order by i.modifyTime desc")
+            "order by i.modifyTime desc")
     List<ItemEntity> getAllItemByUserIdWithPrivacyOrderByModifyTimeDesc(int userId, int targetUserId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
 
     List<ItemEntity> findByUserIdAndStatusAndPrivacyOrderByCreateTimeDesc(int userId, String status, String privacy);

@@ -142,16 +142,6 @@ public class ItemController {
         }
     }
 
-    private int getLoginUserId(ServletRequest servletRequest) {
-        int userId = 0;
-        try {
-            HttpServletRequest request = (HttpServletRequest) servletRequest;
-            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
-            userId = userEntity.getId();
-        } catch (Exception e) {
-        }
-        return userId;
-    }
 
     @GetMapping("/item")
     public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest,
@@ -292,6 +282,17 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    private int getLoginUserId(ServletRequest servletRequest) {
+        int userId = 0;
+        try {
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            UserEntity userEntity = (UserEntity) request.getAttribute("USER_INFO");
+            userId = userEntity.getId();
+        } catch (Exception e) {
+        }
+        return userId;
     }
 
     private ResponseEntity getItemsByStatus(String status) {

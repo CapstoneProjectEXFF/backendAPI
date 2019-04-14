@@ -76,19 +76,20 @@ public class UserServiceImpl implements UserServices {
 
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname) {
-        return register(phoneNumber, password, fullname, this.userRole);
+    public ResponseEntity register(String phoneNumber, String password, String fullname, String address) {
+        return register(phoneNumber, password, fullname, address, this.userRole);
     }
 
     @Override
-    public ResponseEntity register(String phoneNumber, String password, String fullname, RoleEntity roleEntity) {
+    public ResponseEntity register(String phoneNumber, String password, String fullname, String address, RoleEntity roleEntity) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setPhoneNumber(phoneNumber);
-        userEntity.setPassword(passwordEncoder.encode(password));
-        userEntity.setFullName(fullname);
-        userEntity.setStatus(ExffStatus.USER_ENABLE);
-        userEntity.setRoleByRoleId(roleEntity);
         try {
+            userEntity.setPhoneNumber(phoneNumber);
+            userEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setFullName(fullname);
+            userEntity.setAddress(address);
+            userEntity.setStatus(ExffStatus.USER_ENABLE);
+            userEntity.setRoleByRoleId(roleEntity);
             userEntity = userRepository.save(userEntity);
         } catch (Exception e) {
             return new ResponseEntity<>(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
-    public ResponseEntity updateUserInfo(String phoneNumber, String fullName, String avatar) {
+    public ResponseEntity updateUserInfo(String phoneNumber, String fullName, String address, String avatar) {
         UserEntity userEntity = new UserEntity();
         userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
 
