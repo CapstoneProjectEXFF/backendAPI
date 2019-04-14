@@ -5,6 +5,9 @@ import com.capstone.exff.entities.ItemEntity;
 import com.capstone.exff.repositories.ItemRepository;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -136,8 +139,9 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> loadAllItemsWithPublicPrivacy() {
-        return itemRepository.findAllByStatusAndPrivacy(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    public Page<ItemEntity> loadAllItemsWithPublicPrivacy(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return itemRepository.findAllByStatusAndPrivacy(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, pageable);
     }
 
     @Override
@@ -147,7 +151,7 @@ public class ItemServiceImpl implements ItemServices {
 
     @Override
     public List<ItemEntity> getItemsByUserId(int userId) {
-        return itemRepository.findItemEntitiesByUserId(userId);
+        return itemRepository.findItemEntitiesByUserIdAndStatus(userId, ITEM_ENABLE);
     }
 
     @Override
@@ -161,8 +165,9 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> getAllItemWithPrivacy(int userId) {
-        return itemRepository.getAllItemWithPrivacy(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public Page<ItemEntity> getAllItemWithPrivacy(int userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return itemRepository.getAllItemWithPrivacy(userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED, pageable);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.capstone.exff.repositories;
 
 import com.capstone.exff.entities.ItemEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +13,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
 
-    List<ItemEntity> findAllByStatusAndPrivacy(String status, String privacy);
+    Page<ItemEntity> findAllByStatusAndPrivacy(String status, String privacy, Pageable pageable);
 
     @Override
     <S extends ItemEntity> S save(S s);
@@ -77,7 +79,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
     @Query("select i from ItemEntity i where i.status = :status and i.id In :ids")
     List<ItemEntity> filterItems(String status, List<Integer> ids);
 
-    List<ItemEntity> findItemEntitiesByUserId(int userId);
+    List<ItemEntity> findItemEntitiesByUserIdAndStatus(int userId, String status);
 
     @Query("select i from ItemEntity i where i.status = :status")
     List<ItemEntity> loadItemsByStatus(String status);
@@ -105,7 +107,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "               where r.senderId = :userId " +
             "               and r.status = :friendStatus))) " +
             "order by i.modifyTime desc")
-    List<ItemEntity> getAllItemWithPrivacy(int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
+    Page<ItemEntity> getAllItemWithPrivacy(int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus, Pageable pageable);
 
     @Query("select i " +
             "from ItemEntity i " +
