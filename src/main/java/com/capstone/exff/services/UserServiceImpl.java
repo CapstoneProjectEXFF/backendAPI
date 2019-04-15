@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserServices {
         if (userEntity != null) {
             userEntity.setAvatar(avatar);
             userEntity.setFullName(fullName);
+            userEntity.setAddress(address);
             userRepository.save(userEntity);
             Map<String, Object> data = new HashMap<>();
             data.put("User", userEntity);
