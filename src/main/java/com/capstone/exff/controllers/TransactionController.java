@@ -171,7 +171,7 @@ public class TransactionController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-       return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
+        return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
     }
 
     @PutMapping("/transaction")
@@ -232,10 +232,10 @@ public class TransactionController {
 
     @DeleteMapping("/transaction/{id:[\\d]+}")
     public ResponseEntity cancelTransactionByID(@PathVariable("id") int id,
-                                            ServletRequest servletRequest) {
+                                                ServletRequest servletRequest) {
         try {
             int loginUserId = getLoginUserId(servletRequest);
-           TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
+            TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
             if (loginUserId == transaction.getReceiverId() || loginUserId == transaction.getSenderId()) {
                 transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
                 transactionService.deleteTransaction(transaction);
@@ -284,4 +284,30 @@ public class TransactionController {
         }
         return new ResponseEntity(transactionRequestWrapperList, HttpStatus.OK);
     }
+
+
+    @GetMapping("/transaction/donation")
+    public ResponseEntity getDonationTransactionByReceiverAgentId(ServletRequest servletRequest) {
+        int userId = getLoginUserId(servletRequest);
+        List<TransactionRequestWrapper> transactionRequestWrapperList = new ArrayList<>();
+
+        try {
+            List<TransactionEntity> transactionList = transactionService.getDonationTransactionByUserId(userId);
+            if (!transactionList.isEmpty()) {
+                for (int i = 0; i < transactionList.size(); i++) {
+                    List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(transactionList.get(i).getId());
+                    TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
+                    transactionRequestWrapper.setDetails(details);
+                    transactionRequestWrapper.setTransaction(transactionList.get(i));
+                    transactionRequestWrapperList.add(transactionRequestWrapper);
+                }
+            } else {
+                return new ResponseEntity(new ExffMessage("No Donation"), HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionRequestWrapperList, HttpStatus.OK);
+    }
+
 }
