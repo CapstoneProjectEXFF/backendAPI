@@ -20,6 +20,11 @@ public class TransactionServicesImpl implements TransactionServices {
     }
 
     @Override
+    public List<TransactionEntity> getDonationTransactionByUserId(int userId) {
+        return transactionRepository.findByReceiverIdAndDonationPostIdNotNullOrderByCreateTimeDesc(userId);
+    }
+
+    @Override
     public List<TransactionEntity> getTopTransactionByUserId(int receiverId) {
         return transactionRepository.findReceiveTransaction(
                 receiverId,
