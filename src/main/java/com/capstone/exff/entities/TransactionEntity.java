@@ -12,7 +12,7 @@ public class TransactionEntity implements Serializable {
     private Integer senderId;
     private Integer receiverId;
     private Integer donationPostId;
-    private String qrcode;
+    private String qrCode;
     private String status;
     private Timestamp createTime;
     private Timestamp modifyTime;
@@ -62,12 +62,12 @@ public class TransactionEntity implements Serializable {
 
     @Basic
     @Column(name = "qrcode")
-    public String getQrcode() {
-        return qrcode;
+    public String getQrCode() {
+        return qrCode;
     }
 
-    public void setQrcode(String qrcode) {
-        this.qrcode = qrcode;
+    public void setQrCode(String qrcode) {
+        this.qrCode = qrcode;
     }
 
     @Basic
