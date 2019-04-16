@@ -21,6 +21,7 @@ public class DonationPostEntity {
     private Integer userId;
     private UserEntity userEntity;
     private List<ImageEntity> imageEntities;
+    private List<DonationPostTargetEntity> donationPostTargetEntities;
 
     @Id
     @Column(name = "id")
@@ -125,6 +126,18 @@ public class DonationPostEntity {
     public void setImageEntities(List<ImageEntity> imageEntities) {
         this.imageEntities = imageEntities;
     }
+
+    @OneToMany
+    @JoinColumn(name="donation_post_id", insertable = false, updatable = false)
+    @JsonProperty("targets")
+    public List<DonationPostTargetEntity> getDonationPostTargetEntities() {
+        return donationPostTargetEntities;
+    }
+
+    public void setDonationPostTargetEntities(List<DonationPostTargetEntity> donationPostTargetEntities) {
+        this.donationPostTargetEntities = donationPostTargetEntities;
+    }
+
 
     @Override
     public boolean equals(Object o) {
