@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DonationPostTargetServicesImpl implements DonationPostTargetServices {
@@ -20,6 +21,15 @@ public class DonationPostTargetServicesImpl implements DonationPostTargetService
 
     @Override
     public Iterable<DonationPostTargetEntity> createDonationTargets(List<DonationPostTargetEntity> donationPostTargetEntities) {
+//        List<DonationPostTargetEntity> targetEntities = donationPostTargetEntities
+//                .stream()
+//                .map(donationPostTargetEntity -> {
+//                    DonationPostTargetEntity tmp = new DonationPostTargetEntity();
+//                    tmp.setDonationPostId(donationPostTargetEntity.getDonationPostId());
+//                    tmp.setCategoryId(donationPostTargetEntity.getCategoryId());
+//                    tmp.setTarget(donationPostTargetEntity.getTarget());
+//                    return tmp;
+//                }).collect(Collectors.toList());
         return donationPostTargetRepository.saveAll(donationPostTargetEntities);
     }
 
@@ -48,11 +58,11 @@ public class DonationPostTargetServicesImpl implements DonationPostTargetService
                     .filter(t -> target.getCategoryId() == t.getCategoryId())
                     .findAny()
                     .isPresent()
-            )){
+            )) {
                 target.setDonationPostId(donationPostId);
                 donationPostTargetRepository.save(target);
             }
-            }
+        }
     }
 
 

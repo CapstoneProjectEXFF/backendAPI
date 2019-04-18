@@ -17,6 +17,7 @@ public class DonationPostTargetEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public int getId() {
         return id;
     }
@@ -81,9 +82,12 @@ public class DonationPostTargetEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DonationPostTargetEntity that = (DonationPostTargetEntity) o;
-        return (Objects.equals(donationPostId, that.donationPostId) &&
-                Objects.equals(categoryId, that.categoryId));
+        return id == that.id &&
+                (Objects.equals(donationPostId, that.donationPostId) &&
+                Objects.equals(categoryId, that.categoryId)) &&
+                Objects.equals(target, that.target);
     }
+
 
     @Override
     public int hashCode() {
