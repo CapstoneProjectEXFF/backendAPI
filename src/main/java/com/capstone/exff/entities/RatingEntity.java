@@ -1,6 +1,7 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,7 @@ public class RatingEntity {
     private Integer receiverId;
     private String content;
     private Integer rate;
+    private Timestamp createTime;
     private UserEntity sender;
     private UserEntity receiver;
 
@@ -83,6 +85,16 @@ public class RatingEntity {
 
     public void setReceiver(UserEntity receiver) {
         this.receiver = receiver;
+    }
+
+    @Basic
+    @Column(name = "create_time")
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
     @Override

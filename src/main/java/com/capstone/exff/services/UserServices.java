@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface UserServices {
     ResponseEntity login(String phoneNumber, String password);
+    ResponseEntity loginAdmin(String phoneNumber, String password);
 
     ResponseEntity register(String phoneNumber, String password, String fullname, String address);
 
@@ -18,7 +19,9 @@ public interface UserServices {
 
     ResponseEntity changePassword(String phoneNumber, String oldPassword, String newPassword);
 
-    ResponseEntity getAllUser();
+    ResponseEntity getAllEnableUser();
+    ResponseEntity getAllDisableUser();
+    ResponseEntity banUser(int id);
 
     UserEntity getUserById(int id);
 

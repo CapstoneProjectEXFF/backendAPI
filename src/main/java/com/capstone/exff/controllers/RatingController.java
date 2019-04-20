@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -44,6 +45,7 @@ public class RatingController {
                 return new ResponseEntity(new ExffMessage("Can not add"), HttpStatus.BAD_REQUEST);
             }
             body.setSenderId(senderId);
+            body.setCreateTime(new Timestamp(System.currentTimeMillis()));
             RatingEntity res = ratingServices.createRating(body);
             if (res != null){
                 return new ResponseEntity(res, HttpStatus.OK);

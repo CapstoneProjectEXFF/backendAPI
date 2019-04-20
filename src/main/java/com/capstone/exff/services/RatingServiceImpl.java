@@ -19,7 +19,7 @@ public class RatingServiceImpl implements RatingServices{
 
     @Override
     public List<RatingEntity> getRatingByReceiverId(int receiverId) {
-        return ratingReppository.findByReceiverId(receiverId);
+        return ratingReppository.findByReceiverIdOrderByCreateTimeDesc(receiverId);
     }
 
     @Override

@@ -132,11 +132,11 @@ public class DatabaseSeeder {
     }
 
     private void seedUser() {
-        String adminAccount = "admin00100";
-        UserEntity userEntity = userRepository.findTop1ByPhoneNumber("admin00100");
+        String adminAccount = "0010000100";
+        UserEntity userEntity = userRepository.findTop1ByPhoneNumber("0010000100");
         if (userEntity == null) {
             RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_ADMIN);
-            String adminPassword = "password00100";
+            String adminPassword = "0010000100";
             userServices.register(adminAccount,adminPassword,"admin", "", roleEntity);
         }
     }
