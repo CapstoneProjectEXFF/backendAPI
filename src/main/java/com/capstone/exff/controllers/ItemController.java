@@ -231,23 +231,43 @@ public class ItemController {
     }
 
 
-    @GetMapping("/user/my/item")
-    public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
-        int loginUserId = getLoginUserId(servletRequest);
-        List<ItemEntity> result = null;
+    @GetMapping("/user/{userId:[\\d]+}/item/count")
+    public ResponseEntity countItemsByUserId(ServletRequest servletRequest,
+                                             @PathVariable("userId") int userId) {
+        int targetUserId = getLoginUserId(servletRequest);
+        int result = 0;
         try {
-            result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status);
-            if (result == null) {
-                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            if (targetUserId == userId) {
+                result = itemServices.loadItemsByUserIdAndStatus(targetUserId, ITEM_ENABLE).size();
+            } else if (targetUserId == 0) {
+                result = itemServices.getPublicItemsByUserId(userId).size();
             } else {
-                return new ResponseEntity(result, HttpStatus.OK);
+                RelationshipEntity relationshipEntity = relationshipServices.checkFriend(targetUserId, userId);
+                if (relationshipEntity != null && relationshipEntity.getStatus().equals(ExffStatus.RELATIONSHIP_ACCEPTED)) {
+                    result = itemServices.getItemsByUserId(userId).size();
+                } else {
+                    result = itemServices.getPublicItemsByUserId(userId).size();
+                }
             }
+            return new ResponseEntity(result, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/user/my/item/count")
+    public ResponseEntity countMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
+        int loginUserId = getLoginUserId(servletRequest);
+        int result = 0;
+        try {
+            result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status).size();
+            return new ResponseEntity(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
 
-    }
-//
+    }//
 //    @GetMapping("/user/{userId:[\\d]+}/item")
 //    public ResponseEntity getItemsByUserId(
 //            @PathVariable("userId") int userId,
