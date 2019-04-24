@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.capstone.exff.constants.ExffStatus.ITEM_DONATED;
@@ -171,7 +172,7 @@ public class TransactionController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-       return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
+        return new ResponseEntity(new ExffMessage("" + transId), HttpStatus.OK);
     }
 
     @PutMapping("/transaction")
@@ -210,7 +211,37 @@ public class TransactionController {
         }
         return new ResponseEntity(new ExffMessage("Updated and resend"), HttpStatus.OK);
     }
-
+    @PutMapping("/transaction/uploadReceipt")
+    public ResponseEntity uploadReceiptTransaction(@RequestBody Map<String, Object> body,
+                                                    ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            Integer transactionId = (Integer) body.get("id");
+            String imageUrl = (String) body.get("url");
+            TransactionEntity transactionEntity = transactionService.uploadReceiptImage(transactionId,loginUserId, imageUrl);
+            if (transactionEntity == null) {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(transactionEntity, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+    @PutMapping("/transaction/confirmReceipt")
+    public ResponseEntity confirmReceiptTransaction(@RequestBody Map<String, Object> body,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            Integer transactionId = (Integer) body.get("id");
+            TransactionEntity transactionEntity = transactionService.confirmReceiptImage(transactionId,loginUserId);
+            if (transactionEntity == null) {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(transactionEntity, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
     @DeleteMapping("/transaction")
     public ResponseEntity cancelTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
@@ -232,10 +263,10 @@ public class TransactionController {
 
     @DeleteMapping("/transaction/{id:[\\d]+}")
     public ResponseEntity cancelTransactionByID(@PathVariable("id") int id,
-                                            ServletRequest servletRequest) {
+                                                ServletRequest servletRequest) {
         try {
             int loginUserId = getLoginUserId(servletRequest);
-           TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
+            TransactionEntity transaction = transactionService.getTransactionByTransactionId(id);
             if (loginUserId == transaction.getReceiverId() || loginUserId == transaction.getSenderId()) {
                 transactionDetailServices.deleteTransactionDetailByTransactionId(transaction.getId());
                 transactionService.deleteTransaction(transaction);
@@ -284,4 +315,30 @@ public class TransactionController {
         }
         return new ResponseEntity(transactionRequestWrapperList, HttpStatus.OK);
     }
+
+
+    @GetMapping("/transaction/donation")
+    public ResponseEntity getDonationTransactionByReceiverAgentId(ServletRequest servletRequest) {
+        int userId = getLoginUserId(servletRequest);
+        List<TransactionRequestWrapper> transactionRequestWrapperList = new ArrayList<>();
+
+        try {
+            List<TransactionEntity> transactionList = transactionService.getDonationTransactionByUserId(userId);
+            if (!transactionList.isEmpty()) {
+                for (int i = 0; i < transactionList.size(); i++) {
+                    List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(transactionList.get(i).getId());
+                    TransactionRequestWrapper transactionRequestWrapper = new TransactionRequestWrapper();
+                    transactionRequestWrapper.setDetails(details);
+                    transactionRequestWrapper.setTransaction(transactionList.get(i));
+                    transactionRequestWrapperList.add(transactionRequestWrapper);
+                }
+            } else {
+                return new ResponseEntity(new ExffMessage("No Donation"), HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(transactionRequestWrapperList, HttpStatus.OK);
+    }
+
 }

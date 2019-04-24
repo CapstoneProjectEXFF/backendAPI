@@ -1,6 +1,7 @@
 package com.capstone.exff.entities;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,9 @@ public class RatingEntity {
     private Integer receiverId;
     private String content;
     private Integer rate;
+    private Timestamp createTime;
+    private UserEntity sender;
+    private UserEntity receiver;
 
     @Id
     @Column(name = "id")
@@ -24,7 +28,7 @@ public class RatingEntity {
     }
 
     @Basic
-    @Column(name = "sender_id")
+    @Column(name = "sender_id", updatable = false)
     public Integer getSenderId() {
         return senderId;
     }
@@ -34,7 +38,7 @@ public class RatingEntity {
     }
 
     @Basic
-    @Column(name = "receiver_id")
+    @Column(name = "receiver_id", updatable = false)
     public Integer getReceiverId() {
         return receiverId;
     }
@@ -61,6 +65,36 @@ public class RatingEntity {
 
     public void setRate(Integer rate) {
         this.rate = rate;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getSender() {
+        return sender;
+    }
+
+    public void setSender(UserEntity sender) {
+        this.sender = sender;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", referencedColumnName = "id", insertable = false, updatable = false)
+    public UserEntity getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(UserEntity receiver) {
+        this.receiver = receiver;
+    }
+
+    @Basic
+    @Column(name = "create_time")
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.entities.ItemEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Timestamp;
@@ -27,11 +28,11 @@ public interface ItemServices {
 
     List<ItemEntity> loadAllItems();
 
-    List<ItemEntity> loadAllItemsWithPublicPrivacy();
+    Page<ItemEntity> loadAllItemsWithPublicPrivacy(int page, int size);
 
     List<ItemEntity> loadItemsByStatus(String status);
 
-    List<ItemEntity> getAllItemWithPrivacy(int userId);
+    Page<ItemEntity> getAllItemWithPrivacy(int userId,int page,int size);
 
     List<ItemEntity> getItemsByUserIdwithPrivacy(int userId, int targetUserId);
 

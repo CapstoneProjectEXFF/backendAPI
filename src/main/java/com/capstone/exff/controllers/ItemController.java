@@ -2,9 +2,11 @@ package com.capstone.exff.controllers;
 
 import com.capstone.exff.constants.ExffStatus;
 import com.capstone.exff.entities.ItemEntity;
+import com.capstone.exff.entities.RelationshipEntity;
 import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.ImageServices;
 import com.capstone.exff.services.ItemServices;
+import com.capstone.exff.services.RelationshipServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,11 +29,13 @@ public class ItemController {
 
     private final ItemServices itemServices;
     private final ImageServices imageServices;
+    private final RelationshipServices relationshipServices;
 
     @Autowired
-    public ItemController(ItemServices itemServices, ImageServices imageServices) {
+    public ItemController(ItemServices itemServices, ImageServices imageServices, RelationshipServices relationshipServices) {
         this.itemServices = itemServices;
         this.imageServices = imageServices;
+        this.relationshipServices = relationshipServices;
     }
 
 
@@ -140,14 +144,16 @@ public class ItemController {
 
 
     @GetMapping("/item")
-    public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest) {
+    public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest,
+                                                  @RequestParam(value = "page", defaultValue = "0") int page,
+                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
         List<ItemEntity> result;
         try {
             int userId = getLoginUserId(servletRequest);
             if (userId != 0) {
-                result = itemServices.getAllItemWithPrivacy(userId);
+                result = itemServices.getAllItemWithPrivacy(userId, page, size).getContent();
             } else {
-                result = itemServices.loadAllItemsWithPublicPrivacy();
+                result = itemServices.loadAllItemsWithPublicPrivacy(page, size).getContent();
             }
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
@@ -172,26 +178,54 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+//
+//    @GetMapping("/user/{userId:[\\d]+}/item")
+//    public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
+//                                                      @PathVariable("userId") int userId) {
+//        int targetUserId = getLoginUserId(servletRequest);
+//        try {
+//            List<ItemEntity> result = null;
+//            if (targetUserId == 0) {
+//                result = itemServices.getPublicItemsByUserId(userId);
+//            } else if (targetUserId == userId) {
+//                result = itemServices.loadItemsByUserIdAndStatus(userId, ITEM_ENABLE);
+//            } else {
+//                result = itemServices.getItemsByUserIdwithPrivacy(userId, targetUserId);
+//            }
+//            if (result == null) {
+//                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+//            } else {
+//                return new ResponseEntity(result, HttpStatus.OK);
+//            }
+//        } catch (Exception e) {
+//            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+//        }
+//    }
 
     @GetMapping("/user/{userId:[\\d]+}/item")
     public ResponseEntity getItemsByUserIdwithPrivacy(ServletRequest servletRequest,
                                                       @PathVariable("userId") int userId) {
-        int loginUserId = getLoginUserId(servletRequest);
+        int targetUserId = getLoginUserId(servletRequest);
+        List<ItemEntity> result = null;
         try {
-            List<ItemEntity> result = null;
-            if (loginUserId == 0) {
+            if (targetUserId == 0) {
                 result = itemServices.getPublicItemsByUserId(userId);
-            } else if (loginUserId == userId) {
-                result = itemServices.loadItemsByUserIdAndStatus(userId, ITEM_ENABLE);
             } else {
-                result = itemServices.getItemsByUserIdwithPrivacy(userId, loginUserId);
+                RelationshipEntity relationshipEntity = relationshipServices.checkFriend(targetUserId, userId);
+                if (relationshipEntity != null && relationshipEntity.getStatus().equals(ExffStatus.RELATIONSHIP_ACCEPTED)) {
+                    result = itemServices.getItemsByUserId(userId);
+                } else {
+                    result = itemServices.getPublicItemsByUserId(userId);
+                }
             }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
+
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
     }
@@ -199,10 +233,10 @@ public class ItemController {
 
     @GetMapping("/user/my/item")
     public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
-        int targetUserId = getLoginUserId(servletRequest);
+        int loginUserId = getLoginUserId(servletRequest);
         List<ItemEntity> result = null;
         try {
-            result = itemServices.loadItemsByUserIdAndStatus(targetUserId, status);
+            result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status);
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {

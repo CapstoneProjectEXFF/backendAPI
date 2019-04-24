@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface TransactionServices {
+    List<TransactionEntity> getDonationTransactionByUserId(int userId);
+
     List<TransactionEntity> getTopTransactionByUserId(int receiverId);
 
     List<TransactionEntity> getAllTransactionByUserID(int userId);
@@ -25,6 +27,8 @@ public interface TransactionServices {
     void confirmTransaction(int transactionId);
     List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
 
+    TransactionEntity uploadReceiptImage(int transactionId, int userId, String imageUrl);
+    TransactionEntity confirmReceiptImage(int transactionId, int userId);
 
     int getCountAllTransactionsByUserID(int userId);
 }

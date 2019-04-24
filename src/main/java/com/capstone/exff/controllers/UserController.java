@@ -4,7 +4,6 @@ import com.capstone.exff.entities.UserEntity;
 import com.capstone.exff.services.UserServices;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,24 @@ public class UserController {
     public ResponseEntity login(@RequestBody Map<String, String> body) {
         String phoneNumber = body.get("phoneNumber");
         String password = body.get("password");
-        ResponseEntity responseEntity = userServices.login(phoneNumber, password);
-        return responseEntity;
+        try {
+            ResponseEntity responseEntity = userServices.login(phoneNumber, password);
+            return responseEntity;
+        } catch (Exception ex) {
+        }
+        return new ResponseEntity<>(new ExffMessage("Cannot login"), HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/adminLogin")
+    public ResponseEntity loginAdmin(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
+        String password = body.get("password");
+        try {
+            ResponseEntity responseEntity = userServices.loginAdmin(username, password);
+            return responseEntity;
+        } catch (Exception ex) {
+        }
+        return new ResponseEntity<>(new ExffMessage("Cannot login"), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/register")
@@ -38,7 +53,7 @@ public class UserController {
         String password = body.get("password");
         String fullName = body.get("fullName");
         String address = body.get("address");
-        if (fullName == null || fullName.length() == 0){
+        if (fullName == null || fullName.length() == 0) {
             return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
         }
         return userServices.register(phoneNumber, password, fullName, address);
@@ -50,7 +65,7 @@ public class UserController {
         String fullName = body.get("fullName");
         String avatar = body.get("avatar");
         String address = body.get("address");
-        if (fullName == null || fullName.length() == 0){
+        if (fullName == null || fullName.length() == 0) {
             return new ResponseEntity(new ExffMessage("Fullname is null"), HttpStatus.CONFLICT);
         }
         return userServices.updateUserInfo(phoneNumber, fullName, address, avatar);
@@ -64,11 +79,6 @@ public class UserController {
         String newPassword = (String) body.get("newPassword");
         return userServices.changePassword(phoneNumber, oldPassword, newPassword);
 
-    }
-
-    @GetMapping("/user")
-    public ResponseEntity getUsers() {
-        return userServices.getAllUser();
     }
 
     @GetMapping("/user/{id:[\\d]+}")
@@ -114,6 +124,25 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping("admin/user")
+    public ResponseEntity getEnableUsers(@RequestParam(value = "status", defaultValue = "1") String status) {
+        if (status.equals("1"))
+            return userServices.getAllEnableUser();
+        else
+            return userServices.getAllDisableUser();
+    }
+
+//    @GetMapping("admin/banneduser")
+//    public ResponseEntity getBannedUsers() {
+//        return userServices.getAllDisableUser();
+//    }
+
+    @PutMapping("admin/user/{id:[\\d]+}")
+    public ResponseEntity banUser(@PathVariable("id") int id) {
+
+        return userServices.banUser(id);
     }
 
     private String getPhoneNumber(ServletRequest servletRequest) {

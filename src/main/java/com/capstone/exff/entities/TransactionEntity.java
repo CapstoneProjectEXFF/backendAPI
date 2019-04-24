@@ -12,7 +12,10 @@ public class TransactionEntity implements Serializable {
     private Integer senderId;
     private Integer receiverId;
     private Integer donationPostId;
+    private String qrCode;
     private String status;
+    private String senderReceipt;
+    private String receiverReceipt;
     private Timestamp createTime;
     private Timestamp modifyTime;
     private UserEntity sender;
@@ -60,6 +63,16 @@ public class TransactionEntity implements Serializable {
     }
 
     @Basic
+    @Column(name = "qrcode")
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrcode) {
+        this.qrCode = qrcode;
+    }
+
+    @Basic
     @Column(name = "status")
     public String getStatus() {
         return status;
@@ -87,6 +100,26 @@ public class TransactionEntity implements Serializable {
 
     public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    @Basic
+    @Column(name = "sender_receipt")
+    public String getSenderReceipt() {
+        return senderReceipt;
+    }
+
+    public void setSenderReceipt(String senderReceipt) {
+        this.senderReceipt = senderReceipt;
+    }
+
+    @Basic
+    @Column(name = "receiver_receipt")
+    public String getReceiverReceipt() {
+        return receiverReceipt;
+    }
+
+    public void setReceiverReceipt(String receiverReceipt) {
+        this.receiverReceipt = receiverReceipt;
     }
 
     @ManyToOne

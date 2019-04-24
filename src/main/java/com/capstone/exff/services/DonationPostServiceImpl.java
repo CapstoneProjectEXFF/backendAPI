@@ -32,20 +32,15 @@ public class DonationPostServiceImpl implements DonationPostServices {
 
     @Override
     public List<DonationPostEntity> getDonationPostByUserID(int userID) {
-        return donationPostRepository.findByUserIdOrderByCreateTimeDesc(userID);
+        return donationPostRepository.findByUserIdOrderByModifyTimeDesc(userID);
     }
 
     @Override
-    public DonationPostEntity createDonationPost(String title, String content, String address, Timestamp createTime, int userId) {
-        DonationPostEntity donationPostEntity = new DonationPostEntity();
-
-        donationPostEntity.setTitle(title);
-        donationPostEntity.setContent(content);
-        donationPostEntity.setAddress(address);
+    public DonationPostEntity createDonationPost(DonationPostEntity donationPostEntity) {
+        Timestamp createTime = new Timestamp(System.currentTimeMillis());
         donationPostEntity.setStatus(DONATION_POST_ENABLE);
         donationPostEntity.setCreateTime(createTime);
         donationPostEntity.setModifyTime(createTime);
-        donationPostEntity.setUserId(userId);
 
         donationPostEntity = donationPostRepository.save(donationPostEntity);
         donationPostRepository.flush();
@@ -53,23 +48,22 @@ public class DonationPostServiceImpl implements DonationPostServices {
     }
 
     @Override
-    public ResponseEntity updateDonationPost(int id, String title, String content, String address, Timestamp modifyTime, int userId) {
+    public ResponseEntity updateDonationPost(int id, DonationPostEntity newDonationPostEntity, Timestamp modifyTime, int userId) {
         DonationPostEntity donationPostEntity = donationPostRepository.findById(id).get();
-        DonationPostEntity newDonationPostEntity;
         if (donationPostEntity == null) {
             return ResponseEntity.notFound().build();
         }
         if (donationPostEntity.getUserId() == userId && !donationPostEntity.getStatus().equals(DONATION_POST_DISABLE)) {
-            donationPostEntity.setTitle(title);
-            donationPostEntity.setContent(content);
-            donationPostEntity.setAddress(address);
+            donationPostEntity.setTitle(newDonationPostEntity.getTitle());
+            donationPostEntity.setContent(newDonationPostEntity.getContent());
+            donationPostEntity.setAddress(newDonationPostEntity.getAddress());
             donationPostEntity.setModifyTime(modifyTime);
             try {
-                newDonationPostEntity = donationPostRepository.save(donationPostEntity);
+                donationPostEntity = donationPostRepository.save(donationPostEntity);
             } catch (Exception e) {
                 return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
             }
-            return new ResponseEntity(newDonationPostEntity, HttpStatus.OK);
+            return new ResponseEntity(donationPostEntity, HttpStatus.OK);
         } else {
             return new ResponseEntity("Cannot access this donation post", HttpStatus.BAD_REQUEST);
         }
@@ -98,12 +92,12 @@ public class DonationPostServiceImpl implements DonationPostServices {
     @Override
     public List<DonationPostEntity> getDonationPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return donationPostRepository.findAll(pageable).getContent();
+        return donationPostRepository.findAllByOrderByModifyTimeDesc(pageable).getContent();
     }
 
     @Override
     public List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return donationPostRepository.findByContentContainingOrTitleContaining(searchValue,searchValue,pageable).getContent();
+        return donationPostRepository.findByContentContainingOrTitleContainingOrderByModifyTimeDesc(searchValue,searchValue,pageable).getContent();
     }
 }

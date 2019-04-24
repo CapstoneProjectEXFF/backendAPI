@@ -1,5 +1,6 @@
 package com.capstone.exff;
 
+import com.capstone.exff.filters.AdminFilter;
 import com.capstone.exff.filters.JwtFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +32,16 @@ public class ExffApplication {
         registrationBean.addUrlPatterns("/image/*");
         registrationBean.addUrlPatterns("/transaction/*");
         registrationBean.addUrlPatterns("/donationPost/*");
+        registrationBean.addUrlPatterns("/rating/*");
+        return registrationBean;
+    }
+    @Bean
+    public FilterRegistrationBean<JwtFilter> adminFilter(){
+        FilterRegistrationBean registrationBean
+                = new FilterRegistrationBean<>();
 
+        registrationBean.setFilter(new AdminFilter());
+        registrationBean.addUrlPatterns("/admin/*");
         return registrationBean;
     }
     @Bean

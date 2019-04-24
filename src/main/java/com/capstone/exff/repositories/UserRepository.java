@@ -1,5 +1,6 @@
 package com.capstone.exff.repositories;
 
+import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -27,6 +28,8 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
 
     @Override
     List<UserEntity> findAll();
+
+    List<UserEntity> findAllByRoleByRoleIdAndStatus(RoleEntity roleEntity, String status);
 
     List<UserEntity> findByPhoneNumberInAndStatus(ArrayList<String> phoneNumnerList, String status);
 }
