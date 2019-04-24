@@ -15,6 +15,9 @@ public class ExffStatus {
     public static final String TRANSACTION_DONE = "2";
     public static final String TRANSACTION_RESEND = "4";
     public static final String TRANSACTION_DONATE = "3";
+    public static final String TRANSACTION_GIFTAWAY = "5";
+    public static final String TRANSACTION_SENDER_RECEIPT_CONFRIMED = "6";
+    public static final String TRANSACTION_RECEIVER_RECEIPT_CONFRIMED = "7";
     public static final String RELATIONSHIP_SEND = "1";
     public static final String RELATIONSHIP_ACCEPTED = "2";
     public static final String ITEM_PRIVACY_PUBLIC = "0";

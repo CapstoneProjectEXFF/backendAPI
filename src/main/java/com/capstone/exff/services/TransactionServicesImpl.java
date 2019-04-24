@@ -98,6 +98,54 @@ public class TransactionServicesImpl implements TransactionServices {
     }
 
     @Override
+    public TransactionEntity uploadReceiptImage(int transactionId, int userId, String imageUrl) {
+        TransactionEntity transactionEntity = getTransactionByTransactionId(transactionId);
+        if (transactionEntity.getStatus().equals(ExffStatus.TRANSACTION_DONE)) {
+            return null;
+        }
+        if (transactionEntity.getSenderId() == userId) {
+            if (transactionEntity.getSenderReceipt() == null || !transactionEntity.getStatus().equals(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED)) {
+                transactionEntity.setSenderReceipt(imageUrl);
+                return transactionRepository.save(transactionEntity);
+            }
+        } else if (transactionEntity.getReceiverId() == userId) {
+            if (transactionEntity.getReceiverReceipt() == null || !transactionEntity.getStatus().equals(ExffStatus.TRANSACTION_RECEIVER_RECEIPT_CONFRIMED)) {
+                transactionEntity.setReceiverReceipt(imageUrl);
+                return transactionRepository.save(transactionEntity);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public TransactionEntity confirmReceiptImage(int transactionId, int userId) {
+        TransactionEntity transactionEntity = getTransactionByTransactionId(transactionId);
+        String status = transactionEntity.getStatus();
+        if (transactionEntity.getSenderId() == userId) { // check sender is confirming
+            if (transactionEntity.getReceiverReceipt() != null) { // check receipt exist
+                if (status.equals(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED)) { // check sender's receipt is confirmed
+                    transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE); // if 2 confirm
+                    return transactionRepository.save(transactionEntity);
+                } else if (status.equals(ExffStatus.TRANSACTION_SEND)) {
+                    transactionEntity.setStatus(ExffStatus.TRANSACTION_RECEIVER_RECEIPT_CONFRIMED); // confirm to receiver
+                    return transactionRepository.save(transactionEntity);
+                }
+            }
+        } else if (transactionEntity.getReceiverId() == userId) { // check receiver is confirming
+            if (transactionEntity.getSenderReceipt() != null) { // check receipt exist
+                if (status.equals(ExffStatus.TRANSACTION_RECEIVER_RECEIPT_CONFRIMED)) {
+                    transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE);
+                    return transactionRepository.save(transactionEntity);
+                } else if (status.equals(ExffStatus.TRANSACTION_SEND)) {
+                    transactionEntity.setStatus(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED);
+                    return transactionRepository.save(transactionEntity);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public int getCountAllTransactionsByUserID(int userId) {
         return transactionRepository.countBySenderIdOrReceiverIdOrderByCreateTimeAsc(userId, userId);
     }

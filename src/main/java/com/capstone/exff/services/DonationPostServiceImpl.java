@@ -32,7 +32,7 @@ public class DonationPostServiceImpl implements DonationPostServices {
 
     @Override
     public List<DonationPostEntity> getDonationPostByUserID(int userID) {
-        return donationPostRepository.findByUserIdOrderByCreateTimeDesc(userID);
+        return donationPostRepository.findByUserIdOrderByModifyTimeDesc(userID);
     }
 
     @Override
@@ -92,12 +92,12 @@ public class DonationPostServiceImpl implements DonationPostServices {
     @Override
     public List<DonationPostEntity> getDonationPosts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return donationPostRepository.findAll(pageable).getContent();
+        return donationPostRepository.findAllByOrderByModifyTimeDesc(pageable).getContent();
     }
 
     @Override
     public List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return donationPostRepository.findByContentContainingOrTitleContaining(searchValue,searchValue,pageable).getContent();
+        return donationPostRepository.findByContentContainingOrTitleContainingOrderByModifyTimeDesc(searchValue,searchValue,pageable).getContent();
     }
 }

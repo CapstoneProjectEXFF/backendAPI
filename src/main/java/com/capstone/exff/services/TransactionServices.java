@@ -27,6 +27,8 @@ public interface TransactionServices {
     void confirmTransaction(int transactionId);
     List<TransactionEntity> getTransactionByDonationPostId(int donationPostId);
 
+    TransactionEntity uploadReceiptImage(int transactionId, int userId, String imageUrl);
+    TransactionEntity confirmReceiptImage(int transactionId, int userId);
 
     int getCountAllTransactionsByUserID(int userId);
 }

@@ -72,6 +72,9 @@ public class TokenAuthenticationService {
         UserEntity userEntity = null;
 
         String res = getInfoFromToken(token);
+        if (res == null) {
+            return null;
+        }
         ObjectMapper mapper = new ObjectMapper();
         try {
             userEntity = mapper.readValue(res, UserEntity.class);

@@ -16,7 +16,11 @@ public interface DonationPostRepository extends JpaRepository<DonationPostEntity
     @Override
     Page<DonationPostEntity> findAll(Pageable pageable);
 
+    Page<DonationPostEntity> findAllByOrderByModifyTimeDesc(Pageable pageable);
+
     Page<DonationPostEntity> findByContentContainingOrTitleContaining(String content, String title, Pageable pageable);
+
+    Page<DonationPostEntity> findByContentContainingOrTitleContainingOrderByModifyTimeDesc(String content, String title, Pageable pageable);
 
     @Override
     Optional<DonationPostEntity> findById(Integer integer);
@@ -25,5 +29,6 @@ public interface DonationPostRepository extends JpaRepository<DonationPostEntity
     <S extends DonationPostEntity> S save(S s);
 
     List<DonationPostEntity> findByUserIdOrderByCreateTimeDesc(Integer integer);
+    List<DonationPostEntity> findByUserIdOrderByModifyTimeDesc(Integer integer);
 
 }

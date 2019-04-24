@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.capstone.exff.constants.ExffStatus.ITEM_DONATED;
@@ -210,7 +211,37 @@ public class TransactionController {
         }
         return new ResponseEntity(new ExffMessage("Updated and resend"), HttpStatus.OK);
     }
-
+    @PutMapping("/transaction/uploadReceipt")
+    public ResponseEntity uploadReceiptTransaction(@RequestBody Map<String, Object> body,
+                                                    ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            Integer transactionId = (Integer) body.get("id");
+            String imageUrl = (String) body.get("url");
+            TransactionEntity transactionEntity = transactionService.uploadReceiptImage(transactionId,loginUserId, imageUrl);
+            if (transactionEntity == null) {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(transactionEntity, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+    @PutMapping("/transaction/confirmReceipt")
+    public ResponseEntity confirmReceiptTransaction(@RequestBody Map<String, Object> body,
+                                            ServletRequest servletRequest) {
+        try {
+            int loginUserId = getLoginUserId(servletRequest);
+            Integer transactionId = (Integer) body.get("id");
+            TransactionEntity transactionEntity = transactionService.confirmReceiptImage(transactionId,loginUserId);
+            if (transactionEntity == null) {
+                return new ResponseEntity(new ExffMessage("Not permission"), HttpStatus.CONFLICT);
+            }
+            return new ResponseEntity(transactionEntity, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
     @DeleteMapping("/transaction")
     public ResponseEntity cancelTransaction(@RequestBody TransactionRequestWrapper requestWrapper,
                                             ServletRequest servletRequest) {
