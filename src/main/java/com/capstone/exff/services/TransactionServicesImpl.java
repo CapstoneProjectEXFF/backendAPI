@@ -1,6 +1,7 @@
 package com.capstone.exff.services;
 
 import com.capstone.exff.constants.ExffStatus;
+import com.capstone.exff.entities.TransactionDetailEntity;
 import com.capstone.exff.entities.TransactionEntity;
 import com.capstone.exff.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,12 @@ import java.util.List;
 public class TransactionServicesImpl implements TransactionServices {
 
     private TransactionRepository transactionRepository;
+    private TransactionDetailServices transactionDetailServices;
 
     @Autowired
-    public TransactionServicesImpl(TransactionRepository transactionRepository) {
+    public TransactionServicesImpl(TransactionRepository transactionRepository, TransactionDetailServices transactionDetailServices) {
         this.transactionRepository = transactionRepository;
+        this.transactionDetailServices = transactionDetailServices;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class TransactionServicesImpl implements TransactionServices {
 
     @Override
     public List<TransactionEntity> getAllTransactionByUserID(int userId) {
-        return transactionRepository.findBySenderIdOrReceiverIdOrderByCreateTimeAsc(userId, userId);
+        return transactionRepository.findBySenderIdOrReceiverIdOrderByCreateTimeDesc(userId, userId);
     }
 
     @Override
@@ -127,8 +130,13 @@ public class TransactionServicesImpl implements TransactionServices {
                     transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE); // if 2 confirm
                     return transactionRepository.save(transactionEntity);
                 } else if (status.equals(ExffStatus.TRANSACTION_SEND)) {
-                    transactionEntity.setStatus(ExffStatus.TRANSACTION_RECEIVER_RECEIPT_CONFRIMED); // confirm to receiver
-                    return transactionRepository.save(transactionEntity);
+                    if (checkGiftAway(transactionId, transactionEntity.getReceiverId())) {
+                        transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE); // if 2 confirm
+                        return transactionRepository.save(transactionEntity);
+                    } else {
+                        transactionEntity.setStatus(ExffStatus.TRANSACTION_RECEIVER_RECEIPT_CONFRIMED); // confirm to receiver
+                        return transactionRepository.save(transactionEntity);
+                    }
                 }
             }
         } else if (transactionEntity.getReceiverId() == userId) { // check receiver is confirming
@@ -137,8 +145,13 @@ public class TransactionServicesImpl implements TransactionServices {
                     transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE);
                     return transactionRepository.save(transactionEntity);
                 } else if (status.equals(ExffStatus.TRANSACTION_SEND)) {
-                    transactionEntity.setStatus(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED);
-                    return transactionRepository.save(transactionEntity);
+                    if (checkGiftAway(transactionId, transactionEntity.getSenderId())) {
+                        transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE); // if 2 confirm
+                        return transactionRepository.save(transactionEntity);
+                    } else {
+                        transactionEntity.setStatus(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED);
+                        return transactionRepository.save(transactionEntity);
+                    }
                 }
             }
         }
@@ -148,5 +161,19 @@ public class TransactionServicesImpl implements TransactionServices {
     @Override
     public int getCountAllTransactionsByUserID(int userId) {
         return transactionRepository.countBySenderIdOrReceiverIdOrderByCreateTimeAsc(userId, userId);
+    }
+
+    private boolean checkGiftAway(int transactionId, int userId) {
+        List<TransactionDetailEntity> details = transactionDetailServices.getTransactionDetailsByTransactionId(transactionId);
+        int tmp = 0;
+        for (TransactionDetailEntity detailEntity :
+                details) {
+            if (detailEntity.getItem().getUserId() == userId) {
+                tmp++;
+            } else {
+                break;
+            }
+        }
+        return details.size() == tmp;
     }
 }

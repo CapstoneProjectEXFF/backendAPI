@@ -36,6 +36,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     List<TransactionEntity> findTop10BySenderIdAndStatusOrderByCreateTimeAsc(int receiverId, String status);
 
     List<TransactionEntity> findBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
+    List<TransactionEntity> findBySenderIdOrReceiverIdOrderByCreateTimeDesc(int senderId, int receiverId);
 
     int countBySenderIdOrReceiverIdOrderByCreateTimeAsc(int senderId, int receiverId);
 
