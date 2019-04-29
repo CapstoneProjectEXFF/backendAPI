@@ -84,7 +84,7 @@ public class DonationPostController {
             } else {
                 imageServices.saveImages(newUrls, id, DONATION_TYPE);
             }
-            donationPostTargetServices.updateDonationTargets(updateTarget,removeTarget, id);
+            donationPostTargetServices.updateDonationTargets(updateTarget, removeTarget, id);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,6 +156,16 @@ public class DonationPostController {
             } else {
                 return new ResponseEntity(result, HttpStatus.OK);
             }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
+
+    @GetMapping("/user/{userId:[\\d]+}/donationPost/count")
+    public ResponseEntity countOwnerDonationPost(@PathVariable("userId") int userId) {
+        try {
+            int result = donationPostServices.countOwnerDonationPost(userId);
+            return new ResponseEntity(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }

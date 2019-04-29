@@ -14,4 +14,5 @@ public interface DonationPostServices {
     List<DonationPostEntity> getDonationPosts(int page, int size);
     List<DonationPostEntity> searchDonationPosts(String searchValue, int page, int size);
     List<DonationPostEntity> getDonationPostByUserID(int userID);
+    int countOwnerDonationPost(int userId);
 }
