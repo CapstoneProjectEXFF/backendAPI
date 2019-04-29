@@ -269,7 +269,25 @@ public class ItemController {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
 
-    }//
+    }
+    @GetMapping("/user/my/item")
+    public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
+        int loginUserId = getLoginUserId(servletRequest);
+        List<ItemEntity> result = null;
+        try {
+            result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status);
+            if (result == null) {
+                return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
+        }
+
+    }
+
+    //
 //    @GetMapping("/user/{userId:[\\d]+}/item")
 //    public ResponseEntity getItemsByUserId(
 //            @PathVariable("userId") int userId,
