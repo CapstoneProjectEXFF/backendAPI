@@ -17,6 +17,7 @@ public class ItemEntity {
     private String name;
     private Integer userId;
     private String description;
+    private String preferItems;
     private String address;
     private String status;
     private String privacy;
@@ -78,6 +79,16 @@ public class ItemEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Basic
+    @Column(name = "prefer_items")
+    public String getPreferItems() {
+        return preferItems;
+    }
+
+    public void setPreferItems(String preferItems) {
+        this.preferItems = preferItems;
     }
 
     @Basic

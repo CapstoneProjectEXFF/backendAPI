@@ -47,12 +47,12 @@ public class ItemController {
             String name = (String) body.get("name");
             int userId = getLoginUserId(servletRequest);
             String description = (String) body.get("description");
-
+            String preferItems = (String) body.get("preferItems");
             String address = (String) body.get("address");
             String privacy = (String) body.get("privacy");
             Timestamp createTime = new Timestamp(System.currentTimeMillis());
             int categoryId = Integer.parseInt((String) body.get("category"));
-            itemEntity = itemServices.createItem(name, userId, description, address, privacy, createTime, categoryId);
+            itemEntity = itemServices.createItem(name, userId, description, preferItems, address, privacy, createTime, categoryId);
             try {
                 ArrayList<String> url = (ArrayList<String>) body.get("urls");
                 imageServices.saveImages(url, itemEntity.getId(), ITEM_TYPE);
@@ -72,6 +72,7 @@ public class ItemController {
         int userId = getLoginUserId(servletRequest);
         String description = (String) body.get("description");
         String address = (String) body.get("address");
+        String preferItems = (String) body.get("preferItems");
         String privacy = (String) body.get("privacy");
         Timestamp modifyTime = new Timestamp(System.currentTimeMillis());
         int categoryId = Integer.parseInt((String) body.get("category"));
@@ -91,7 +92,7 @@ public class ItemController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return itemServices.updateItem(id, name, userId, description, address, privacy, modifyTime, categoryId);
+        return itemServices.updateItem(id, name, userId, description, preferItems, address, privacy, modifyTime, categoryId);
     }
 
     @DeleteMapping("/item/{id:[\\d]+}")
