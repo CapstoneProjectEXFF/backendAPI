@@ -59,6 +59,7 @@ public class ItemController {
             } catch (Exception e) {
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
         return new ResponseEntity(itemEntity, HttpStatus.OK);
