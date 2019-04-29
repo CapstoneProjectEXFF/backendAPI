@@ -31,4 +31,6 @@ public interface DonationPostRepository extends JpaRepository<DonationPostEntity
     List<DonationPostEntity> findByUserIdOrderByCreateTimeDesc(Integer integer);
     List<DonationPostEntity> findByUserIdOrderByModifyTimeDesc(Integer integer);
 
+    @Query("select count(do) as num from DonationPostEntity do where (do.userId = :userId)")
+    int countOwnerDonationPost(int userId);
 }
