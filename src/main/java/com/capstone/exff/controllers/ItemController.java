@@ -271,11 +271,24 @@ public class ItemController {
 
     }
     @GetMapping("/user/my/item")
-    public ResponseEntity getMyItems(ServletRequest servletRequest, @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status) {
+    public ResponseEntity getMyItems(
+            ServletRequest servletRequest,
+            @RequestParam(name = "status", defaultValue = ITEM_ENABLE) String status,
+            @RequestParam(name = "friendId", defaultValue = "0") String friendId
+    ) {
         int loginUserId = getLoginUserId(servletRequest);
         List<ItemEntity> result = null;
         try {
-            result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status);
+            if (friendId.equals("0")) {
+                result = itemServices.loadItemsByUserIdAndStatus(loginUserId, status);
+            } else {
+                RelationshipEntity relationshipEntity = relationshipServices.checkFriend(new Integer(friendId), loginUserId);
+                if (relationshipEntity != null && relationshipEntity.getStatus().equals(ExffStatus.RELATIONSHIP_ACCEPTED)) {
+                    result = itemServices.getItemsByUserId(loginUserId);
+                } else {
+                    result = itemServices.getPublicItemsByUserId(loginUserId);
+                }
+            }
             if (result == null) {
                 return new ResponseEntity("no item found", HttpStatus.BAD_REQUEST);
             } else {
@@ -284,7 +297,6 @@ public class ItemController {
         } catch (Exception e) {
             return new ResponseEntity(new ExffMessage(e.getMessage()), HttpStatus.CONFLICT);
         }
-
     }
 
     //
