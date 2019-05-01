@@ -97,11 +97,16 @@ public class DatabaseSeeder {
             superCategory.put("Mẹ và bé", categories);
 
             categories = new ArrayList<>();
-            categories.add("Thời trang nữ");
-            categories.add("Thời trang nam");
-            categories.add("Trang sức");
-            categories.add("Balo");
-            superCategory.put("Thời trang", categories);
+            categories.add("Bàn học");
+            categories.add("Dụng cụ học tập");
+            superCategory.put("Học tập", categories);
+
+            categories = new ArrayList<>();
+            categories.add("Quần áo nữ");
+            categories.add("Quần áo nam");
+            categories.add("Giày, dép");
+            categories.add("Balo, cặp sách");
+            superCategory.put("Quần áo", categories);
 
             categories = new ArrayList<>();
             categories.add("Xe máy");
@@ -110,9 +115,9 @@ public class DatabaseSeeder {
             superCategory.put("Xe máy, Ô tô, Xe đạp", categories);
 
             categories = new ArrayList<>();
-            categories.add("Văn học");
-            categories.add("Kinh tế");
-            categories.add("Kỹ năng sống");
+            categories.add("Sách văn học");
+            categories.add("Sách kinh tế");
+            categories.add("Sách kỹ năng sống");
             superCategory.put("Sách", categories);
             superCategory.forEach((s, arr) -> {
                 CategoryEntity superCategoryEntity = new CategoryEntity();
@@ -137,7 +142,7 @@ public class DatabaseSeeder {
         if (userEntity == null) {
             RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_ADMIN);
             String adminPassword = "0010000100";
-            userServices.register(adminAccount,adminPassword,"admin", "", roleEntity);
+            userServices.register(adminAccount,adminPassword,"Exff", "", roleEntity);
         }
     }
 }

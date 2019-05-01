@@ -18,11 +18,11 @@ public interface ItemServices {
 
     List<ItemEntity> getPublicItemsByUserId(int userId);
 
-    List<ItemEntity> findItemsByItemName(String itemName);
+    List<ItemEntity> findItemsByItemName(String itemName, int page, int size);
 
     List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId);
 
-    List<ItemEntity> findItemsByItemNamePublic(String itemName,  int categoryId);
+    List<ItemEntity> findItemsByItemNamePublic(String itemName,  int categoryId, int page, int size);
 
     List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName,  int userId);
 

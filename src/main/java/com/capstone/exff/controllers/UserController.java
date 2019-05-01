@@ -99,9 +99,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/name")
-    public ResponseEntity findUsersByName(@RequestParam("name") String name) {
+    public ResponseEntity findUsersByName(
+            @RequestParam("name") String name,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
         try {
-            List<UserEntity> results = userServices.findUsersByName(name);
+            List<UserEntity> results = userServices.findUsersByName(name, page, size);
             if (results.isEmpty()) {
                 return new ResponseEntity("no user found", HttpStatus.OK);
             } else {

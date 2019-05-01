@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
 
-    Page<ItemEntity> findAllByStatusAndPrivacy(String status, String privacy, Pageable pageable);
+    Page<ItemEntity> findAllByStatusAndPrivacyOrderByModifyTimeDesc(String status, String privacy, Pageable pageable);
 
     @Override
     <S extends ItemEntity> S save(S s);
@@ -24,7 +24,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "   and i.status = :itemStatus " +
             "   and i.name like concat('%', :itemName, '%') " +
             "order by i.modifyTime desc")
-    List<ItemEntity> findItemsByItemName(String itemName, String itemStatus, String itemPublic);
+    List<ItemEntity> findItemsByItemName(String itemName, String itemStatus, String itemPublic, Pageable pageable);
 
 
     @Query("select i " +
@@ -71,7 +71,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "   and i.status = :itemStatus " +
             "   and i.privacy = :itemPublic " +
             "order by i.modifyTime desc")
-    List<ItemEntity> findItemsByItemNameandCategoryWithPrivacy(String itemName, int categoryId, String itemStatus, String itemPublic);
+    List<ItemEntity> findItemsByItemNameandCategoryWithPrivacy(String itemName, int categoryId, String itemStatus, String itemPublic, Pageable pageable);
 
     @Query("select i from ItemEntity i where i.id = :itemId")
     ItemEntity getItemById(int itemId);

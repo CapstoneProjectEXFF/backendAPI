@@ -2,6 +2,7 @@ package com.capstone.exff.repositories;
 
 import com.capstone.exff.entities.RoleEntity;
 import com.capstone.exff.entities.UserEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,7 +14,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Integer> {
     UserEntity findFirstByPhoneNumber(String phoneNumber);
 
     @Query("select u from UserEntity u where u.fullName like concat('%', :name, '%')")
-    List<UserEntity> findUserEntitiesByFullName(String name);
+    List<UserEntity> findUserEntitiesByFullName(String name, Pageable pageable);
 
     @Query("select u from UserEntity u where u.phoneNumber = :phone")
     UserEntity findUserEntitiesByPhoneNumber(String phone);

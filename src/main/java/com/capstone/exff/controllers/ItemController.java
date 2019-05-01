@@ -102,30 +102,35 @@ public class ItemController {
         return itemServices.removeItem(id, userId);
     }
 
-    @GetMapping("/itemSearch")
-    public ResponseEntity findItem(@RequestParam(value = "name") String itemName) {
-        try {
-            List<ItemEntity> results = itemServices.findItemsByItemName(itemName);
-            if (results.isEmpty()) {
-                return new ResponseEntity("no item found", HttpStatus.OK);
-            } else {
-                return new ResponseEntity(results, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
-        }
-    }
+//    @GetMapping("/itemSearch")
+//    public ResponseEntity findItem(@RequestParam(value = "name") String itemName) {
+//        try {
+//            List<ItemEntity> results = itemServices.findItemsByItemName(itemName);
+//            if (results.isEmpty()) {
+//                return new ResponseEntity("no item found", HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity(results, HttpStatus.OK);
+//            }
+//        } catch (Exception e) {
+//            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+//        }
+//    }
 
     @GetMapping("/item/search")
-    public ResponseEntity findItem(ServletRequest servletRequest, @RequestParam(value = "name") String itemName, @RequestParam(value = "categoryId", required = false, defaultValue = "0") Integer categoryId) {
+    public ResponseEntity findItem(
+            ServletRequest servletRequest, @RequestParam(value = "name") String itemName,
+            @RequestParam(value = "categoryId", required = false, defaultValue = "0") Integer categoryId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
         List<ItemEntity> results = new ArrayList<>();
         try {
             int userId = getLoginUserId(servletRequest);
             if (userId == 0) {
                 if (categoryId != 0) {
-                    results = itemServices.findItemsByItemNamePublic(itemName, categoryId);
+                    results = itemServices.findItemsByItemNamePublic(itemName, categoryId, page, size);
                 } else {
-                    results = itemServices.findItemsByItemName(itemName);
+                    results = itemServices.findItemsByItemName(itemName, page, size);
                 }
             } else {
                 if (categoryId == 0) {
@@ -146,9 +151,11 @@ public class ItemController {
 
 
     @GetMapping("/item")
-    public ResponseEntity loadAllItemswithPrivacy(ServletRequest servletRequest,
-                                                  @RequestParam(value = "page", defaultValue = "0") int page,
-                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ResponseEntity loadAllItemswithPrivacy(
+            ServletRequest servletRequest,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
         List<ItemEntity> result;
         try {
             int userId = getLoginUserId(servletRequest);
@@ -270,6 +277,7 @@ public class ItemController {
         }
 
     }
+
     @GetMapping("/user/my/item")
     public ResponseEntity getMyItems(
             ServletRequest servletRequest,

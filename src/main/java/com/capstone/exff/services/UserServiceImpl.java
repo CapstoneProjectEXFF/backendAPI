@@ -8,6 +8,8 @@ import com.capstone.exff.repositories.RoleRepository;
 import com.capstone.exff.repositories.UserRepository;
 import com.capstone.exff.utilities.ExffMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -197,8 +199,9 @@ public class UserServiceImpl implements UserServices {
     }
 
     @Override
-    public List<UserEntity> findUsersByName(String name) {
-        return userRepository.findUserEntitiesByFullName(name);
+    public List<UserEntity> findUsersByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return userRepository.findUserEntitiesByFullName(name, pageable);
     }
 
     @Override

@@ -38,6 +38,7 @@ public class ItemServiceImpl implements ItemServices {
         itemEntity.setPrivacy(privacy);
         itemEntity.setStatus(ITEM_ENABLE);
         itemEntity.setCreateTime(createTime);
+        itemEntity.setModifyTime(createTime);
         itemEntity.setCategoryId(categoryId);
 
         itemEntity = itemRepository.save(itemEntity);
@@ -114,8 +115,9 @@ public class ItemServiceImpl implements ItemServices {
 
 
     @Override
-    public List<ItemEntity> findItemsByItemName(String itemName) {
-        return itemRepository.findItemsByItemName(itemName, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    public List<ItemEntity> findItemsByItemName(String itemName, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return itemRepository.findItemsByItemName(itemName, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, pageable);
     }
 
 
@@ -125,8 +127,9 @@ public class ItemServiceImpl implements ItemServices {
     }
 
     @Override
-    public List<ItemEntity> findItemsByItemNamePublic(String itemName, int categoryId) {
-        return itemRepository.findItemsByItemNameandCategoryWithPrivacy(itemName, categoryId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC);
+    public List<ItemEntity> findItemsByItemNamePublic(String itemName, int categoryId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return itemRepository.findItemsByItemNameandCategoryWithPrivacy(itemName, categoryId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, pageable);
     }
 
 
@@ -143,7 +146,7 @@ public class ItemServiceImpl implements ItemServices {
     @Override
     public Page<ItemEntity> loadAllItemsWithPublicPrivacy(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return itemRepository.findAllByStatusAndPrivacy(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, pageable);
+        return itemRepository.findAllByStatusAndPrivacyOrderByModifyTimeDesc(ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, pageable);
     }
 
     @Override
