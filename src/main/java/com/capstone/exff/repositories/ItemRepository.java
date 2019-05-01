@@ -44,7 +44,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "                               from RelationshipEntity r " +
             "                               where r.senderId = :userId and r.status = :friendStatus)))) " +
             "order by i.modifyTime desc")
-    List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
+    List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus, Pageable pageable);
 
     @Query("select i " +
             "from ItemEntity i " +
@@ -59,7 +59,7 @@ public interface ItemRepository extends JpaRepository<ItemEntity, Integer> {
             "                               from RelationshipEntity r " +
             "                               where r.senderId = :userId and r.status = :friendStatus)))) " +
             "order by i.modifyTime desc")
-    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus);
+    List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId, String itemStatus, String itemPublic, String itemPrivate, String friendStatus, Pageable pageable);
 
     @Query("select i " +
             "from ItemEntity i " +

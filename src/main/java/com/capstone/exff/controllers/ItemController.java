@@ -121,7 +121,7 @@ public class ItemController {
             ServletRequest servletRequest, @RequestParam(value = "name") String itemName,
             @RequestParam(value = "categoryId", required = false, defaultValue = "0") Integer categoryId,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "12") int size
     ) {
         List<ItemEntity> results = new ArrayList<>();
         try {
@@ -134,9 +134,9 @@ public class ItemController {
                 }
             } else {
                 if (categoryId == 0) {
-                    results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId);
+                    results = itemServices.findItemsByItemNameWithPrivacy(itemName, userId, page, size);
                 } else {
-                    results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId);
+                    results = itemServices.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, page, size);
                 }
             }
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class ItemController {
     public ResponseEntity loadAllItemswithPrivacy(
             ServletRequest servletRequest,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "12") int size
     ) {
         List<ItemEntity> result;
         try {

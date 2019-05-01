@@ -122,8 +122,9 @@ public class ItemServiceImpl implements ItemServices {
 
 
     @Override
-    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId) {
-        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public List<ItemEntity> findItemsByItemNameAndCategoryWithPrivacy(String itemName, int categoryId, int userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return itemRepository.findItemsByItemNameAndCategoryWithPrivacy(itemName, categoryId, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED, pageable);
     }
 
     @Override
@@ -134,8 +135,9 @@ public class ItemServiceImpl implements ItemServices {
 
 
     @Override
-    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId) {
-        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED);
+    public List<ItemEntity> findItemsByItemNameWithPrivacy(String itemName, int userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return itemRepository.findItemsByItemNameWithPrivacy(itemName, userId, ITEM_ENABLE, ITEM_PRIVACY_PUBLIC, ITEM_PRIVACY_FRIENDS, RELATIONSHIP_ACCEPTED, pageable);
     }
 
     @Override
