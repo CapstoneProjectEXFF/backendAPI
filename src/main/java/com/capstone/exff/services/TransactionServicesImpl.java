@@ -124,6 +124,10 @@ public class TransactionServicesImpl implements TransactionServices {
     public TransactionEntity confirmReceiptImage(int transactionId, int userId) {
         TransactionEntity transactionEntity = getTransactionByTransactionId(transactionId);
         String status = transactionEntity.getStatus();
+        if (status.equals(ExffStatus.TRANSACTION_DONATE) && transactionEntity.getReceiverId() == userId){
+            transactionEntity.setStatus(ExffStatus.TRANSACTION_DONE);
+            return transactionRepository.save(transactionEntity);
+        }
         if (transactionEntity.getSenderId() == userId) { // check sender is confirming
             if (transactionEntity.getReceiverReceipt() != null) { // check receipt exist
                 if (status.equals(ExffStatus.TRANSACTION_SENDER_RECEIPT_CONFRIMED)) { // check sender's receipt is confirmed
