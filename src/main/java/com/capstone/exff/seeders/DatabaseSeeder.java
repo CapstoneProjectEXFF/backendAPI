@@ -100,11 +100,6 @@ public class DatabaseSeeder {
             superCategory.put("Hàng Mẹ, Bé & Đồ Chơi", categories);
 
             categories = new ArrayList<>();
-            categories.add("Bàn học");
-            categories.add("Dụng cụ học tập");
-            superCategory.put("Học tập", categories);
-
-            categories = new ArrayList<>();
             categories.add("Quần áo nữ");
             categories.add("Quần áo nam");
             categories.add("Giày, dép");

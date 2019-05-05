@@ -26,6 +26,15 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
             @Param("receiveStatus") String receiveStatus,
             @Param("sendStatus") String sendStatus
     );
+    @Query("select t " +
+            "from TransactionEntity t " +
+            "where (t.receiverId = :userId or t.senderId = :userId) " +
+            "and t.status = :sendStatus " +
+            "order by t.modifyTime desc ")
+    List<TransactionEntity> findSendTransactionByUserId(
+            @Param("userId") int userId,
+            @Param("sendStatus") String sendStatus
+    );
 
     @Override
     void delete(TransactionEntity transactionEntity);

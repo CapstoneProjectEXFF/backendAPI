@@ -29,10 +29,9 @@ public class TransactionServicesImpl implements TransactionServices {
 
     @Override
     public List<TransactionEntity> getTopTransactionByUserId(int receiverId) {
-        return transactionRepository.findReceiveTransaction(
+        return transactionRepository.findSendTransactionByUserId(
                 receiverId,
-                ExffStatus.TRANSACTION_SEND,
-                ExffStatus.TRANSACTION_RESEND
+                ExffStatus.TRANSACTION_SEND
         );
     }
 
