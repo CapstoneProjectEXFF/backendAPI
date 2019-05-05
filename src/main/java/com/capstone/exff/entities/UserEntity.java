@@ -108,7 +108,7 @@ public class UserEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JoinColumn(name = "role_id", referencedColumnName = "id", updatable = false)
     public RoleEntity getRoleByRoleId() {
         return roleByRoleId;
     }

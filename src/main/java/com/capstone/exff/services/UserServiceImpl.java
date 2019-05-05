@@ -95,14 +95,14 @@ public class UserServiceImpl implements UserServices {
         } else if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
             return new ResponseEntity<>(new ExffMessage("Wrong Password"), HttpStatus.BAD_REQUEST);
         }
-
         return null;
     }
 
 
     @Override
     public ResponseEntity register(String phoneNumber, String password, String fullname, String address) {
-        return register(phoneNumber, password, fullname, address, this.userRole);
+        RoleEntity userRoleRegister = roleRepository.findTop1ByName(ExffRole.ROLE_USER);
+        return register(phoneNumber, password, fullname, address, userRoleRegister);
     }
 
     @Override
@@ -127,7 +127,6 @@ public class UserServiceImpl implements UserServices {
         UserEntity userEntity = new UserEntity();
 //        RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_USER);
         userEntity = userRepository.findFirstByPhoneNumber(phoneNumber);
-
         if (userEntity != null) {
             userEntity.setAvatar(avatar);
             userEntity.setFullName(fullName);
@@ -139,7 +138,6 @@ public class UserServiceImpl implements UserServices {
             return new ResponseEntity<>(data, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ExffMessage("Cannot Update"), HttpStatus.BAD_REQUEST);
-
         }
 
     }

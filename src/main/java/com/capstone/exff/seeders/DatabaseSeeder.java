@@ -74,27 +74,30 @@ public class DatabaseSeeder {
             superCategory.put("Thiết bị điện tử", categories);
 
             categories = new ArrayList<>();
+            categories.add("Chuột máy tính");
+            categories.add("Bàn phím");
             categories.add("Tai nghe");
             categories.add("Loa");
-            categories.add("Đồng hồ thông minh");
+            categories.add("Miếng lót chuột");
             superCategory.put("Phụ kiện - thiết bị số", categories);
 
             categories = new ArrayList<>();
-            categories.add("Tủ lạnh");
-            categories.add("Máy giặt");
-            superCategory.put("Điện gia dụng", categories);
-
-            categories = new ArrayList<>();
-            categories.add("Bàn");
-            categories.add("Ghế");
-            categories.add("Tủ");
-            superCategory.put("Nội thất", categories);
+            categories.add("Bàn ghế");
+            categories.add("Đèn trang trí");
+            categories.add("Tủ, kệ");
+            categories.add("Lọ & Bình trang trí");
+            superCategory.put("Đồ Gia Dụng", categories);
 
             categories = new ArrayList<>();
             categories.add("Đồ chơi");
-            categories.add("Đồ dùng cho bé");
-            categories.add("Đồ dùng cho mẹ");
-            superCategory.put("Mẹ và bé", categories);
+            categories.add("Ghế ngồi ăn");
+            categories.add("Ghế ngồi ô tô");
+            categories.add("Nôi, Xe đẩy, Xe tập đi");
+            categories.add("Địu, Dây đai an toàn");
+            categories.add("Quần áo bé trai");
+            categories.add("Quần áo bé gái");
+            categories.add("Giày dép em bé");
+            superCategory.put("Hàng Mẹ, Bé & Đồ Chơi", categories);
 
             categories = new ArrayList<>();
             categories.add("Bàn học");
@@ -106,19 +109,20 @@ public class DatabaseSeeder {
             categories.add("Quần áo nam");
             categories.add("Giày, dép");
             categories.add("Balo, cặp sách");
-            superCategory.put("Quần áo", categories);
+            categories.add("Phụ kiện cá nhân");
+            superCategory.put("Thời trang", categories);
 
             categories = new ArrayList<>();
-            categories.add("Xe máy");
-            categories.add("Ô tô");
-            categories.add("Xe đạp");
-            superCategory.put("Xe máy, Ô tô, Xe đạp", categories);
-
-            categories = new ArrayList<>();
+            categories.add("Sách giáo khoa");
+            categories.add("Sách ngoại ngữ");
             categories.add("Sách văn học");
-            categories.add("Sách kinh tế");
-            categories.add("Sách kỹ năng sống");
-            superCategory.put("Sách", categories);
+            categories.add("Sách chuyên ngành");
+            categories.add("Truyện tranh");
+            categories.add("Tạp chí");
+            categories.add("Dụng cụ học tập");
+            categories.add("Băng đĩa nhạc");
+            categories.add("Poster, Fan-goods");
+            superCategory.put("Sách Báo, Văn Phòng Phẩm, Băng Đĩa", categories);
             superCategory.forEach((s, arr) -> {
                 CategoryEntity superCategoryEntity = new CategoryEntity();
                 superCategoryEntity.setName(s);
@@ -142,7 +146,7 @@ public class DatabaseSeeder {
         if (userEntity == null) {
             RoleEntity roleEntity = roleRepository.findTop1ByName(ExffRole.ROLE_ADMIN);
             String adminPassword = "0010000100";
-            userServices.register(adminAccount,adminPassword,"Exff", "", roleEntity);
+            userServices.register(adminAccount,adminPassword,"Exff", "Công viên phần mềm Quang Trung", roleEntity);
         }
     }
 }
